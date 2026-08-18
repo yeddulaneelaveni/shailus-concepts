@@ -664,6 +664,29 @@
 @media (max-width: 400px) {
   .footer-top { grid-template-columns: 1fr; }
 }
+
+  /* EXACT index.html navbar/dropdown override */
+  #mainNavBar.navbar{background:var(--cream);border-bottom:2px solid var(--deep-green);width:100%;max-width:100vw;overflow:visible;box-sizing:border-box;position:relative;}
+  #mainNavBar .nav-row{display:flex;align-items:center;justify-content:center;gap:34px;flex-wrap:nowrap;padding:14px 20px;min-width:0;overflow:visible;}
+  #mainNavBar .nav-row a,#mainNavBar .nav-row .drop-toggle{text-decoration:none;color:var(--deep-green);font-weight:600;font-size:15px;background:none;border:none;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:5px;padding:2px 2px 4px;white-space:nowrap;transition:color .2s ease;border-bottom:2px solid transparent;line-height:1.2;}
+  #mainNavBar .nav-row a:hover,#mainNavBar .nav-row .drop-toggle:hover{color:var(--gold);}
+  #mainNavBar .nav-row a.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:700;}
+  #mainNavBar .drop-toggle .arrow{font-size:10px;transition:transform .2s ease;}
+  #mainNavBar .dropdown.open .drop-toggle .arrow{transform:rotate(180deg);}
+  #mainNavBar .dropdown{position:relative;}
+  #mainNavBar .dropdown-menu{display:none;position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%);background:linear-gradient(180deg,var(--deep-green),var(--green-mid));border:1px solid var(--gold);border-radius:8px;min-width:460px;box-shadow:0 14px 30px rgba(13,51,40,.3);z-index:500;padding:14px 10px;grid-template-columns:1fr 1fr;gap:2px 8px;}
+  #mainNavBar .dropdown.open .dropdown-menu{display:grid;}
+  #mainNavBar .dropdown-menu a{display:block;color:var(--gold-light);padding:10px 14px;font-size:14px;font-weight:500;white-space:nowrap;border-radius:6px;border-bottom:none;}
+  #mainNavBar .dropdown-menu a:hover{background:rgba(201,164,85,.15);color:var(--gold);}
+
+  @media(max-width:1024px){
+    #mainNavBar .nav-row{display:none;flex-direction:column;align-items:flex-start;gap:0;padding:6px 0;}
+    #mainNavBar .nav-row.mobile-open{display:flex;}
+    #mainNavBar .nav-row a,#mainNavBar .nav-row .dropdown{width:100%;}
+    #mainNavBar .nav-row a,#mainNavBar .nav-row .drop-toggle{padding:13px 24px;width:100%;justify-content:space-between;}
+    #mainNavBar .dropdown-menu{position:static;transform:none;width:100%;border-radius:0;box-shadow:none;grid-template-columns:1fr;min-width:0;}
+  }
+
 </style>
 </head>
 <body>
