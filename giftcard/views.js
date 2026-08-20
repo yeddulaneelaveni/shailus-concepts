@@ -315,3 +315,483 @@ function displaySimilarProducts(products) {
         relatedGrid.appendChild(card);
     });
 }
+
+const API_URL = "http://localhost:5000";
+
+
+// =====================================================
+// IMAGE PATH
+// =====================================================
+
+function fixProductImage(path) {
+
+    if (!path) {
+        return "";
+    }
+
+    // Uploaded backend image
+    if (path.startsWith("/uploads/")) {
+        return API_URL + path;
+    }
+
+    // Old frontend image
+    if (path.startsWith("../assets/")) {
+        return path.replace("../assets/", "assets/");
+    }
+
+    return path;
+}
+
+
+// =====================================================
+// GET PRODUCT ID FROM URL
+// =====================================================
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const productId =
+    params.get("id");
+
+
+// =====================================================
+// LOAD PRODUCT
+// =====================================================
+
+async function loadProductDetails() {
+
+    if (!productId) {
+
+        console.error(
+            "Product ID missing from URL"
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/api/products/${productId}`
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Product not found"
+            );
+        }
+
+
+        const product =
+            await response.json();
+
+
+        console.log(
+            "Product loaded:",
+            product
+        );
+
+
+        displayProduct(product);
+
+
+    } catch (error) {
+
+        console.error(
+            "Product loading error:",
+            error
+        );
+
+
+        document.body.insertAdjacentHTML(
+            "afterbegin",
+            `
+            <div style="
+                padding:20px;
+                text-align:center;
+                background:#fff3cd;
+                color:#664d03;
+            ">
+                Unable to load product.
+            </div>
+            `
+        );
+
+    }
+}
+
+
+// =====================================================
+// DISPLAY PRODUCT
+// =====================================================
+
+function displayProduct(product) {
+
+    // ==========================================
+    // MAIN IMAGE
+    // ==========================================
+
+    const mainImage =
+        fixProductImage(
+            product.image ||
+            (
+                product.images &&
+                product.images.length
+                    ? product.images[0]
+                    : ""
+            )
+        );
+
+
+    const mainImg =
+        document.getElementById(
+            "mainImg"
+        );
+
+
+    if (mainImg && mainImage) {
+
+        mainImg.src =
+            mainImage;
+
+        mainImg.alt =
+            product.name;
+
+    }
+
+
+    // ==========================================
+    // PRODUCT DETAILS CONTAINER
+    // ==========================================
+
+    const details =
+        document.querySelector(
+            ".product-details"
+        );
+
+
+    if (details) {
+
+        details.dataset.id =
+            product.productId;
+
+        details.dataset.name =
+            product.name;
+
+        details.dataset.price =
+            product.price;
+
+        details.dataset.img =
+            mainImage;
+
+    }
+
+
+    // ==========================================
+    // PRODUCT NAME
+    // ==========================================
+
+    const title =
+        document.querySelector(
+            ".product-details h1"
+        );
+
+
+    if (title) {
+
+        title.textContent =
+            product.name;
+
+    }
+
+
+    // ==========================================
+    // PRICE
+    // ==========================================
+
+    const price =
+        document.querySelector(
+            ".product-details .price"
+        );
+
+
+    if (price) {
+
+        price.textContent =
+            "₹" +
+            Number(
+                product.price
+            ).toFixed(2);
+
+    }
+
+
+    // ==========================================
+    // SKU
+    // ==========================================
+
+    const sku =
+        document.querySelector(
+            ".product-details .sku"
+        );
+
+
+    if (sku) {
+
+        sku.textContent =
+            "SKU: " +
+            product.productId;
+
+    }
+
+
+    // ==========================================
+    // DESCRIPTION
+    // ==========================================
+
+    let descriptionBox =
+        document.getElementById(
+            "productDescription"
+        );
+
+
+    if (!descriptionBox) {
+
+        const noteBox =
+            document.querySelector(
+                ".note-box"
+            );
+
+
+        if (noteBox) {
+
+            const description =
+                document.createElement(
+                    "div"
+                );
+
+            description.id =
+                "productDescription";
+
+            description.className =
+                "note-box";
+
+            description.style.marginBottom =
+                "15px";
+
+
+            description.innerHTML =
+                `<strong>Description:</strong> ${escapeHTML(
+                    product.description || ""
+                )}`;
+
+
+            noteBox.parentNode.insertBefore(
+                description,
+                noteBox
+            );
+
+        }
+
+    } else {
+
+        descriptionBox.innerHTML =
+            `<strong>Description:</strong> ${escapeHTML(
+                product.description || ""
+            )}`;
+
+    }
+
+
+    // ==========================================
+    // PRODUCT IMAGES / THUMBNAILS
+    // ==========================================
+
+    const thumbnailRow =
+        document.querySelector(
+            ".thumb-row"
+        );
+
+
+    if (thumbnailRow) {
+
+        let imageList = [];
+
+
+        if (product.image) {
+
+            imageList.push(
+                product.image
+            );
+
+        }
+
+
+        if (
+            product.images &&
+            product.images.length
+        ) {
+
+            product.images.forEach(
+                image => {
+
+                    if (
+                        !imageList.includes(
+                            image
+                        )
+                    ) {
+
+                        imageList.push(
+                            image
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        thumbnailRow.innerHTML =
+            "";
+
+
+        imageList.forEach(
+            (imagePath, index) => {
+
+                const image =
+                    fixProductImage(
+                        imagePath
+                    );
+
+
+                const thumb =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                thumb.className =
+                    index === 0
+                        ? "thumb active"
+                        : "thumb";
+
+
+                thumb.innerHTML = `
+                    <img
+                        src="${image}"
+                        alt="${escapeHTML(product.name)}"
+                    >
+                `;
+
+
+                thumb.onclick =
+                    function () {
+
+                        switchImg(
+                            thumb,
+                            image
+                        );
+
+                    };
+
+
+                thumbnailRow.appendChild(
+                    thumb
+                );
+
+            }
+        );
+
+    }
+
+
+    // ==========================================
+    // UPDATE SPECIFICATION TABLE
+    // ==========================================
+
+    updateSpecifications(
+        product
+    );
+
+}
+
+
+// =====================================================
+// SPECIFICATIONS
+// =====================================================
+
+function updateSpecifications(product) {
+
+    const cells =
+        document.querySelectorAll(
+            ".specs-table tbody td"
+        );
+
+
+    if (!cells.length) {
+        return;
+    }
+
+
+    // Size / Inches
+    if (cells[0]) {
+
+        cells[0].textContent =
+            product.dimensions ||
+            "—";
+
+    }
+
+
+    // The remaining fields are not currently
+    // present in your Product MongoDB schema.
+    //
+    // Keep existing static values for now.
+
+
+}
+
+
+// =====================================================
+// HTML ESCAPE
+// =====================================================
+
+function escapeHTML(value) {
+
+    return String(value || "")
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+}
+
+
+// =====================================================
+// START
+// =====================================================
+
+loadProductDetails();

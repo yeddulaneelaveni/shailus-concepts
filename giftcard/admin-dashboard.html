@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard — Shailu's Concepts</title>
+
+    <link rel="stylesheet" href="admin-dashboard.css">
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header class="admin-header">
+
+    <div class="admin-brand">
+        <img src="assets/logo.jpeg" alt="Shailu's Concepts">
+
+        <div>
+            <h2>Shailu's Concepts</h2>
+            <span>Admin Dashboard</span>
+        </div>
+    </div>
+
+
+    <div class="admin-user">
+
+        <span id="adminName">
+            Admin
+        </span>
+
+        <button onclick="logout()">
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ================= LAYOUT ================= -->
+
+<div class="dashboard-layout">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <button
+            class="sidebar-btn active"
+            onclick="showSection('dashboardSection', this)"
+        >
+            Dashboard
+        </button>
+
+
+        <button
+            class="sidebar-btn"
+            onclick="showSection('productsSection', this); loadProducts()"
+        >
+            Products
+        </button>
+
+
+        <button
+            class="sidebar-btn"
+            onclick="showSection('addProductSection', this); prepareAddProduct()"
+        >
+            Add Product
+        </button>
+
+
+        <button
+            class="sidebar-btn"
+            onclick="showSection('heroSection', this); loadHeroes()"
+        >
+            Hero Section
+        </button>
+
+    </aside>
+
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="dashboard-main">
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <section
+            id="dashboardSection"
+            class="dashboard-section active-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+                    <h1>Dashboard</h1>
+
+                    <p>
+                        Manage your products and homepage content.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <span>Total Products</span>
+
+                    <strong id="totalProducts">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>New Arrivals</span>
+
+                    <strong id="newArrivals">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Best Sellers</span>
+
+                    <strong id="bestSellers">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Hero Slides</span>
+
+                    <strong id="totalHeroes">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= PRODUCTS ================= -->
+
+        <section
+            id="productsSection"
+            class="dashboard-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h1>Products</h1>
+
+                    <p>
+                        View and manage all products.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="primary-btn"
+                    onclick="showSectionById('addProductSection'); prepareAddProduct()"
+                >
+                    + Add Product
+                </button>
+
+            </div>
+
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="productSearch"
+                    placeholder="Search products..."
+                    oninput="searchProducts()"
+                >
+
+            </div>
+
+
+            <div
+                id="productsContainer"
+                class="products-container"
+            >
+                Loading products...
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= ADD / EDIT PRODUCT ================= -->
+
+        <section
+            id="addProductSection"
+            class="dashboard-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h1 id="productFormTitle">
+                        Add Product
+                    </h1>
+
+                    <p>
+                        Add or update product information.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                id="productForm"
+                class="product-form"
+                onsubmit="saveProduct(event)"
+            >
+
+                <input
+                    type="hidden"
+                    id="editingProductId"
+                >
+
+
+                <div class="form-grid">
+
+
+                    <!-- PRODUCT ID -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Product ID
+                        </label>
+
+                        <input
+                            type="number"
+                            id="productId"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PRODUCT NAME -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Product Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="productName"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- CATEGORY -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Category
+                        </label>
+
+                        <input
+                            type="text"
+                            id="productCategory"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PRICE -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Price
+                        </label>
+
+                        <input
+                            type="number"
+                            id="productPrice"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- DIMENSIONS -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Dimensions / Inches
+                        </label>
+
+                        <input
+                            type="text"
+                            id="productDimensions"
+                            placeholder="8 × 5 × 4 inches"
+                        >
+
+                    </div>
+
+
+                    <!-- RATING -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Rating
+                        </label>
+
+                        <input
+                            type="number"
+                            id="productRating"
+                            min="0"
+                            max="5"
+                            step="0.1"
+                            value="0"
+                        >
+
+                    </div>
+
+
+                    <!-- BADGE -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Badge
+                        </label>
+
+                        <input
+                            type="text"
+                            id="productBadge"
+                            placeholder="New / Bestseller"
+                        >
+
+                    </div>
+
+
+                    <!-- MAIN IMAGE -->
+
+                    <<div class="form-group full-width">
+
+                            <label>
+                                Main Product Image
+                            </label>
+
+                            <input
+                                type="file"
+                                id="productImage"
+                                accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                            >
+
+                            <small class="file-help">
+                                Select the main product image
+                            </small>
+
+                            <div id="mainImagePreview" class="image-preview"></div>
+
+                        </div>
+
+
+                    <!-- ADDITIONAL IMAGES -->
+
+                    <div class="form-group full-width">
+
+    <label>
+        Additional Product Images
+    </label>
+
+    <input
+        type="file"
+        id="productImages"
+        accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+        multiple
+    >
+
+    <small class="file-help">
+        You can select multiple product images
+    </small>
+
+    <div
+        id="additionalImagesPreview"
+        class="images-preview"
+    ></div>
+
+</div>
+                    <!-- DESCRIPTION -->
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Description
+                        </label>
+
+                        <textarea
+                            id="productDescription"
+                            rows="6"
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <!-- CHECKBOXES -->
+
+                    <div class="checkbox-group">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                id="productNewArrival"
+                            >
+
+                            New Arrival
+
+                        </label>
+
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                id="productBestSeller"
+                            >
+
+                            Best Seller
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+                        Save Product
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="secondary-btn"
+                        onclick="resetProductForm()"
+                    >
+                        Clear
+                    </button>
+
+                </div>
+
+
+                <p
+                    id="productMessage"
+                    class="form-message"
+                ></p>
+
+            </form>
+
+        </section>
+
+
+
+        <!-- ================= HERO SECTION ================= -->
+
+        <section
+            id="heroSection"
+            class="dashboard-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h1>Hero Section</h1>
+
+                    <p>
+                        Manage the homepage hero slides.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="primary-btn"
+                    onclick="prepareAddHero()"
+                >
+                    + Add Hero
+                </button>
+
+            </div>
+
+
+            <form
+                id="heroForm"
+                class="product-form"
+                onsubmit="saveHero(event)"
+            >
+
+                <input
+                    type="hidden"
+                    id="editingHeroId"
+                >
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="heroTitle"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Subtitle
+                        </label>
+
+                        <input
+                            type="text"
+                            id="heroSubtitle"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Description
+                        </label>
+
+                        <textarea
+                            id="heroDescription"
+                            rows="4"
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Image Path / URL
+                        </label>
+
+                        <input
+    type="file"
+    id="heroImage"
+    accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+    required
+>
+
+<small class="file-help">
+    Select the homepage hero image
+</small>
+
+<div
+    id="heroImagePreview"
+    class="image-preview"
+></div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Button Text
+                        </label>
+
+                        <input
+                            type="text"
+                            id="heroButtonText"
+                            value="Shop Now"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Button Link
+                        </label>
+
+                        <input
+                            type="text"
+                            id="heroButtonLink"
+                            value="index.html#gallery"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Display Order
+                        </label>
+
+                        <input
+                            type="number"
+                            id="heroOrder"
+                            value="1"
+                            min="1"
+                        >
+
+                    </div>
+
+
+                    <div class="checkbox-group">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                id="heroActive"
+                                checked
+                            >
+
+                            Active
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+                        Save Hero
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="secondary-btn"
+                        onclick="resetHeroForm()"
+                    >
+                        Clear
+                    </button>
+
+                </div>
+
+
+                <p
+                    id="heroMessage"
+                    class="form-message"
+                ></p>
+
+            </form>
+
+
+            <div
+                id="heroesContainer"
+                class="heroes-container"
+            >
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="admin-dashboard.js"></script>
+
+</body>
+</html>

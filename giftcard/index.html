@@ -271,6 +271,60 @@
       font-size: 17px;
     }
   }
+  /* ============ LOGIN DROPDOWN ============ */
+
+.login-dropdown {
+  position: relative;
+}
+
+.login-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+
+  min-width: 190px;
+
+  background: linear-gradient(
+    180deg,
+    var(--deep-green),
+    var(--green-mid)
+  );
+
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+
+  box-shadow: 0 14px 30px rgba(13,51,40,0.3);
+
+  padding: 8px;
+
+  z-index: 1000;
+}
+
+.login-dropdown.open .login-menu {
+  display: block;
+}
+
+.login-menu a {
+  display: block;
+
+  padding: 11px 14px;
+
+  color: var(--gold-light);
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  border-radius: 6px;
+
+  white-space: nowrap;
+}
+
+.login-menu a:hover {
+  background: rgba(201,164,85,0.15);
+  color: var(--gold);
+}
 
   /* ============ AUTO-SCROLLING CATEGORY STRIP ============ */
   .scroll-strip-section{
@@ -606,9 +660,40 @@
     </div>
 
     <div class="top-right">
-      <a class="icon-btn" aria-label="Login" href="login.html" title="Login">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </a>
+      <div class="login-dropdown" id="loginDropdown">
+
+  <button class="icon-btn"
+          aria-label="Login"
+          title="Login"
+          onclick="toggleLoginDropdown()">
+
+    <svg width="20" height="20" viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="2"
+         stroke-linecap="round"
+         stroke-linejoin="round">
+
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+
+    </svg>
+
+  </button>
+
+  <div class="login-menu">
+
+    <a href="login.html">
+      Login as User
+    </a>
+
+    <a href="admin-login.html">
+      Login as Admin
+    </a>
+
+  </div>
+
+</div>
       <button class="icon-btn" aria-label="Cart" id="cartIconBtn" onclick="openCart()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         <span class="cart-badge" id="cartBadge">0</span>
@@ -653,34 +738,15 @@
 
 </header>
 
-<!-- ============ HERO (3 images / 3 slides, CTAs all bottom-right) ============ -->
+<!-- ============ HERO (loaded from MongoDB) ============ -->
 <section class="hero">
-  <div class="hero-text-col">
-    <div class="hero-slide-text active" data-slide="0">
-      <a href="return-gifts.html" class="hero-cta">Shop Now</a>
-    </div>
-    <div class="hero-slide-text" data-slide="1">
-      <a href="return-gifts.html#customisable-jute-bags" class="hero-cta">Explore Bags</a>
-    </div>
-    <div class="hero-slide-text" data-slide="2">
-      <a href="return-gifts.html#kids-return-gifts" class="hero-cta">View Kids Gifts</a>
-    </div>
-  </div>
-
-  <div class="hero-image-col">
-    <img src="assets/heromain1.png" alt="Return gifts display" class="active" data-slide="0">
-    <img src="assets/heromain2.png" alt="Jute bags" data-slide="1">
-    <img src="assets/heromain3.png" alt="Kids return gifts" data-slide="2">
-  </div>
+  <div class="hero-text-col" id="heroTextColumn"></div>
+  <div class="hero-image-col" id="heroImageColumn"></div>
 
   <button class="hero-arrow prev" aria-label="Previous slide" onclick="heroPrev()">&#10094;</button>
   <button class="hero-arrow next" aria-label="Next slide" onclick="heroNext()">&#10095;</button>
 
-  <div class="hero-dots" id="heroDots">
-    <span class="hero-dot active" onclick="heroGoTo(0)"></span>
-    <span class="hero-dot" onclick="heroGoTo(1)"></span>
-    <span class="hero-dot" onclick="heroGoTo(2)"></span>
-  </div>
+  <div class="hero-dots" id="heroDots"></div>
 </section>
 
 <!-- ============ ABOUT / DISCOVER ============ -->
@@ -804,132 +870,9 @@
     <h2>New Collections</h2>
     <div class="section-underline"></div>
   </div>
-  <div class="product-grid">
-    <div class="product-card" data-id="p1" data-name="Lotus Air Tight Container" data-price="300" data-img="assets/images/products/baby/baby1.jpg">
-      <div class="img-wrap"><img src="assets/images/products/baby/baby1.jpg" alt="Lotus Air Tight Container"></div>
-      <div class="info">
-        <h3>Lotus Air Tight Container</h3><div class="price">₹300.00</div>
-        <div class="card-actions">
-          <a href="views.html" class="view-btn">View</a>
-          <button class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-    <div class="product-card" data-id="p2" data-name="Elephant Air Tight Container" data-price="300" data-img="assets/images/products/baby/baby2.jpg">
-      <div class="img-wrap"><img src="assets/images/products/baby/baby2.jpg" alt="Elephant Air Tight Container"></div>
-      <div class="info">
-        <h3>Elephant Air Tight Container</h3><div class="price">₹300.00</div>
-        <div class="card-actions">
-          <a href="views.html" class="view-btn">View</a>
-          <button class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-    <div class="product-card" data-id="p3" data-name='Digital Print Metal Tray 8"inch' data-price="420" data-img="assets/images/products/baby/baby3.jpg">
-      <div class="img-wrap"><img src="assets/images/products/baby/baby3.jpg" alt="Digital Print Metal Tray"></div>
-      <div class="info">
-        <h3>Digital Print Metal Tray 8"inch</h3><div class="price">₹420.00</div>
-        <div class="card-actions">
-          <a href="views.html" class="view-btn">View</a>
-          <button class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-    <div class="product-card" data-id="p4" data-name="Iron Nuts Box" data-price="240" data-img="assets/images/products/baby/baby4.jpg">
-      <div class="img-wrap"><img src="assets/images/products/baby/baby4.jpg" alt="Iron Nuts Box"></div>
-      <div class="info">
-        <h3>Iron Nuts Box</h3><div class="price">₹240.00</div>
-        <div class="card-actions">
-          <a href="views.html" class="view-btn">View</a>
-          <button class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  </div>
-  <div class="product-grid">
-    <div class="product-card" data-id="p1" data-name="Lotus Air Tight Container" data-price="300" data-img="assets/images/products/baby/baby1.jpg">
-      <div class="img-wrap"><img src="assets/images/products/baby/baby1.jpg" alt="Lotus Air Tight Container"></div>
-      <div class="info">
-        <h3>Lotus Air Tight Container</h3><div class="price">₹300.00</div>
-        <div class="card-actions">
-          <a href="views.html" class="view-btn">View</a>
-          <button class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-    <div class="product-card" data-id="p2" data-name="Elephant Air Tight Container" data-price="300" data-img="assets/images/products/baby/baby2.jpg">
-      <div class="img-wrap"><img src="assets/images/products/baby/baby2.jpg" alt="Elephant Air Tight Container"></div>
-      <div class="info">
-        <h3>Elephant Air Tight Container</h3><div class="price">₹300.00</div>
-        <div class="card-actions">
-          <a href="views.html" class="view-btn">View</a>
-          <button class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-    <div class="product-card" data-id="p3" data-name='Digital Print Metal Tray 8"inch' data-price="420" data-img="assets/images/products/baby/baby3.jpg">
-      <div class="img-wrap"><img src="assets/images/products/baby/baby3.jpg" alt="Digital Print Metal Tray"></div>
-      <div class="info">
-        <h3>Digital Print Metal Tray 8"inch</h3><div class="price">₹420.00</div>
-        <div class="card-actions">
-          <a href="views.html" class="view-btn">View</a>
-          <button class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-    <div class="product-card" data-id="p4" data-name="Iron Nuts Box" data-price="240" data-img="assets/images/products/baby/baby4.jpg">
-      <div class="img-wrap"><img src="assets/images/products/baby/baby4.jpg" alt="Iron Nuts Box"></div>
-      <div class="info">
-        <h3>Iron Nuts Box</h3><div class="price">₹240.00</div>
-        <div class="card-actions">
-          <a href="views.html" class="view-btn">View</a>
-          <button class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="product-grid">
-    <div class="product-card" data-id="p1" data-name="Lotus Air Tight Container" data-price="300" data-img="assets/images/products/baby/baby1.jpg">
-      <div class="img-wrap"><img src="assets/images/products/baby/baby1.jpg" alt="Lotus Air Tight Container"></div>
-      <div class="info">
-        <h3>Lotus Air Tight Container</h3><div class="price">₹300.00</div>
-        <div class="card-actions">
-          <a href="views.html" class="view-btn">View</a>
-          <button class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-    <div class="product-card" data-id="p2" data-name="Elephant Air Tight Container" data-price="300" data-img="assets/images/products/baby/baby2.jpg">
-      <div class="img-wrap"><img src="assets/images/products/baby/baby2.jpg" alt="Elephant Air Tight Container"></div>
-      <div class="info">
-        <h3>Elephant Air Tight Container</h3><div class="price">₹300.00</div>
-        <div class="card-actions">
-          <a href="views.html" class="view-btn">View</a>
-          <button class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-    <div class="product-card" data-id="p3" data-name='Digital Print Metal Tray 8"inch' data-price="420" data-img="assets/images/products/baby/baby3.jpg">
-      <div class="img-wrap"><img src="assets/images/products/baby/baby3.jpg" alt="Digital Print Metal Tray"></div>
-      <div class="info">
-        <h3>Digital Print Metal Tray 8"inch</h3><div class="price">₹420.00</div>
-        <div class="card-actions">
-          <a href="views.html" class="view-btn">View</a>
-          <button class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-    <div class="product-card" data-id="p4" data-name="Iron Nuts Box" data-price="240" data-img="assets/images/products/baby/baby4.jpg">
-      <div class="img-wrap"><img src="assets/images/products/baby/baby4.jpg" alt="Iron Nuts Box"></div>
-      <div class="info">
-        <h3>Iron Nuts Box</h3><div class="price">₹240.00</div>
-        <div class="card-actions">
-          <a href="views.html" class="view-btn">View</a>
-          <button class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
+
+  <div class="product-grid" id="productGrid">
+    <!-- Products are loaded dynamically from MongoDB -->
   </div>
 </section>
 
@@ -1207,17 +1150,19 @@
     }
   }
 
-  document.addEventListener('click', function(e){
+ document.addEventListener("click", function(e) {
 
-    document.querySelectorAll('.dropdown.open').forEach(function(d){
+    document.querySelectorAll(
+        ".dropdown.open, .has-submenu.open, .login-dropdown.open"
+    ).forEach(function(element) {
 
-      if(!d.contains(e.target)){
-        d.classList.remove('open');
-      }
+        if (!element.contains(e.target)) {
+            element.classList.remove("open");
+        }
 
     });
 
-  });
+});
 
 
   // =====================================================
@@ -1900,6 +1845,25 @@
 
   }
 
+  function toggleLoginDropdown() {
+
+    const loginDropdown =
+        document.getElementById("loginDropdown");
+
+    const wasOpen =
+        loginDropdown.classList.contains("open");
+
+    // Close other dropdowns
+    document.querySelectorAll(
+        ".dropdown.open, .has-submenu.open, .login-dropdown.open"
+    ).forEach(function(element) {
+        element.classList.remove("open");
+    });
+
+    if (!wasOpen) {
+        loginDropdown.classList.add("open");
+    }
+}
 
   function closeCart(){
 
@@ -1977,303 +1941,252 @@
   // MONGODB / BACKEND INTEGRATION
   // =====================================================
 
-  function fixImagePath(path){
+ function fixImagePath(path) {
 
-    if(!path){
-      return "";
+    if (!path) {
+        return "";
     }
 
-
-    /*
-      MongoDB contains paths like:
-
-      ../assets/images/...
-
-      But index.html is inside:
-
-      giftcard/
-
-      So browser needs:
-
-      assets/images/...
-    */
-
-    if(
-      path.startsWith(
-        "../assets/"
-      )
-    ){
-
-      return path.replace(
-        "../assets/",
-        "assets/"
-      );
-
+    // Newly uploaded backend image
+    if (path.startsWith("/uploads/")) {
+        return "http://localhost:5000" + path;
     }
 
+    // Old MongoDB frontend image paths
+    if (path.startsWith("../assets/")) {
+        return path.replace("../assets/", "assets/");
+    }
 
     return path;
-
-  }
-
-
-  async function loadProductsFromBackend(){
-
-    try{
-
-      console.log(
-        "Loading products from backend..."
-      );
+}
 
 
-      // Get products from Express API
+  async function loadProductsFromBackend() {
+    try {
+      console.log("Loading products from backend...");
 
-      var response =
-        await fetch(
-          "http://localhost:5000/api/products"
-        );
+      const response = await fetch("http://localhost:5000/api/products");
 
-
-      if(!response.ok){
-
-        throw new Error(
-          "Failed to load products"
-        );
-
+      if (!response.ok) {
+        throw new Error("Failed to load products");
       }
 
-
-      var products =
-        await response.json();
-
-
-      console.log(
-        "Products received from MongoDB:",
-        products
-      );
-
-
-      // Existing HTML cards
-
-      var cards =
-        document.querySelectorAll(
-          ".product-grid .product-card"
-        );
-
-
-      console.log(
-        "Existing frontend cards:",
-        cards.length
-      );
-
-
-      /*
-        IMPORTANT:
-
-        We are NOT creating new cards.
-
-        We are using the existing
-        HTML cards from your enhanced
-        index.html.
-      */
-
-
-      cards.forEach(
-        function(card, index){
-
-          /*
-            If frontend has 12 cards,
-            first 12 MongoDB products
-            will be displayed.
-
-            Later, if you want all 60
-            products on this page, we
-            can add pagination/load more.
-          */
-
-          if(!products[index]){
-            return;
-          }
-
-
-          var product =
-            products[index];
-
-
-          // ==========================================
-          // PRODUCT ID
-          // ==========================================
-
-          card.dataset.id =
-            String(
-              product.productId
-            );
-
-
-          // ==========================================
-          // PRODUCT NAME
-          // ==========================================
-
-          card.dataset.name =
-            product.name;
-
-
-          var nameElement =
-            card.querySelector(
-              ".info h3"
-            );
-
-
-          if(nameElement){
-
-            nameElement.textContent =
-              product.name;
-
-          }
-
-
-          // ==========================================
-          // PRODUCT PRICE
-          // ==========================================
-
-          card.dataset.price =
-            product.price;
-
-
-          var priceElement =
-            card.querySelector(
-              ".info .price"
-            );
-
-
-          if(priceElement){
-
-            if(product.price > 0){
-
-              priceElement.textContent =
-                "₹" +
-                Number(
-                  product.price
-                ).toFixed(2);
-
-            }
-            else{
-
-              priceElement.textContent =
-                "Price on request";
-
-            }
-
-          }
-
-
-          // ==========================================
-          // PRODUCT IMAGE
-          // ==========================================
-
-          var imagePath =
-            product.image ||
-            (
-              product.images &&
-              product.images.length > 0
-            )
-              ? (
-                  product.image ||
-                  product.images[0]
-                )
-              : "";
-
-
-          imagePath =
-            fixImagePath(
-              imagePath
-            );
-
-
-          card.dataset.img =
-            imagePath;
-
-
-          var imageElement =
-            card.querySelector(
-              ".img-wrap img"
-            );
-
-
-          if(imageElement){
-
-            imageElement.src =
-              imagePath;
-
-            imageElement.alt =
-              product.name;
-
-          }
-
-
-          // ==========================================
-          // VIEW DETAILS
-          // ==========================================
-
-          var viewButton =
-            card.querySelector(
-              ".view-btn"
-            );
-
-
-          if(viewButton){
-
-            viewButton.href =
-              "views.html?id=" +
-              product.productId;
-
-          }
-
-
-          // ==========================================
-          // ADD TO CART
-          // ==========================================
-
-          /*
-            The existing HTML button calls:
-
-            addToCartFromCard(this)
-
-            That function reads:
-
-            data-id
-            data-name
-            data-price
-            data-img
-
-            We already updated all four
-            values above.
-
-            So the existing Add to Cart
-            functionality will now use
-            MongoDB product data.
-          */
-
-
+      const products = await response.json();
+      const productGrid = document.getElementById("productGrid");
+
+      if (!productGrid) {
+        console.error("Product grid not found");
+        return;
+      }
+
+      productGrid.innerHTML = "";
+
+      if (!Array.isArray(products) || products.length === 0) {
+        productGrid.innerHTML = `
+          <p style="grid-column:1/-1;text-align:center;padding:40px;color:#777;">
+            No products available.
+          </p>`;
+        return;
+      }
+
+      products.forEach(function(product) {
+        let imagePath = "";
+
+        if (product.image) {
+          imagePath = fixImagePath(product.image);
+        } else if (Array.isArray(product.images) && product.images.length > 0) {
+          imagePath = fixImagePath(product.images[0]);
         }
-      );
 
+        const priceText = Number(product.price) > 0
+          ? "₹" + Number(product.price).toFixed(2)
+          : "Price on request";
 
-      console.log(
-        "Existing product cards updated successfully"
-      );
+        const badgeHtml = product.badge
+          ? `<span style="position:absolute;top:10px;left:10px;background:var(--gold);color:var(--deep-green);padding:5px 9px;border-radius:4px;font-size:11px;font-weight:700;">${escapeHTML(product.badge)}</span>`
+          : "";
 
+        const card = document.createElement("div");
+        card.className = "product-card";
+
+        card.dataset.id = String(product.productId ?? "");
+        card.dataset.name = product.name || "";
+        card.dataset.price = String(product.price ?? 0);
+        card.dataset.img = imagePath;
+
+        card.innerHTML = `
+          <div class="img-wrap" style="position:relative;">
+            ${imagePath ? `<img src="${imagePath}" alt="${escapeHTML(product.name || "Product")}" onerror="this.style.display='none';">` : ""}
+            ${badgeHtml}
+          </div>
+
+          <div class="info">
+            <h3>${escapeHTML(product.name || "Product")}</h3>
+            <div class="price">${priceText}</div>
+
+            <div class="card-actions">
+              <a href="views.html?id=${encodeURIComponent(product.productId)}" class="view-btn">
+                View
+              </a>
+
+              <button class="add-cart-btn" onclick="addToCartFromCard(this)">
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        `;
+
+        productGrid.appendChild(card);
+      });
+
+      console.log("MongoDB products rendered successfully:", products.length);
+
+    } catch (error) {
+      console.error("Backend product loading error:", error);
+
+      const productGrid = document.getElementById("productGrid");
+
+      if (productGrid) {
+        productGrid.innerHTML = `
+          <p style="grid-column:1/-1;text-align:center;padding:40px;color:#b33;">
+            Unable to load products. Please try again later.
+          </p>`;
+      }
     }
-    catch(error){
-
-      console.error(
-        "Backend product loading error:",
-        error
-      );
-
-    }
-
   }
+
+  
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function getBackendImageUrl(path) {
+    if (!path) return "";
+
+    if (path.startsWith("http://") || path.startsWith("https://")) {
+      return path;
+    }
+
+    if (path.startsWith("/uploads/")) {
+      return "http://localhost:5000" + path;
+    }
+
+    if (path.startsWith("uploads/")) {
+      return "http://localhost:5000/" + path;
+    }
+
+    if (path.startsWith("../assets/")) {
+      return path.replace("../assets/", "assets/");
+    }
+
+    return path;
+  }
+
+  async function loadHeroFromBackend() {
+    try {
+      console.log("Loading heroes from backend...");
+
+      const response = await fetch("http://localhost:5000/api/hero");
+
+      if (!response.ok) {
+        throw new Error("Failed to load hero");
+      }
+
+      const heroes = await response.json();
+
+      const activeHeroes = Array.isArray(heroes)
+        ? heroes
+            .filter(hero => hero.active === true)
+            .sort((a, b) => Number(a.order || 0) - Number(b.order || 0))
+        : [];
+
+      const imageColumn = document.getElementById("heroImageColumn");
+      const textColumn = document.getElementById("heroTextColumn");
+      const dots = document.getElementById("heroDots");
+
+      if (!imageColumn || !textColumn || !dots) {
+        console.error("Hero containers not found");
+        return;
+      }
+
+      imageColumn.innerHTML = "";
+      textColumn.innerHTML = "";
+      dots.innerHTML = "";
+
+      if (activeHeroes.length === 0) {
+        heroTotal = 0;
+        console.log("No active heroes found");
+        return;
+      }
+
+      imageColumn.innerHTML = activeHeroes.map((hero, index) => {
+        const imageUrl = getBackendImageUrl(hero.image);
+
+        return `
+          <img
+            src="${imageUrl}"
+            alt="${escapeHTML(hero.title || "Hero image")}"
+            class="${index === 0 ? "active" : ""}"
+            data-slide="${index}"
+            onerror="console.error('Hero image failed:', this.src);"
+          >
+        `;
+      }).join("");
+
+      textColumn.innerHTML = activeHeroes.map((hero, index) => {
+        const title = hero.title
+          ? `<h1>${escapeHTML(hero.title)}</h1>`
+          : "";
+
+        const subtitle = hero.subtitle
+          ? `<p>${escapeHTML(hero.subtitle)}</p>`
+          : "";
+
+        const description = hero.description
+          ? `<p>${escapeHTML(hero.description)}</p>`
+          : "";
+
+        const buttonText = hero.buttonText || "Shop Now";
+        const buttonLink = hero.buttonLink || "#";
+
+        return `
+          <div class="hero-slide-text ${index === 0 ? "active" : ""}" data-slide="${index}">
+            ${title}
+            ${subtitle}
+            ${description}
+
+            <a href="${escapeHTML(buttonLink)}" class="hero-cta">
+              ${escapeHTML(buttonText)}
+            </a>
+          </div>
+        `;
+      }).join("");
+
+      dots.innerHTML = activeHeroes.map((_, index) => `
+        <span
+          class="hero-dot ${index === 0 ? "active" : ""}"
+          onclick="heroGoTo(${index})"
+        ></span>
+      `).join("");
+
+      heroTotal = activeHeroes.length;
+      heroIndex = 0;
+      heroShow(0);
+      restartHeroTimer();
+
+      console.log("MongoDB heroes rendered successfully:", activeHeroes.length);
+
+    } catch (error) {
+      console.error("Hero loading error:", error);
+    }
+  }
+
+
 
 
   // =====================================================
@@ -2288,7 +2201,10 @@
     have been initialized.
   */
 
+
+
   loadProductsFromBackend();
+  loadHeroFromBackend();
 
 
 </script>

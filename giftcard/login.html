@@ -126,9 +126,9 @@
   }
 
   /* ============ NAV BAR ============ */
-  .nav-bar{
+  .navbar{
     background: var(--cream);
-    border-bottom:1px solid rgba(201,164,85,0.35);
+    border-bottom:2px solid var(--deep-green);
     position: relative;
   }
 
@@ -235,12 +235,52 @@
     .submenu a{ padding-left:44px; }
   }
 
+  @media (max-width: 1024px){
+    .navbar{ width:100%; max-width:100vw; overflow:visible; }
+    .nav-row{
+      position:absolute; top:100%; left:0; right:0;
+      background:linear-gradient(135deg,var(--deep-green),var(--green-mid));
+      border-bottom:2px solid var(--gold);
+      box-shadow:0 14px 30px rgba(13,51,40,0.3);
+      z-index:900; max-height:80vh; overflow-y:auto;
+    }
+    .nav-row a, .nav-row .dropdown{ width:100%; }
+    .nav-row a, .nav-row .drop-toggle{
+      color:var(--gold-light); padding:13px 24px; width:100%;
+      justify-content:space-between;
+    }
+    .nav-row a.active{
+      border-bottom:none; background:rgba(201,164,85,0.12); color:var(--gold);
+    }
+    .dropdown-menu{
+      position:static; transform:none; width:100%; min-width:0;
+      border-radius:0; box-shadow:none; grid-template-columns:1fr;
+    }
+  }
+
   @media (max-width: 480px){
     .top-left, .top-right{ gap:14px; }
     .brand-center img{ height:36px; }
     .brand-name{ font-size:13px; letter-spacing:1px; }
     .brand-tagline{ font-size:7px; letter-spacing:1px; }
   }
+
+
+  /* ============ LOGIN ICON DROPDOWN ============ */
+  .login-dropdown{ position:relative; }
+  .login-menu{
+    display:none; position:absolute; top:calc(100% + 12px); right:0;
+    min-width:190px; background:linear-gradient(180deg,var(--deep-green),var(--green-mid));
+    border:1px solid var(--gold); border-radius:8px;
+    box-shadow:0 14px 30px rgba(13,51,40,0.3); padding:8px; z-index:1000;
+  }
+  .login-dropdown.open .login-menu{ display:block; }
+  .login-menu a{
+    display:block; color:var(--gold-light); text-decoration:none;
+    padding:11px 14px; font-size:14px; font-weight:500;
+    border-radius:6px; white-space:nowrap;
+  }
+  .login-menu a:hover{ background:rgba(201,164,85,0.15); color:var(--gold); }
 
   /* ============ LOGIN / SIGNUP PAGE CONTENT ============ */
   .auth-page{
@@ -555,9 +595,21 @@
   </div>
 
   <div class="top-right">
-    <a class="icon-btn" aria-label="Login" href="login.html" title="Login">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    </a>
+    <div class="login-dropdown" id="loginDropdown">
+      <button class="icon-btn" aria-label="Login" title="Login"
+              onclick="toggleLoginDropdown()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </button>
+      <div class="login-menu">
+        <a href="login.html">Login as User</a>
+        <a href="admin-login.html">Login as Admin</a>
+      </div>
+    </div>
     <a class="icon-btn" aria-label="Cart" href="index.html" title="View cart on Home">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
     </a>
@@ -568,76 +620,34 @@
   </div>
 </div>
 
-<!-- ============ NAV BAR ============ -->
-<nav class="nav-bar" id="mainNavBar">
+<!-- ============ NAV BAR — SAME AS INDEX.HTML ============ -->
+<nav class="navbar" id="mainNavBar">
   <div class="nav-row" id="mainNavRow">
-
-    <a href="index.html">Home</a>
-    <a href="index.html#">New Arrivals</a>
+    <a href="index.html" class="active">Home</a>
 
     <div class="dropdown" id="returnGiftsDropdown">
       <button class="drop-toggle" type="button"
-        onclick="event.stopPropagation(); toggleDropdown('returnGiftsDropdown')">
+              onclick="event.stopPropagation(); toggleDropdown('returnGiftsDropdown')">
         Return Gifts <span class="arrow">▾</span>
       </button>
       <div class="dropdown-menu">
-        <a href="index.html#">Category</a>
-        <div class="has-submenu" id="bagsSubmenu">
-          <button class="sub-toggle" type="button"
-            onclick="event.stopPropagation(); toggleDropdown('bagsSubmenu')">
-            Bags <span class="arrow">›</span>
-          </button>
-          <div class="submenu">
-            <a href="index.html#">Jute Bags</a>
-            <a href="index.html#">Non-Woven Bags</a>
-            <a href="index.html#">Fancy Bags</a>
-            <a href="index.html#">Paper Bags</a>
-            <a href="index.html#">Imported Bags</a>
-          </div>
-        </div>
-        <a href="index.html#">Kids Return Gifts</a>
-        <a href="index.html#">Return Gifts</a>
-        <a href="index.html#">New Collection</a>
-        <a href="index.html#">Combos</a>
-        <a href="index.html#">Customised Return Gifts</a>
-        <hr>
-        <a href="index.html#">Corporate Gifts</a>
+        <a href="return-gifts.html#kids-return-gifts">Kids Return Gifts</a>
+        <a href="return-gifts.html#pichwai-return-gifts">Pichwai Return Gifts</a>
+        <a href="return-gifts.html#german-silver-return-gifts">German Silver Return Gifts</a>
+        <a href="return-gifts.html#metal-jars-tins">Metal Jars &amp; Tins</a>
+        <a href="return-gifts.html#brass-return-gifts">Brass Return Gifts</a>
+        <a href="return-gifts.html#kondapalli-return-gifts">Kondapalli Return Gifts</a>
+        <a href="return-gifts.html#crockery-return-gifts">Crockery Return Gifts</a>
+        <a href="return-gifts.html#stainless-return-gifts">Stainless Return Gifts</a>
+        <a href="return-gifts.html#fancy-return-gifts">Fancy Return Gifts</a>
+        <a href="return-gifts.html#customisable-jute-bags">Customisable Jute Bags</a>
       </div>
     </div>
 
-    <div class="dropdown" id="favourBagsDropdown">
-      <button class="drop-toggle" type="button"
-        onclick="event.stopPropagation(); toggleDropdown('favourBagsDropdown')">
-        Favour Bags <span class="arrow">▾</span>
-      </button>
-      <div class="dropdown-menu">
-        <a href="index.html#">Jute Bags</a>
-        <a href="index.html#">Paper Bags</a>
-        <a href="index.html#">Fancy Pouches</a>
-        <a href="index.html#">Eco-Friendly Bags</a>
-      </div>
-    </div>
-
-    <a href="index.html#">Corporate Gifts</a>
-
-    <div class="dropdown" id="eventDropdown">
-      <button class="drop-toggle" type="button"
-        onclick="event.stopPropagation(); toggleDropdown('eventDropdown')">
-        Gifting For Moments <span class="arrow">▾</span>
-      </button>
-      <div class="dropdown-menu">
-        <a href="index.html#">Weddings</a>
-        <a href="index.html#">Birthdays</a>
-        <a href="index.html#">Baby Showers</a>
-        <a href="index.html#">Festivals</a>
-        <a href="index.html#">Housewarming</a>
-      </div>
-    </div>
-
-    <a href="index.html#">About Us</a>
-    <a href="https://thambulaaareturngifts.com/terms/" target="_blank" rel="noopener">Terms &amp; Conditions</a>
-    <a href="https://thambulaaareturngifts.com/privacy/" target="_blank" rel="noopener">Privacy Policy</a>
-
+    <a href="new-collection.html">New Collection</a>
+    <a href="combos.html">Combos</a>
+    <a href="corporate-gifts.html">Corporate Gifts</a>
+    <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
   </div>
 </nav>
 
@@ -818,14 +828,24 @@
   function toggleDropdown(id){
     var el = document.getElementById(id);
     var wasOpen = el.classList.contains('open');
-    document.querySelectorAll('.dropdown.open, .has-submenu.open').forEach(function(d){ d.classList.remove('open'); });
+    document.querySelectorAll('.dropdown.open, .has-submenu.open, .login-dropdown.open')
+      .forEach(function(d){ d.classList.remove('open'); });
+    if(!wasOpen) el.classList.add('open');
+  }
+
+  function toggleLoginDropdown(){
+    var el = document.getElementById('loginDropdown');
+    var wasOpen = el.classList.contains('open');
+    document.querySelectorAll('.dropdown.open, .has-submenu.open, .login-dropdown.open')
+      .forEach(function(d){ d.classList.remove('open'); });
     if(!wasOpen) el.classList.add('open');
   }
 
   document.addEventListener('click', function(e){
-    document.querySelectorAll('.dropdown.open, .has-submenu.open').forEach(function(d){
-      if(!d.contains(e.target)) d.classList.remove('open');
-    });
+    document.querySelectorAll('.dropdown.open, .has-submenu.open, .login-dropdown.open')
+      .forEach(function(d){
+        if(!d.contains(e.target)) d.classList.remove('open');
+      });
   });
 
   // ===== Sticky header shadow on scroll =====
@@ -874,31 +894,147 @@
     }
   }
 
-  function handleLogin(e){
+  async function handleLogin(e) {
     e.preventDefault();
-    var msg = document.getElementById('formMessage');
-    msg.style.display = 'block';
-    msg.style.color = '#0d3328';
-    msg.textContent = 'Login is not connected to a backend yet — this is a UI placeholder.';
-  }
 
-  function handleSignup(e){
+    const msg = document.getElementById("formMessage");
+
+    const email =
+        document.getElementById("loginEmail").value.trim();
+
+    const password =
+        document.getElementById("loginPassword").value;
+
+    msg.style.display = "block";
+    msg.style.color = "#0d3328";
+    msg.textContent = "Logging in...";
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:5000/api/auth/login",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            msg.style.color = "#b33";
+            msg.textContent =
+                data.message || "Invalid email or password.";
+            return;
+        }
+
+        // Store authentication information
+        localStorage.setItem("token", data.token);
+
+        localStorage.setItem(
+            "user",
+            JSON.stringify(data.user)
+        );
+
+        msg.style.color = "#0d3328";
+        msg.textContent = "Login successful!";
+
+        console.log("Logged in user:", data.user);
+
+        // Redirect to home page
+        setTimeout(() => {
+            window.location.href = "index.html";
+        }, 1000);
+
+    } catch (error) {
+
+        console.error("Login error:", error);
+
+        msg.style.color = "#b33";
+        msg.textContent =
+            "Unable to connect to the server.";
+    }
+}
+  async function handleSignup(e) {
     e.preventDefault();
-    var msg = document.getElementById('formMessage');
-    var pass = document.getElementById('signupPassword').value;
-    var confirmPass = document.getElementById('signupConfirmPassword').value;
 
-    if(pass !== confirmPass){
-      msg.style.display = 'block';
-      msg.style.color = '#b33';
-      msg.textContent = 'Passwords do not match.';
-      return;
+    const msg = document.getElementById("formMessage");
+
+    const name = document.getElementById("signupName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
+    const phone = document.getElementById("signupPhone").value.trim();
+    const password = document.getElementById("signupPassword").value;
+    const confirmPassword =
+        document.getElementById("signupConfirmPassword").value;
+
+    // Check passwords
+    if (password !== confirmPassword) {
+        msg.style.display = "block";
+        msg.style.color = "#b33";
+        msg.textContent = "Passwords do not match.";
+        return;
     }
 
-    msg.style.display = 'block';
-    msg.style.color = '#0d3328';
-    msg.textContent = 'Sign up is not connected to a backend yet — this is a UI placeholder.';
-  }
+    msg.style.display = "block";
+    msg.style.color = "#0d3328";
+    msg.textContent = "Creating your account...";
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:5000/api/auth/register",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    password: password
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            msg.style.color = "#b33";
+            msg.textContent = data.message || "Registration failed.";
+            return;
+        }
+
+        msg.style.color = "#0d3328";
+        msg.textContent = "Account created successfully!";
+
+        // Clear form
+        document.getElementById("signupForm").reset();
+
+        // After 1.5 seconds, go to login
+        setTimeout(() => {
+            showForm("login");
+        }, 1500);
+
+    } catch (error) {
+
+        console.error("Signup error:", error);
+
+        msg.style.color = "#b33";
+        msg.textContent =
+            "Unable to connect to the server. Please try again.";
+    }
+}
 </script>
 
 </body>

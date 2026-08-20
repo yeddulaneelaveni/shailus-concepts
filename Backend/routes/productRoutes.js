@@ -1,20 +1,79 @@
 const express = require("express");
 
+const router = express.Router();
+
 const {
     getProducts,
     getProductById,
-    getSimilarProducts
+    createProduct,
+    updateProduct,
+    deleteProduct
 } = require("../controllers/productController");
 
-const router = express.Router();
+const adminMiddleware = require("../middleware/adminMiddleware");
+const upload = require("../middleware/uploadMiddleware");
 
-// Get all products
+
+// =====================================================
+// PUBLIC ROUTES
+// =====================================================
+
 router.get("/", getProducts);
 
-// Get similar products
-router.get("/:id/similar", getSimilarProducts);
+router.get("/:productId", getProductById);
 
-// Get single product
-router.get("/:id", getProductById);
+
+// =====================================================
+// ADMIN PRODUCT ROUTES
+// =====================================================
+
+// Create product with:
+// mainImage = one image
+// additionalImages = multiple images
+
+router.post(
+    "/",
+    adminMiddleware,
+    upload.fields([
+        {
+            name: "mainImage",
+            maxCount: 1
+        },
+        {
+            name: "additionalImages",
+            maxCount: 10
+        }
+    ]),
+    createProduct
+);
+
+
+// Update product
+
+router.put(
+    "/:productId",
+    adminMiddleware,
+    upload.fields([
+        {
+            name: "mainImage",
+            maxCount: 1
+        },
+        {
+            name: "additionalImages",
+            maxCount: 10
+        }
+    ]),
+    updateProduct
+);
+
+
+// Delete product
+
+router.delete(
+    "/:productId",
+    adminMiddleware,
+    deleteProduct
+);
+
 
 module.exports = router;
