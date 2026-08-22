@@ -7,6 +7,15 @@ const productRoutes = require("./routes/productRoutes");
 const authRoutes = require("./routes/authRoutes");
 const heroRoutes = require("./routes/heroRoutes");
 
+const scrollCategoryRoutes =
+    require("./routes/scrollCategoryRoutes");
+
+const bestSellerRoutes =
+    require("./routes/bestSellerRoutes");
+
+const standoutRoutes =
+    require("./routes/standoutRoutes");
+
 
 dotenv.config();
 
@@ -39,6 +48,21 @@ app.use(
 // Product routes
 app.use("/api/products", productRoutes);
 app.use("/api/auth", authRoutes);
+
+app.use(
+    "/api/scroll-categories",
+    scrollCategoryRoutes
+);
+
+app.use(
+    "/api/best-sellers",
+    bestSellerRoutes
+);
+
+app.use(
+    "/api/standout",
+    standoutRoutes
+);
 
 const PORT = process.env.PORT || 5000;
 

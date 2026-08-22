@@ -80,6 +80,27 @@
             Hero Section
         </button>
 
+        <button
+            class="sidebar-btn"
+            onclick="showSection('scrollCategorySection', this); loadScrollCategories()"
+        >
+            Scroll Categories
+        </button>
+
+        <button
+            class="sidebar-btn"
+            onclick="showSection('bestSellerSection', this); loadBestSellers()"
+        >
+            Best Sellers
+        </button>
+
+        <button
+            class="sidebar-btn"
+            onclick="showSection('standoutSection', this); loadStandout()"
+        >
+            Standout Section
+        </button>
+
     </aside>
 
 
@@ -378,7 +399,7 @@
 
                     <!-- MAIN IMAGE -->
 
-                    <<div class="form-group full-width">
+                    <div class="form-group full-width">
 
                             <label>
                                 Main Product Image
@@ -716,6 +737,505 @@
                 id="heroesContainer"
                 class="heroes-container"
             >
+            </div>
+
+        </section>
+
+    
+        <!-- ================= SCROLL CATEGORIES ================= -->
+        <section
+            id="scrollCategorySection"
+            class="dashboard-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+                    <h1>Scroll Categories</h1>
+
+                    <p>
+                        Manage the scrolling categories shown on the homepage.
+                    </p>
+                </div>
+
+                <button
+                    class="primary-btn"
+                    type="button"
+                    onclick="prepareAddScrollCategory()"
+                >
+                    + Add Category
+                </button>
+
+            </div>
+
+
+            <form
+                id="scrollCategoryForm"
+                class="product-form"
+                onsubmit="saveScrollCategory(event)"
+            >
+
+                <input
+                    type="hidden"
+                    id="editingScrollCategoryId"
+                >
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            Category Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="scrollCategoryTitle"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Count
+                        </label>
+
+                        <input
+                            type="number"
+                            id="scrollCategoryCount"
+                            min="0"
+                            value="0"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Link
+                        </label>
+
+                        <input
+                            type="text"
+                            id="scrollCategoryLink"
+                            placeholder="return-gifts.html#pichwai-return-gifts"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Display Order
+                        </label>
+
+                        <input
+                            type="number"
+                            id="scrollCategoryOrder"
+                            min="1"
+                            value="1"
+                        >
+
+                    </div>
+
+
+                    <div class="checkbox-group">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                id="scrollCategoryActive"
+                                checked
+                            >
+
+                            Active
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Category Image
+                        </label>
+
+                        <input
+                            type="file"
+                            id="scrollCategoryImage"
+                            accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                        >
+
+                        <small class="file-help">
+                            Upload the category image.
+                        </small>
+
+                        <div
+                            id="scrollCategoryImagePreview"
+                            class="image-preview"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+                        Save Category
+                    </button>
+
+                    <button
+                        type="button"
+                        class="secondary-btn"
+                        onclick="resetScrollCategoryForm()"
+                    >
+                        Clear
+                    </button>
+
+                </div>
+
+
+                <p
+                    id="scrollCategoryMessage"
+                    class="form-message"
+                ></p>
+
+            </form>
+
+
+            <div
+                id="scrollCategoriesContainer"
+                class="heroes-container"
+            >
+                Loading scroll categories...
+            </div>
+
+        </section>
+
+
+        <!-- ================= BEST SELLERS ================= -->
+        <section
+            id="bestSellerSection"
+            class="dashboard-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+                    <h1>Best Sellers</h1>
+
+                    <p>
+                        Manage the products displayed in the homepage Best Sellers section.
+                    </p>
+                </div>
+
+                <button
+                    class="primary-btn"
+                    type="button"
+                    onclick="prepareAddBestSeller()"
+                >
+                    + Add Best Seller
+                </button>
+
+            </div>
+
+
+            <form
+                id="bestSellerForm"
+                class="product-form"
+                onsubmit="saveBestSeller(event)"
+            >
+
+                <input
+                    type="hidden"
+                    id="editingBestSellerId"
+                >
+
+                <div class="form-grid">
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Select Product
+                        </label>
+
+                        <select
+                            id="bestSellerProduct"
+                            required
+                        >
+                            <option value="">
+                                Select Product
+                            </option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Display Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="bestSellerName"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Price
+                        </label>
+
+                        <input
+                            type="number"
+                            id="bestSellerPrice"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Display Order
+                        </label>
+
+                        <input
+                            type="number"
+                            id="bestSellerOrder"
+                            min="1"
+                            value="1"
+                        >
+
+                    </div>
+
+
+                    <div class="checkbox-group">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                id="bestSellerActive"
+                                checked
+                            >
+
+                            Active
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Best Seller Image
+                        </label>
+
+                        <input
+                            type="file"
+                            id="bestSellerImage"
+                            accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                        >
+
+                        <small class="file-help">
+                            Optional. If you do not upload an image, the selected product image will be used.
+                        </small>
+
+                        <div
+                            id="bestSellerImagePreview"
+                            class="image-preview"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+                        Save Best Seller
+                    </button>
+
+                    <button
+                        type="button"
+                        class="secondary-btn"
+                        onclick="resetBestSellerForm()"
+                    >
+                        Clear
+                    </button>
+
+                </div>
+
+
+                <p
+                    id="bestSellerMessage"
+                    class="form-message"
+                ></p>
+
+            </form>
+
+
+            <div
+                id="bestSellersContainer"
+                class="heroes-container"
+            >
+                Loading best sellers...
+            </div>
+
+        </section>
+
+
+        <!-- ================= STANDOUT SECTION ================= -->
+        <section
+            id="standoutSection"
+            class="dashboard-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+                    <h1>Standout Section</h1>
+
+                    <p>
+                        Manage the image displayed in the homepage Standout section.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form
+                id="standoutForm"
+                class="product-form"
+                onsubmit="saveStandout(event)"
+            >
+
+                <input
+                    type="hidden"
+                    id="editingStandoutId"
+                >
+
+                <div class="form-grid">
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="standoutTitle"
+                            value="What Makes Shailu's Concepts Stand Out?"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Standout Image
+                        </label>
+
+                        <input
+                            type="file"
+                            id="standoutImage"
+                            accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                        >
+
+                        <small class="file-help">
+                            Upload the Standout section image.
+                        </small>
+
+                        <div
+                            id="standoutImagePreview"
+                            class="image-preview"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="checkbox-group">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                id="standoutActive"
+                                checked
+                            >
+
+                            Active
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+                        Save Standout
+                    </button>
+
+                    <button
+                        type="button"
+                        class="secondary-btn"
+                        onclick="resetStandoutForm()"
+                    >
+                        Clear
+                    </button>
+
+                </div>
+
+
+                <p
+                    id="standoutMessage"
+                    class="form-message"
+                ></p>
+
+            </form>
+
+
+            <div
+                id="standoutContainer"
+                class="heroes-container"
+            >
+                Loading standout section...
             </div>
 
         </section>
