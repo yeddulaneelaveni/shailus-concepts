@@ -751,103 +751,53 @@
 
 <!-- ============ BREADCRUMB ============ -->
 <div class="breadcrumb">
-  <a href="index.html">Home</a>
-  <span>›</span>
-  <a href="#">Return Gifts</a>
-  <span>›</span>
-  Lotus Air Tight Container
+  <a href="index.html">Home</a><span>›</span>
+  <a href="return-gifts.html">Return Gifts</a><span>›</span>
+  <span id="breadcrumbProductName">Product</span>
 </div>
 
 <!-- ============ PRODUCT SECTION ============ -->
 <section class="product-section">
-
-  <!-- LEFT: Gallery -->
   <div class="gallery">
     <div class="main-img-wrap">
-      <img id="mainImg" src="assets\images\products\customized\custom1.jpg" alt="Lotus Air Tight Container">
+      <img id="mainImg" src="" alt="Product">
       <button class="zoom-btn" onclick="openZoom()" aria-label="Zoom image">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
       </button>
     </div>
-    <div class="thumb-row">
-      <div class="thumb active" onclick="switchImg(this,'https://placehold.co/600x600/f7f3ea/0d3328?text=View+1')">
-        <img src="https://placehold.co/80x80/f7f3ea/0d3328?text=1" alt="thumb 1">
-      </div>
-      <div class="thumb" onclick="switchImg(this,'https://placehold.co/600x600/e8f5e9/0d3328?text=View+2')">
-        <img src="https://placehold.co/80x80/e8f5e9/0d3328?text=2" alt="thumb 2">
-      </div>
-      <div class="thumb" onclick="switchImg(this,'https://placehold.co/600x600/fff8e1/0d3328?text=View+3')">
-        <img src="https://placehold.co/80x80/fff8e1/0d3328?text=3" alt="thumb 3">
-      </div>
-      <div class="thumb" onclick="switchImg(this,'https://placehold.co/600x600/fce4ec/0d3328?text=View+4')">
-        <img src="https://placehold.co/80x80/fce4ec/0d3328?text=4" alt="thumb 4">
-      </div>
-    </div>
+    <div class="thumb-row"></div>
   </div>
 
-  <!-- RIGHT: Details -->
-  <div class="product-details"
-       data-id="p1"
-       data-name="Lotus Air Tight Container"
-       data-price="300"
-       data-img="assets/images/products/baby/baby1.jpg">
-    <h1>Lotus Air Tight Container</h1>
-    <div class="sku">SKU: TRLATC3089</div>
-
+  <div class="product-details">
+    <h1>Product</h1>
+    <div class="sku">SKU: -</div>
     <div class="price-block">
-      <div class="price">₹300.00</div>
+      <div class="price">Price on request</div>
       <div class="gst-note">(Prices Are Inclusive Of 12% GST)</div>
     </div>
 
     <table class="specs-table">
-      <thead>
-        <tr>
-          <th>Size</th>
-          <th>Shape</th>
-          <th>Color</th>
-          <th>Material</th>
-          <th>MOQ</th>
-          <th>Customization</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>4*inch</td>
-          <td>Round</td>
-          <td>Mixed Colours</td>
-          <td>Iron</td>
-          <td>25</td>
-          <td>Yes</td>
-        </tr>
-      </tbody>
+      <thead><tr>
+        <th>Size</th><th>Shape</th><th>Color</th><th>Material</th><th>MOQ</th><th>Customization</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+      </tr></tbody>
     </table>
 
-    <div class="note-box">
-      <strong>Note:</strong> For stock availability and dispatch related information you can reach out our support team <strong>(8825498438)</strong>.
-    </div>
+    <div id="productDescription" class="note-box"><strong>Description:</strong> —</div>
+    <div class="note-box"><strong>Note:</strong> For stock availability and dispatch related information you can reach out to our support team.</div>
 
-    <!-- Quantity + Action buttons -->
     <div class="qty-selector">
       <button type="button" onclick="changeQty(-1)" aria-label="Decrease quantity">−</button>
-      <input type="text" id="qtyInput" value="25" readonly>
+      <input type="text" id="qtyInput" value="1" readonly>
       <button type="button" onclick="changeQty(1)" aria-label="Increase quantity">+</button>
     </div>
 
     <div class="action-row">
-      <button type="button" class="cart-btn" onclick="addToCartFromPage()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        ADD TO CART
-      </button>
-
-      <button type="button" class="buy-btn" onclick="buyNow()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        BUY NOW
-      </button>
-
-      <a href="tel:8825498438" class="enquire-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.02z"/></svg>
-        ENQUIRE NOW
-      </a>
+      <button type="button" class="cart-btn" onclick="addToCartFromPage()">ADD TO CART</button>
+      <button type="button" class="buy-btn" onclick="buyNow()">BUY NOW</button>
+      <a href="tel:+918825498438" class="enquire-btn">ENQUIRE NOW</a>
     </div>
   </div>
 </section>
@@ -856,45 +806,9 @@
 <section class="related-section">
   <h2>Related Products</h2>
   <div class="section-divider"></div>
-
-  <div class="related-grid">
-    <div class="product-card">
-      <div class="img-wrap"><img src="https://placehold.co/300x300/f7f3ea/0d3328?text=Pichwai+Kumkum" alt="Pichwai Pasappu Kumkum"></div>
-      <div class="card-info">
-        <h3>Pichwai Pasappu Kumkum</h3>
-        <div class="card-price">₹45.00</div>
-        <button class="view-btn">View</button>
-      </div>
-    </div>
-
-    <div class="product-card">
-      <div class="img-wrap"><img src="https://placehold.co/300x300/e8f5e9/0d3328?text=Leaf+Kumkum" alt="Leaf Pasappu Kumkum"></div>
-      <div class="card-info">
-        <h3>Leaf Pasappu Kumkum</h3>
-        <div class="card-price">₹50.00</div>
-        <button class="view-btn">View</button>
-      </div>
-    </div>
-
-    <div class="product-card">
-      <div class="img-wrap"><img src="https://placehold.co/300x300/fff8e1/0d3328?text=Ganesh+Key+Holder" alt="Rose Gold Ganesh Key Holder"></div>
-      <div class="card-info">
-        <h3>Rose Gold Ganesh Key Holder</h3>
-        <div class="card-price">₹130.00</div>
-        <button class="view-btn">View</button>
-      </div>
-    </div>
-
-    <div class="product-card">
-      <div class="img-wrap"><img src="https://placehold.co/300x300/fce4ec/0d3328?text=Iron+Floral+Jar" alt="Iron Floral Nuts Jar"></div>
-      <div class="card-info">
-        <h3>Iron Floral Nuts Jar</h3>
-        <div class="card-price">₹200.00</div>
-        <button class="view-btn">View</button>
-      </div>
-    </div>
-  </div>
+  <div class="related-grid"></div>
 </section>
+
 <!-- ============ FOOTER ============ -->
 <footer class="footer">
   <div class="footer-top">
@@ -1010,204 +924,31 @@
 <div class="cart-toast" id="cartToast"></div>
 
 <script>
-
-  function toggleSearch(){
-    const wrap=document.getElementById('searchWrap');
-    if(!wrap) return;
-    wrap.classList.toggle('expanded');
-    if(wrap.classList.contains('expanded')){
-      const input=document.getElementById('searchInput');
-      if(input) input.focus();
-    }
-  }
-
-  function filterProducts(value){
-    if(!value || !value.trim()) return;
-    window.location.href='index.html?search='+encodeURIComponent(value.trim());
-  }
-
-  function toggleDropdown(id){
-    var el=document.getElementById(id);
-    var wasOpen=el.classList.contains('open');
-    document.querySelectorAll('.dropdown.open,.has-submenu.open').forEach(function(d){d.classList.remove('open');});
-    if(!wasOpen) el.classList.add('open');
-  }
-
-  document.addEventListener('click',function(e){
-    document.querySelectorAll('.dropdown.open,.has-submenu.open').forEach(function(d){
-      if(!d.contains(e.target)) d.classList.remove('open');
-    });
-  });
-
-  function switchImg(thumb, src){
-    document.getElementById('mainImg').src = src;
-    document.querySelectorAll('.thumb').forEach(function(t){ t.classList.remove('active'); });
-    thumb.classList.add('active');
-  }
-
-  function openZoom(){
-    var src = document.getElementById('mainImg').src;
-    window.open(src,'_blank');
-  }
-
-  /* =========================================================
-     PERSISTENT CART — same storage key & item shape as index.html
-     Key: "shailusCart"
-     Each item: { id, name, price, img, qty }
-     This keeps the cart badge, contents, and totals in sync
-     across every page (product pages, index.html, checkout.html)
-     until the user removes something.
-  ========================================================= */
-  var CART_STORAGE_KEY = 'shailusCart';
-  var MOQ = 25; // this product sells in lots of 25 (see specs table)
-  var cart = loadCart();
-
-  function loadCart(){
-    try{
-      var raw = localStorage.getItem(CART_STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch(e){ return []; }
-  }
-
-  function saveCart(){
-    try{ localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart)); }
-    catch(e){ /* storage unavailable — fail silently */ }
-  }
-
-  function findCartItem(id){
-    for(var i = 0; i < cart.length; i++){ if(cart[i].id === id) return cart[i]; }
-    return null;
-  }
-
-  // qty defaults to 1 to match index.html's addToCartFromCard behaviour;
-  // this page passes the selected quantity from the qty selector instead.
-  function addToCart(id, name, price, img, qty){
-    qty = qty || 1;
-    var existing = findCartItem(id);
-    if(existing){ existing.qty += qty; }
-    else { cart.push({ id: id, name: name, price: price, img: img, qty: qty }); }
-    saveCart();
-    renderCart();
-    showToast(name + ' added to cart');
-  }
-
-  function changeQty(delta){
-    const input = document.getElementById('qtyInput');
-    let val = parseInt(input.value, 10) || MOQ;
-    val += delta * MOQ; // step by MOQ
-    if(val < MOQ) val = MOQ;
-    input.value = val;
-  }
-
-  function getCurrentProduct(){
-    const details = document.querySelector('.product-details');
-    return {
-      id: details.dataset.id,
-      name: details.dataset.name,
-      price: parseFloat(details.dataset.price),
-      img: details.dataset.img,
-      qty: parseInt(document.getElementById('qtyInput').value, 10) || MOQ
-    };
-  }
-
-  function addToCartFromPage(){
-    const p = getCurrentProduct();
-    addToCart(p.id, p.name, p.price, p.img, p.qty);
-  }
-
-  function buyNow(){
-    const p = getCurrentProduct();
-    addToCart(p.id, p.name, p.price, p.img, p.qty);
-    window.location.href = 'checkout.html';
-  }
-
-  function changeCartQty(id, delta){
-    var item = findCartItem(id);
-    if(!item) return;
-    item.qty += delta;
-    if(item.qty <= 0){
-      cart = cart.filter(function(c){ return c.id !== id; });
-    }
-    saveCart();
-    renderCart();
-  }
-
-  function removeFromCart(id){
-    cart = cart.filter(function(c){ return c.id !== id; });
-    saveCart();
-    renderCart();
-  }
-
-  function cartCount(){
-    return cart.reduce(function(sum, c){ return sum + c.qty; }, 0);
-  }
-
-  function cartTotal(){
-    return cart.reduce(function(sum, c){ return sum + (c.price * c.qty); }, 0);
-  }
-
-  function renderCart(){
-    document.getElementById('cartBadge').textContent = cartCount();
-
-    var container = document.getElementById('cartItemsContainer');
-    if(cart.length === 0){
-      container.innerHTML = '<p class="cart-empty">Your cart is empty.</p>';
-    } else {
-      container.innerHTML = cart.map(function(item){
-        var priceLabel = item.price > 0 ? ('₹' + item.price.toFixed(2)) : 'Price on request';
-        return '' +
-          '<div class="cart-item">' +
-            '<img src="' + item.img + '" alt="' + item.name + '">' +
-            '<div class="cart-item-info">' +
-              '<h4>' + item.name + '</h4>' +
-              '<div class="ci-price">' + priceLabel + '</div>' +
-            '</div>' +
-            '<div class="cart-qty">' +
-              '<button onclick="changeCartQty(\'' + item.id + '\', -1)">−</button>' +
-              '<span>' + item.qty + '</span>' +
-              '<button onclick="changeCartQty(\'' + item.id + '\', 1)">+</button>' +
-            '</div>' +
-            '<button class="cart-remove" onclick="removeFromCart(\'' + item.id + '\')" aria-label="Remove">&times;</button>' +
-          '</div>';
-      }).join('');
-    }
-
-    document.getElementById('cartTotalAmount').textContent = '₹' + cartTotal().toFixed(2);
-  }
-
-  function openCart(){
-    document.getElementById('cartPanel').classList.add('open');
-    document.getElementById('cartOverlay').classList.add('open');
-  }
-
-  function closeCart(){
-    document.getElementById('cartPanel').classList.remove('open');
-    document.getElementById('cartOverlay').classList.remove('open');
-  }
-
-  function checkoutCart(){
-    if(cart.length === 0){
-      showToast('Your cart is empty');
-      return;
-    }
-    window.location.href = 'checkout.html';
-  }
-
-  var toastTimer = null;
-  function showToast(msg){
-    var toast = document.getElementById('cartToast');
-    toast.textContent = msg;
-    toast.classList.add('show');
-    if(toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2200);
-  }
-
-  // Keep the badge in sync if the cart changes in another tab/page
-  window.addEventListener('storage', function(e){
-    if(e.key === CART_STORAGE_KEY){ cart = loadCart(); renderCart(); }
-  });
-
-  renderCart();
+function toggleSearch(){const w=document.getElementById("searchWrap");if(!w)return;w.classList.toggle("expanded");if(w.classList.contains("expanded"))document.getElementById("searchInput")?.focus();}
+function filterProducts(v){v=String(v||"").trim();if(v)location.href="index.html?search="+encodeURIComponent(v);}
+function toggleDropdown(id){const e=document.getElementById(id);if(!e)return;const o=e.classList.contains("open");document.querySelectorAll(".dropdown.open,.has-submenu.open").forEach(x=>x.classList.remove("open"));if(!o)e.classList.add("open");}
+document.addEventListener("click",e=>document.querySelectorAll(".dropdown.open,.has-submenu.open").forEach(x=>{if(!x.contains(e.target))x.classList.remove("open");}));
+const CART_STORAGE_KEY="shailusCart";let cart=loadCart();
+function loadCart(){try{const x=JSON.parse(localStorage.getItem(CART_STORAGE_KEY)||"[]");return Array.isArray(x)?x:[]}catch{return[]}}
+function saveCart(){try{localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(cart))}catch{}}
+function findCartItem(id){return cart.find(x=>String(x.id)===String(id))}
+function getCurrentMOQ(){const d=document.querySelector(".product-details");const n=Number(d?.dataset.moq);return Number.isInteger(n)&&n>0?n:1}
+function changeQty(delta){const i=document.getElementById("qtyInput");if(!i)return;const m=getCurrentMOQ();let n=parseInt(i.value,10)||m;n=Math.max(m,n+delta*m);i.value=n}
+function getCurrentProduct(){const d=document.querySelector(".product-details");if(!d?.dataset.id)return null;return{id:d.dataset.id,name:d.dataset.name,price:Number(d.dataset.price)||0,img:d.dataset.img,qty:parseInt(document.getElementById("qtyInput")?.value,10)||getCurrentMOQ()}}
+function addToCart(id,name,price,img,qty=1){const e=findCartItem(id);if(e)e.qty+=qty;else cart.push({id,name,price,img,qty});saveCart();renderCart();showToast(name+" added to cart")}
+function addToCartFromPage(){const p=getCurrentProduct();if(!p)return showToast("Product is not loaded");addToCart(p.id,p.name,p.price,p.img,p.qty)}
+function buyNow(){const p=getCurrentProduct();if(!p)return showToast("Product is not loaded");addToCart(p.id,p.name,p.price,p.img,p.qty);location.href="checkout.html"}
+function changeCartQty(id,d){const x=findCartItem(id);if(!x)return;x.qty+=d;if(x.qty<=0)cart=cart.filter(y=>String(y.id)!==String(id));saveCart();renderCart()}
+function removeFromCart(id){cart=cart.filter(x=>String(x.id)!==String(id));saveCart();renderCart()}
+function cartCount(){return cart.reduce((s,x)=>s+Number(x.qty||0),0)}
+function cartTotal(){return cart.reduce((s,x)=>s+(Number(x.price)||0)*(Number(x.qty)||0),0)}
+function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function renderCart(){document.getElementById("cartBadge")?.replaceChildren(document.createTextNode(cartCount()));const c=document.getElementById("cartItemsContainer");if(!c)return;if(!cart.length)c.innerHTML='<p class="cart-empty">Your cart is empty.</p>';else c.innerHTML=cart.map(x=>`<div class="cart-item"><img src="${esc(x.img)}" alt="${esc(x.name)}"><div class="cart-item-info"><h4>${esc(x.name)}</h4><div class="ci-price">${Number(x.price)>0?"₹"+Number(x.price).toFixed(2):"Price on request"}</div></div><div class="cart-qty"><button onclick="changeCartQty('${esc(x.id)}',-1)">−</button><span>${x.qty}</span><button onclick="changeCartQty('${esc(x.id)}',1)">+</button></div><button class="cart-remove" onclick="removeFromCart('${esc(x.id)}')">&times;</button></div>`).join("");document.getElementById("cartTotalAmount")&&(document.getElementById("cartTotalAmount").textContent="₹"+cartTotal().toFixed(2))}
+function openCart(){document.getElementById("cartPanel")?.classList.add("open");document.getElementById("cartOverlay")?.classList.add("open")}
+function closeCart(){document.getElementById("cartPanel")?.classList.remove("open");document.getElementById("cartOverlay")?.classList.remove("open")}
+function checkoutCart(){if(!cart.length)return showToast("Your cart is empty");location.href="checkout.html"}
+let toastTimer;function showToast(m){const t=document.getElementById("cartToast");if(!t)return;t.textContent=m;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2200)}
+window.addEventListener("storage",e=>{if(e.key===CART_STORAGE_KEY){cart=loadCart();renderCart()}});renderCart();
 </script>
 <script src="views.js"></script>
 </body>

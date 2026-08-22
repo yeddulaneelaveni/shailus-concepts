@@ -79,28 +79,38 @@ const getProductById = async (req, res) => {
 // =====================================================
 // CREATE PRODUCT
 // =====================================================
-
 const createProduct = async (req, res) => {
 
     try {
+
+        // ==========================================
+        // GET DATA FROM REQUEST
+        // ==========================================
 
         const {
             productId,
             name,
             category,
             price,
+
+            dimensions,
+            shape,
+            colour,
+            material,
+            moq,
+            customization,
+
             badge,
             rating,
             newArrival,
             bestSeller,
-            description,
-            dimensions
+            description
         } = req.body;
 
 
-        // -----------------------------
-        // VALIDATION
-        // -----------------------------
+        // ==========================================
+        // VALIDATE REQUIRED FIELDS
+        // ==========================================
 
         if (
             productId === undefined ||
@@ -111,36 +121,142 @@ const createProduct = async (req, res) => {
         ) {
 
             return res.status(400).json({
+
                 message:
                     "Required product fields are missing"
+
             });
 
         }
 
 
-        // -----------------------------
+        // ==========================================
+        // VALIDATE PRODUCT ID
+        // ==========================================
+
+        const numericProductId =
+            Number(productId);
+
+
+        if (
+            !Number.isInteger(numericProductId) ||
+            numericProductId <= 0
+        ) {
+
+            return res.status(400).json({
+
+                message:
+                    "Product ID must be a valid positive number"
+
+            });
+
+        }
+
+
+        // ==========================================
+        // VALIDATE PRICE
+        // ==========================================
+
+        const numericPrice =
+            Number(price);
+
+
+        if (
+            !Number.isFinite(numericPrice) ||
+            numericPrice < 0
+        ) {
+
+            return res.status(400).json({
+
+                message:
+                    "Price must be a valid number"
+
+            });
+
+        }
+
+
+        // ==========================================
+        // VALIDATE RATING
+        // ==========================================
+
+        const numericRating =
+            rating === undefined ||
+            rating === ""
+                ? 0
+                : Number(rating);
+
+
+        if (
+            !Number.isFinite(numericRating) ||
+            numericRating < 0 ||
+            numericRating > 5
+        ) {
+
+            return res.status(400).json({
+
+                message:
+                    "Rating must be between 0 and 5"
+
+            });
+
+        }
+
+
+        // ==========================================
+        // VALIDATE MOQ
+        // ==========================================
+
+        const numericMoq =
+            moq === undefined ||
+            moq === ""
+                ? 1
+                : Number(moq);
+
+
+        if (
+            !Number.isInteger(numericMoq) ||
+            numericMoq < 1
+        ) {
+
+            return res.status(400).json({
+
+                message:
+                    "MOQ must be a number greater than 0"
+
+            });
+
+        }
+
+
+        // ==========================================
         // CHECK DUPLICATE PRODUCT ID
-        // -----------------------------
+        // ==========================================
 
         const existingProduct =
             await Product.findOne({
-                productId: Number(productId)
+
+                productId:
+                    numericProductId
+
             });
 
 
         if (existingProduct) {
 
             return res.status(409).json({
+
                 message:
                     "Product ID already exists"
+
             });
 
         }
 
 
-        // -----------------------------
+        // ==========================================
         // MAIN IMAGE
-        // -----------------------------
+        // ==========================================
 
         let mainImage = "";
 
@@ -157,16 +273,17 @@ const createProduct = async (req, res) => {
         }
 
 
-        // -----------------------------
+        // ==========================================
         // ADDITIONAL IMAGES
-        // -----------------------------
+        // ==========================================
 
         let additionalImages = [];
 
 
         if (
             req.files &&
-            req.files.additionalImages
+            req.files.additionalImages &&
+            req.files.additionalImages.length > 0
         ) {
 
             additionalImages =
@@ -178,50 +295,102 @@ const createProduct = async (req, res) => {
         }
 
 
-        // -----------------------------
+        // ==========================================
         // CREATE PRODUCT
-        // -----------------------------
+        // ==========================================
 
         const product =
             await Product.create({
 
+                // Basic information
                 productId:
-                    Number(productId),
+                    numericProductId,
 
-                name,
+                name:
+                    name.trim(),
 
-                category,
+                category:
+                    category.trim(),
+
+                price:
+                    numericPrice,
+
+
+                // ======================================
+                // PRODUCT SPECIFICATIONS
+                // ======================================
+
+                dimensions:
+                    dimensions
+                        ? dimensions.trim()
+                        : "",
+
+                shape:
+                    shape
+                        ? shape.trim()
+                        : "",
+
+                colour:
+                    colour
+                        ? colour.trim()
+                        : "",
+
+                material:
+                    material
+                        ? material.trim()
+                        : "",
+
+                moq:
+                    numericMoq,
+
+                customization:
+                    customization
+                        ? customization.trim()
+                        : "",
+
+
+                // ======================================
+                // OTHER FIELDS
+                // ======================================
+
+                badge:
+                    badge
+                        ? badge.trim()
+                        : "",
+
+                rating:
+                    numericRating,
+
+                newArrival:
+                    newArrival === true ||
+                    newArrival === "true",
+
+                bestSeller:
+                    bestSeller === true ||
+                    bestSeller === "true",
+
+                description:
+                    description.trim(),
+
+
+                // ======================================
+                // IMAGES
+                // ======================================
 
                 image:
                     mainImage,
 
                 images:
-                    additionalImages,
-
-                price:
-                    Number(price),
-
-                badge:
-                    badge || "",
-
-                rating:
-                    Number(rating) || 0,
-
-                newArrival:
-                    newArrival === "true",
-
-                bestSeller:
-                    bestSeller === "true",
-
-                description,
-
-                dimensions:
-                    dimensions || ""
+                    additionalImages
 
             });
 
 
-        res.status(201).json({
+        // ==========================================
+        // SUCCESS RESPONSE
+        // ==========================================
+
+        return res.status(201).json({
 
             message:
                 "Product created successfully",
@@ -230,22 +399,32 @@ const createProduct = async (req, res) => {
 
         });
 
-    } catch (error) {
+    }
+    catch (error) {
 
         console.error(
             "Create product error:",
             error
         );
 
-        res.status(500).json({
+
+        return res.status(500).json({
 
             message:
-                "Failed to create product"
+                "Failed to create product",
+
+            error:
+                error.message
 
         });
 
     }
+
 };
+// =====================================================
+// UPDATE PRODUCT
+// =====================================================
+
 
 
 // =====================================================
@@ -256,88 +435,260 @@ const updateProduct = async (req, res) => {
 
     try {
 
-        const productId =
-            Number(req.params.productId);
+        // ==========================================
+        // GET PRODUCT ID FROM URL
+        // ==========================================
+
+        const rawProductId = req.params.productId;
+
+        console.log(
+            "Update product ID:",
+            rawProductId
+        );
 
 
-        const product =
-            await Product.findOne({
-                productId: productId
-            });
+        // ==========================================
+        // VALIDATE PRODUCT ID
+        // ==========================================
 
+        const productId = Number(rawProductId);
 
-        if (!product) {
+        if (
+            !rawProductId ||
+            !Number.isInteger(productId) ||
+            productId <= 0
+        ) {
 
-            return res.status(404).json({
+            return res.status(400).json({
 
-                message:
-                    "Product not found"
+                message: "Invalid product ID",
+
+                received: rawProductId
 
             });
 
         }
 
 
-        const {
-            name,
-            category,
-            price,
-            badge,
-            rating,
-            newArrival,
-            bestSeller,
-            description,
-            dimensions
-        } = req.body;
+        // ==========================================
+        // FIND PRODUCT
+        // ==========================================
+
+        const product = await Product.findOne({
+            productId: productId
+        });
 
 
-        // -----------------------------
-        // UPDATE TEXT FIELDS
-        // -----------------------------
+        if (!product) {
 
-        if (name !== undefined)
-            product.name = name;
+            return res.status(404).json({
 
+                message: "Product not found"
 
-        if (category !== undefined)
-            product.category = category;
+            });
 
-
-        if (price !== undefined)
-            product.price = Number(price);
+        }
 
 
-        if (badge !== undefined)
-            product.badge = badge;
+        // ==========================================
+        // BASIC FIELDS
+        // ==========================================
+
+        if (req.body.name !== undefined) {
+
+            product.name =
+                req.body.name;
+
+        }
 
 
-        if (rating !== undefined)
-            product.rating = Number(rating);
+        if (req.body.category !== undefined) {
+
+            product.category =
+                req.body.category;
+
+        }
 
 
-        if (newArrival !== undefined)
-            product.newArrival =
-                newArrival === "true";
+        if (req.body.price !== undefined) {
+
+            const price =
+                Number(req.body.price);
 
 
-        if (bestSeller !== undefined)
-            product.bestSeller =
-                bestSeller === "true";
+            if (
+                !Number.isFinite(price) ||
+                price < 0
+            ) {
+
+                return res.status(400).json({
+
+                    message: "Invalid price"
+
+                });
+
+            }
 
 
-        if (description !== undefined)
+            product.price =
+                price;
+
+        }
+
+
+        if (req.body.description !== undefined) {
+
             product.description =
-                description;
+                req.body.description;
+
+        }
 
 
-        if (dimensions !== undefined)
+        if (req.body.badge !== undefined) {
+
+            product.badge =
+                req.body.badge;
+
+        }
+
+
+        // ==========================================
+        // RATING
+        // ==========================================
+
+        if (req.body.rating !== undefined) {
+
+            const rating =
+                Number(req.body.rating);
+
+
+            if (
+                !Number.isFinite(rating) ||
+                rating < 0 ||
+                rating > 5
+            ) {
+
+                return res.status(400).json({
+
+                    message:
+                        "Rating must be between 0 and 5"
+
+                });
+
+            }
+
+
+            product.rating =
+                rating;
+
+        }
+
+
+        // ==========================================
+        // BOOLEAN FIELDS
+        // ==========================================
+
+        if (req.body.newArrival !== undefined) {
+
+            product.newArrival =
+                req.body.newArrival === true ||
+                req.body.newArrival === "true";
+
+        }
+
+
+        if (req.body.bestSeller !== undefined) {
+
+            product.bestSeller =
+                req.body.bestSeller === true ||
+                req.body.bestSeller === "true";
+
+        }
+
+
+        // ==========================================
+        // SPECIFICATIONS
+        // ==========================================
+
+        // Dimensions
+        if (req.body.dimensions !== undefined) {
+
             product.dimensions =
-                dimensions;
+                req.body.dimensions;
+
+        }
 
 
-        // -----------------------------
-        // UPDATE MAIN IMAGE
-        // -----------------------------
+        // Shape
+        if (req.body.shape !== undefined) {
+
+            product.shape =
+                req.body.shape;
+
+        }
+
+
+        // Colour
+        if (req.body.colour !== undefined) {
+
+            product.colour =
+                req.body.colour;
+
+        }
+
+
+        // Material
+        if (req.body.material !== undefined) {
+
+            product.material =
+                req.body.material;
+
+        }
+
+
+        // Customization
+        if (req.body.customization !== undefined) {
+
+            product.customization =
+                req.body.customization;
+
+        }
+
+
+        // ==========================================
+        // MOQ
+        // ==========================================
+
+        if (req.body.moq !== undefined) {
+
+            const moq =
+                Number(req.body.moq);
+
+
+            if (
+                !Number.isInteger(moq) ||
+                moq < 1
+            ) {
+
+                return res.status(400).json({
+
+                    message:
+                        "MOQ must be a number greater than 0"
+
+                });
+
+            }
+
+
+            product.moq =
+                moq;
+
+        }
+
+
+        // ==========================================
+        // MAIN IMAGE
+        // ==========================================
 
         if (
             req.files &&
@@ -351,9 +702,9 @@ const updateProduct = async (req, res) => {
         }
 
 
-        // -----------------------------
-        // UPDATE ADDITIONAL IMAGES
-        // -----------------------------
+        // ==========================================
+        // ADDITIONAL IMAGES
+        // ==========================================
 
         if (
             req.files &&
@@ -361,44 +712,63 @@ const updateProduct = async (req, res) => {
             req.files.additionalImages.length > 0
         ) {
 
-            product.images =
+            const uploadedImages =
                 req.files.additionalImages.map(
                     file =>
                         `/uploads/products/${file.filename}`
                 );
 
+
+            product.images = [
+                ...(product.images || []),
+                ...uploadedImages
+            ];
+
         }
 
+
+        // ==========================================
+        // SAVE PRODUCT
+        // ==========================================
 
         await product.save();
 
 
-        res.status(200).json({
+        // ==========================================
+        // RESPONSE
+        // ==========================================
+
+        return res.status(200).json({
 
             message:
                 "Product updated successfully",
 
-            product
+            product: product
 
         });
 
-    } catch (error) {
+    }
+    catch (error) {
 
         console.error(
             "Update product error:",
             error
         );
 
-        res.status(500).json({
+
+        return res.status(500).json({
 
             message:
-                "Failed to update product"
+                "Failed to update product",
+
+            error:
+                error.message
 
         });
 
     }
-};
 
+};
 
 // =====================================================
 // DELETE PRODUCT
@@ -412,6 +782,19 @@ const deleteProduct = async (req, res) => {
             Number(req.params.productId);
 
 
+        // Prevent NaN from reaching Mongoose
+        if (
+            !Number.isInteger(productId) ||
+            productId <= 0
+        ) {
+
+            return res.status(400).json({
+                message: "Invalid product ID."
+            });
+
+        }
+
+
         const product =
             await Product.findOneAndDelete({
                 productId: productId
@@ -421,21 +804,21 @@ const deleteProduct = async (req, res) => {
         if (!product) {
 
             return res.status(404).json({
-
-                message:
-                    "Product not found"
-
+                message: "Product not found."
             });
 
         }
 
 
-        res.status(200).json({
+        return res.status(200).json({
 
             message:
-                "Product deleted successfully"
+                "Product deleted successfully.",
+
+            product
 
         });
+
 
     } catch (error) {
 
@@ -444,16 +827,20 @@ const deleteProduct = async (req, res) => {
             error
         );
 
-        res.status(500).json({
+
+        return res.status(500).json({
 
             message:
-                "Failed to delete product"
+                "Failed to delete product.",
+
+            error:
+                error.message
 
         });
 
     }
-};
 
+};
 
 module.exports = {
 

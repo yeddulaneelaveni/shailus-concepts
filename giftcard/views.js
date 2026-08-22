@@ -5,24 +5,19 @@
 
 console.log("VIEWS.JS LOADED");
 
-
 // =====================================================
 // API CONFIGURATION
 // =====================================================
 
 const API_URL = "http://localhost:5000";
 
-
 // =====================================================
 // GET PRODUCT ID FROM URL
+// Example: views.html?id=123
 // =====================================================
 
-const urlParams =
-    new URLSearchParams(window.location.search);
-
-const productId =
-    urlParams.get("id");
-
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get("id");
 
 // =====================================================
 // IMAGE PATH HELPER
@@ -34,48 +29,23 @@ function fixProductImage(path) {
         return "";
     }
 
-
-    // ---------------------------------------------
     // Backend uploaded image
-    // Example:
-    // /uploads/products/image.jpg
-    // ---------------------------------------------
-
     if (path.startsWith("/uploads/")) {
-
         return API_URL + path;
-
     }
 
-
-    // ---------------------------------------------
     // Backend image without leading slash
-    // ---------------------------------------------
-
     if (path.startsWith("uploads/")) {
-
         return API_URL + "/" + path;
-
     }
 
-
-    // ---------------------------------------------
     // Old frontend paths
-    // ---------------------------------------------
-
     if (path.startsWith("../assets/")) {
-
-        return path.replace(
-            "../assets/",
-            "assets/"
-        );
-
+        return path.replace("../assets/", "assets/");
     }
-
 
     return path;
 }
-
 
 // =====================================================
 // HTML ESCAPE
@@ -84,33 +54,12 @@ function fixProductImage(path) {
 function escapeHTML(value) {
 
     return String(value || "")
-
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
-
 
 // =====================================================
 // LOAD PRODUCT DETAILS
@@ -120,65 +69,42 @@ async function loadProductDetails() {
 
     if (!productId) {
 
-        console.error(
-            "Product ID missing from URL"
-        );
+        console.error("Product ID missing from URL");
 
-        showProductError(
-            "Product ID is missing."
-        );
+        showProductError("Product ID is missing.");
 
         return;
     }
 
-
     try {
 
-        console.log(
-            "Loading product:",
-            productId
+        console.log("Loading product:", productId);
+
+        // =================================================
+        // GET PRODUCT FROM BACKEND
+        // =================================================
+
+        const response = await fetch(
+            `${API_URL}/api/products/${productId}`
         );
-
-
-        // ==========================================
-        // GET CURRENT PRODUCT
-        // ==========================================
-
-        const response =
-            await fetch(
-                `${API_URL}/api/products/${productId}`
-            );
-
 
         if (!response.ok) {
-
-            throw new Error(
-                "Product not found"
-            );
-
+            throw new Error("Product not found");
         }
 
+        const product = await response.json();
 
-        const product =
-            await response.json();
+        console.log("Current product:", product);
 
-
-        console.log(
-            "Current product:",
-            product
-        );
-
-
-        // ==========================================
-        // DISPLAY CURRENT PRODUCT
-        // ==========================================
+        // =================================================
+        // DISPLAY PRODUCT
+        // =================================================
 
         displayProduct(product);
 
-
-        // ==========================================
+        // =================================================
         // LOAD RELATED PRODUCTS
-        // ==========================================
+        // =================================================
 
         await loadRelatedProducts(product);
 
@@ -190,14 +116,11 @@ async function loadProductDetails() {
             error
         );
 
-
         showProductError(
             "Unable to load product."
         );
-
     }
 }
-
 
 // =====================================================
 // DISPLAY PRODUCT
@@ -205,209 +128,303 @@ async function loadProductDetails() {
 
 function displayProduct(product) {
 
-    // ==========================================
-    // PAGE TITLE
-    // ==========================================
+    // =================================================
+    // MAIN IMAGE
+    // =================================================
 
-    document.title =
-        `${product.name} – Shailu's Concepts`;
+    const mainImage = fixProductImage(
+        product.image ||
+        (
+            product.images &&
+            product.images.length
+                ? product.images[0]
+                : ""
+        )
+    );
 
+    const mainImg =
+        document.getElementById("mainImg");
 
-    // ==========================================
-    // BREADCRUMB
-    // ==========================================
+    if (mainImg && mainImage) {
 
-    const breadcrumb =
-        document.querySelector(
-            ".breadcrumb"
-        );
+        mainImg.src = mainImage;
 
-
-    if (breadcrumb) {
-
-        breadcrumb.innerHTML = `
-
-            <a href="index.html">
-                Home
-            </a>
-
-            <span>›</span>
-
-            <a href="#">
-                ${escapeHTML(
-                    product.category || "Products"
-                )}
-            </a>
-
-            <span>›</span>
-
-            ${escapeHTML(product.name)}
-
-        `;
-
+        mainImg.alt =
+            product.name || "Product";
     }
 
-
-    // ==========================================
+    // =================================================
     // PRODUCT DETAILS CONTAINER
-    // ==========================================
+    // =================================================
 
     const details =
         document.querySelector(
             ".product-details"
         );
 
-
-    const mainImage =
-        getMainProductImage(product);
-
-
     if (details) {
 
         details.dataset.id =
-            product.productId;
+            product.productId || "";
 
         details.dataset.name =
             product.name || "";
 
         details.dataset.price =
-            product.price || 0;
+            product.price || "";
 
         details.dataset.img =
-            mainImage;
-
+            mainImage || "";
     }
 
-
-    // ==========================================
+    // =================================================
     // PRODUCT NAME
-    // ==========================================
+    // =================================================
 
     const title =
         document.querySelector(
             ".product-details h1"
         );
 
-
     if (title) {
 
         title.textContent =
-            product.name || "";
-
+            product.name || "-";
     }
 
-
-    // ==========================================
+    // =================================================
     // SKU
-    // ==========================================
+    // =================================================
 
     const sku =
         document.querySelector(
             ".product-details .sku"
         );
 
-
     if (sku) {
 
         sku.textContent =
-            `SKU: ${product.productId}`;
-
+            "SKU: " +
+            (product.productId ?? "-");
     }
 
-
-    // ==========================================
+    // =================================================
     // PRICE
-    // ==========================================
+    // =================================================
 
     const price =
         document.querySelector(
             ".product-details .price"
         );
 
-
     if (price) {
 
-        const productPrice =
-            Number(product.price || 0);
-
-
-        if (productPrice > 0) {
+        if (
+            product.price !== undefined &&
+            product.price !== null &&
+            product.price !== ""
+        ) {
 
             price.textContent =
-                `₹${productPrice.toFixed(2)}`;
+                "₹" +
+                Number(product.price).toFixed(2);
 
         }
         else {
 
             price.textContent =
                 "Price on request";
-
         }
-
     }
 
-
-    // ==========================================
-    // MAIN IMAGE
-    // ==========================================
-
-    const mainImg =
-        document.getElementById(
-            "mainImg"
-        );
-
-
-    if (mainImg) {
-
-        if (mainImage) {
-
-            mainImg.src =
-                mainImage;
-
-            mainImg.alt =
-                product.name || "Product";
-
-        }
-
-        else {
-
-            mainImg.src =
-                "https://placehold.co/600x600/f7f3ea/0d3328?text=No+Image";
-
-        }
-
-    }
-
-
-    // ==========================================
-    // PRODUCT THUMBNAILS
-    // ==========================================
-
-    displayProductImages(product);
-
-
-    // ==========================================
-    // DESCRIPTION
-    // ==========================================
-
-    displayDescription(product);
-
-
-    // ==========================================
-    // BADGE
-    // ==========================================
-
-    displayBadge(product);
-
-
-    // ==========================================
-    // SPECIFICATIONS
-    // ==========================================
+    // =================================================
+    // SPECIFICATION TABLE
+    // =================================================
 
     updateSpecifications(product);
 
+    // =================================================
+    // DESCRIPTION
+    // =================================================
+
+    displayDescription(product);
+
+    // =================================================
+    // BADGE
+    // =================================================
+
+    displayBadge(product);
+
+    // =================================================
+    // PRODUCT IMAGES / THUMBNAILS
+    // =================================================
+
+    displayProductImages(product);
 }
 
+// =====================================================
+// UPDATE SPECIFICATIONS
+// =====================================================
+
+function updateSpecifications(product) {
+
+    const cells =
+        document.querySelectorAll(
+            ".specs-table tbody td"
+        );
+
+    if (!cells.length) {
+        return;
+    }
+
+    // Size / Dimensions
+    if (cells[0]) {
+
+        cells[0].textContent =
+            product.dimensions || "-";
+    }
+
+    // Shape
+    if (cells[1]) {
+
+        cells[1].textContent =
+            product.shape || "-";
+    }
+
+    // Colour
+    if (cells[2]) {
+
+        cells[2].textContent =
+            product.colour || "-";
+    }
+
+    // Material
+    if (cells[3]) {
+
+        cells[3].textContent =
+            product.material || "-";
+    }
+
+    // MOQ
+    if (cells[4]) {
+
+        cells[4].textContent =
+            product.moq || "-";
+    }
+
+    // Customization
+    if (cells[5]) {
+
+        cells[5].textContent =
+            product.customization || "-";
+    }
+}
+
+// =====================================================
+// DISPLAY DESCRIPTION
+// =====================================================
+
+function displayDescription(product) {
+
+    let descriptionBox =
+        document.getElementById(
+            "productDescription"
+        );
+
+    // Create description box if it doesn't exist
+    if (!descriptionBox) {
+
+        descriptionBox =
+            document.createElement("div");
+
+        descriptionBox.id =
+            "productDescription";
+
+        descriptionBox.className =
+            "note-box";
+
+        const specsTable =
+            document.querySelector(
+                ".specs-table"
+            );
+
+        if (specsTable) {
+
+            specsTable.parentNode.insertBefore(
+                descriptionBox,
+                specsTable.nextSibling
+            );
+        }
+    }
+
+    if (descriptionBox) {
+
+        descriptionBox.innerHTML =
+            `<strong>Description:</strong> ${
+                escapeHTML(
+                    product.description ||
+                    "No description available."
+                )
+            }`;
+    }
+}
+
+// =====================================================
+// DISPLAY BADGE
+// =====================================================
+
+function displayBadge(product) {
+
+    // Remove previous badge
+    const oldBadge =
+        document.querySelector(
+            ".product-details .product-badge"
+        );
+
+    if (oldBadge) {
+        oldBadge.remove();
+    }
+
+    // No badge
+    if (!product.badge) {
+        return;
+    }
+
+    // Create badge
+    const badge =
+        document.createElement("div");
+
+    badge.className =
+        "product-badge";
+
+    badge.textContent =
+        product.badge;
+
+    badge.style.cssText = `
+        display: inline-block;
+        width: fit-content;
+        background: #c9a455;
+        color: #0d3328;
+        padding: 6px 12px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 700;
+        margin: 10px 0;
+    `;
+
+    const title =
+        document.querySelector(
+            ".product-details h1"
+        );
+
+    if (title) {
+
+        title.insertAdjacentElement(
+            "afterend",
+            badge
+        );
+    }
+}
 
 // =====================================================
 // GET PRODUCT IMAGES
@@ -417,24 +434,15 @@ function getProductImages(product) {
 
     const imageList = [];
 
-
-    // ---------------------------------------------
     // Main image
-    // ---------------------------------------------
-
     if (product.image) {
 
         imageList.push(
             product.image
         );
-
     }
 
-
-    // ---------------------------------------------
     // Additional images
-    // ---------------------------------------------
-
     if (
         product.images &&
         Array.isArray(product.images)
@@ -449,23 +457,18 @@ function getProductImages(product) {
                 ) {
 
                     imageList.push(image);
-
                 }
-
             }
         );
-
     }
-
 
     return imageList
         .map(fixProductImage)
         .filter(Boolean);
 }
 
-
 // =====================================================
-// GET MAIN IMAGE
+// GET MAIN PRODUCT IMAGE
 // =====================================================
 
 function getMainProductImage(product) {
@@ -473,18 +476,13 @@ function getMainProductImage(product) {
     const images =
         getProductImages(product);
 
-
     if (images.length > 0) {
 
         return images[0];
-
     }
 
-
     return "";
-
 }
-
 
 // =====================================================
 // DISPLAY PRODUCT IMAGES
@@ -497,25 +495,18 @@ function displayProductImages(product) {
             ".thumb-row"
         );
 
-
     if (!thumbnailRow) {
         return;
     }
 
-
     const images =
         getProductImages(product);
 
-
     thumbnailRow.innerHTML = "";
 
-
     if (images.length === 0) {
-
         return;
-
     }
-
 
     images.forEach(
         (image, index) => {
@@ -525,27 +516,22 @@ function displayProductImages(product) {
                     "div"
                 );
 
-
             thumb.className =
                 index === 0
                     ? "thumb active"
                     : "thumb";
 
-
             thumb.innerHTML = `
-
                 <img
                     src="${image}"
                     alt="${escapeHTML(
                         product.name
                     )} image ${index + 1}"
                     onerror="
-                        this.src='https://placehold.co/80x80/f7f3ea/0d3328?text=Image'
+                        this.style.display='none'
                     "
                 >
-
             `;
-
 
             thumb.onclick =
                 function () {
@@ -554,256 +540,14 @@ function displayProductImages(product) {
                         thumb,
                         image
                     );
-
                 };
-
 
             thumbnailRow.appendChild(
                 thumb
             );
-
         }
     );
-
 }
-
-
-// =====================================================
-// DISPLAY DESCRIPTION
-// =====================================================
-
-function displayDescription(product) {
-
-    let descriptionBox =
-        document.getElementById(
-            "productDescription"
-        );
-
-
-    if (!descriptionBox) {
-
-        const noteBox =
-            document.querySelector(
-                ".note-box"
-            );
-
-
-        if (noteBox) {
-
-            descriptionBox =
-                document.createElement(
-                    "div"
-                );
-
-
-            descriptionBox.id =
-                "productDescription";
-
-
-            descriptionBox.className =
-                "note-box";
-
-
-            descriptionBox.style.marginBottom =
-                "15px";
-
-
-            noteBox.parentNode.insertBefore(
-                descriptionBox,
-                noteBox
-            );
-
-        }
-
-    }
-
-
-    if (descriptionBox) {
-
-        descriptionBox.innerHTML = `
-
-            <strong>
-                Description:
-            </strong>
-
-            ${escapeHTML(
-                product.description ||
-                "No description available."
-            )}
-
-        `;
-
-    }
-
-}
-
-
-// =====================================================
-// DISPLAY BADGE
-// =====================================================
-
-function displayBadge(product) {
-
-    // Remove previous badge first
-    const oldBadge =
-        document.querySelector(
-            ".product-badge"
-        );
-
-
-    if (oldBadge) {
-
-        oldBadge.remove();
-
-    }
-
-
-    if (!product.badge) {
-
-        return;
-
-    }
-
-
-    const badge =
-        document.createElement(
-            "div"
-        );
-
-
-    badge.className =
-        "product-badge";
-
-
-    badge.textContent =
-        product.badge;
-
-
-    badge.style.cssText = `
-
-        display: inline-block;
-
-        width: fit-content;
-
-        background: #c9a455;
-
-        color: #0d3328;
-
-        padding: 6px 12px;
-
-        border-radius: 5px;
-
-        font-size: 12px;
-
-        font-weight: 700;
-
-        margin-bottom: 5px;
-
-    `;
-
-
-    const title =
-        document.querySelector(
-            ".product-details h1"
-        );
-
-
-    if (title) {
-
-        title.insertAdjacentElement(
-            "afterend",
-            badge
-        );
-
-    }
-
-}
-
-
-// =====================================================
-// UPDATE SPECIFICATIONS
-// =====================================================
-
-function updateSpecifications(product) {
-
-    const cells =
-        document.querySelectorAll(
-            ".specs-table tbody td"
-        );
-
-
-    if (!cells.length) {
-
-        return;
-
-    }
-
-
-    // ==========================================
-    // SIZE / DIMENSIONS
-    // ==========================================
-
-    if (cells[0]) {
-
-        cells[0].textContent =
-            product.dimensions ||
-            "—";
-
-    }
-
-
-    // ==========================================
-    // CATEGORY
-    // ==========================================
-
-    if (cells[1]) {
-
-        cells[1].textContent =
-            product.category ||
-            "—";
-
-    }
-
-
-    // ==========================================
-    // BADGE / TYPE
-    // ==========================================
-
-    if (cells[2]) {
-
-        cells[2].textContent =
-            product.badge ||
-            "—";
-
-    }
-
-
-    // ==========================================
-    // MATERIAL
-    // ==========================================
-    // Your current Product schema does not
-    // contain a material field.
-    // So leave this as existing/static value.
-    // ==========================================
-
-
-    // ==========================================
-    // MOQ
-    // ==========================================
-    // Your current Product schema does not
-    // contain MOQ.
-    // ==========================================
-
-
-    // ==========================================
-    // CUSTOMIZATION
-    // ==========================================
-    // Your current Product schema does not
-    // contain customization.
-    // ==========================================
-
-}
-
 
 // =====================================================
 // LOAD RELATED PRODUCTS
@@ -818,7 +562,6 @@ async function loadRelatedProducts(
             ".related-grid"
         );
 
-
     if (!relatedGrid) {
 
         console.warn(
@@ -826,62 +569,43 @@ async function loadRelatedProducts(
         );
 
         return;
-
     }
-
 
     try {
 
-        // ==========================================
+        // =================================================
         // GET ALL PRODUCTS
-        // ==========================================
+        // =================================================
 
         const response =
             await fetch(
                 `${API_URL}/api/products`
             );
 
-
         if (!response.ok) {
 
             throw new Error(
                 "Unable to load products"
             );
-
         }
-
 
         const products =
             await response.json();
 
-
-        console.log(
-            "All products:",
-            products
-        );
-
-
-        // ==========================================
+        // =================================================
         // CHECK CATEGORY
-        // ==========================================
+        // =================================================
 
         if (!currentProduct.category) {
-
-            console.warn(
-                "Current product has no category"
-            );
-
 
             displaySimilarProducts([]);
 
             return;
-
         }
 
-
-        // ==========================================
-        // FILTER SAME CATEGORY
-        // ==========================================
+        // =================================================
+        // CURRENT CATEGORY
+        // =================================================
 
         const currentCategory =
             String(
@@ -890,12 +614,18 @@ async function loadRelatedProducts(
                 .trim()
                 .toLowerCase();
 
+        // =================================================
+        // CURRENT PRODUCT ID
+        // =================================================
 
         const currentId =
             String(
                 currentProduct.productId
             );
 
+        // =================================================
+        // FILTER RELATED PRODUCTS
+        // =================================================
 
         const relatedProducts =
             products.filter(
@@ -908,49 +638,26 @@ async function loadRelatedProducts(
                             .trim()
                             .toLowerCase();
 
-
                     const productId =
                         String(
                             product.productId
                         );
 
-
                     return (
-
-                        // Same category
                         productCategory ===
                         currentCategory
-
-                        &&
-
-                        // Don't show current product
-                        productId !==
-                        currentId
-
-                    );
-
+                    )
+                    &&
+                    productId !== currentId;
                 }
             );
 
-
-        console.log(
-            "Current category:",
-            currentProduct.category
-        );
-
-
-        console.log(
-            "Related products:",
-            relatedProducts
-        );
-
-
-        // ==========================================
-        // SHOW MAXIMUM 4
-        // ==========================================
+        // =================================================
+        // DISPLAY RELATED PRODUCTS
+        // =================================================
 
         displaySimilarProducts(
-            relatedProducts.slice(0, 4)
+            relatedProducts
         );
 
     }
@@ -961,25 +668,17 @@ async function loadRelatedProducts(
             error
         );
 
-
         relatedGrid.innerHTML = `
-
             <p style="
                 grid-column:1/-1;
                 text-align:center;
                 color:#777;
             ">
-
                 Unable to load related products.
-
             </p>
-
         `;
-
     }
-
 }
-
 
 // =====================================================
 // DISPLAY RELATED PRODUCTS
@@ -994,20 +693,15 @@ function displaySimilarProducts(
             ".related-grid"
         );
 
-
     if (!relatedGrid) {
-
         return;
-
     }
-
 
     relatedGrid.innerHTML = "";
 
-
-    // ==========================================
+    // =================================================
     // NO RELATED PRODUCTS
-    // ==========================================
+    // =================================================
 
     if (
         !products ||
@@ -1015,27 +709,21 @@ function displaySimilarProducts(
     ) {
 
         relatedGrid.innerHTML = `
-
             <p style="
                 grid-column:1/-1;
                 text-align:center;
                 color:#777;
             ">
-
                 No related products found.
-
             </p>
-
         `;
 
         return;
-
     }
 
-
-    // ==========================================
-    // CREATE PRODUCT CARDS
-    // ==========================================
+    // =================================================
+    // SHOW RELATED PRODUCTS
+    // =================================================
 
     products
         .slice(0, 4)
@@ -1053,16 +741,13 @@ function displaySimilarProducts(
                         )
                     );
 
-
                 const card =
                     document.createElement(
                         "div"
                     );
 
-
                 card.className =
                     "product-card";
-
 
                 const productName =
                     escapeHTML(
@@ -1070,20 +755,16 @@ function displaySimilarProducts(
                         "Product"
                     );
 
-
                 const productPrice =
                     Number(
                         product.price || 0
                     );
 
-
                 const productImage =
                     image ||
                     "https://placehold.co/300x300/f7f3ea/0d3328?text=No+Image";
 
-
                 card.innerHTML = `
-
                     <div class="img-wrap">
 
                         <img
@@ -1096,20 +777,22 @@ function displaySimilarProducts(
 
                     </div>
 
-
                     <div class="card-info">
 
                         <h3>
                             ${productName}
                         </h3>
 
-
                         <div class="card-price">
-
-                            ₹${productPrice.toFixed(2)}
-
+                            ${
+                                product.price !== undefined &&
+                                product.price !== null &&
+                                product.price !== ""
+                                    ? "₹" +
+                                      productPrice.toFixed(2)
+                                    : "Price on request"
+                            }
                         </div>
-
 
                         <button
                             class="view-btn"
@@ -1120,19 +803,16 @@ function displaySimilarProducts(
                         </button>
 
                     </div>
-
                 `;
 
-
-                // ==========================================
+                // =================================================
                 // VIEW BUTTON
-                // ==========================================
+                // =================================================
 
                 const viewButton =
                     card.querySelector(
                         ".view-btn"
                     );
-
 
                 if (viewButton) {
 
@@ -1142,22 +822,16 @@ function displaySimilarProducts(
 
                             window.location.href =
                                 `views.html?id=${product.productId}`;
-
                         }
                     );
-
                 }
-
 
                 relatedGrid.appendChild(
                     card
                 );
-
             }
         );
-
 }
-
 
 // =====================================================
 // SHOW PRODUCT ERROR
@@ -1172,49 +846,44 @@ function showProductError(
             ".product-section"
         );
 
-
-    if (productSection) {
-
-        productSection.innerHTML = `
-
-            <div style="
-                grid-column:1/-1;
-                text-align:center;
-                padding:60px 20px;
-                color:#777;
-            ">
-
-                <h2>
-                    ${escapeHTML(message)}
-                </h2>
-
-                <p style="margin-top:10px;">
-                    Please try again.
-                </p>
-
-                <a
-                    href="index.html"
-                    style="
-                        display:inline-block;
-                        margin-top:20px;
-                        padding:12px 24px;
-                        background:#0d3328;
-                        color:#e6cf8f;
-                        text-decoration:none;
-                        border-radius:6px;
-                    "
-                >
-                    Back to Home
-                </a>
-
-            </div>
-
-        `;
-
+    if (!productSection) {
+        return;
     }
 
-}
+    productSection.innerHTML = `
+        <div style="
+            grid-column:1/-1;
+            text-align:center;
+            padding:60px 20px;
+            color:#777;
+        ">
 
+            <h2>
+                ${escapeHTML(message)}
+            </h2>
+
+            <p style="margin-top:10px;">
+                Please try again.
+            </p>
+
+            <a
+                href="index.html"
+                style="
+                    display:inline-block;
+                    margin-top:20px;
+                    padding:12px 24px;
+                    background:#0d3328;
+                    color:#e6cf8f;
+                    text-decoration:none;
+                    border-radius:6px;
+                "
+            >
+                Back to Home
+            </a>
+
+        </div>
+    `;
+}
 
 // =====================================================
 // START

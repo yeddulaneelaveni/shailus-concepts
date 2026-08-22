@@ -2,106 +2,73 @@
 // ADMIN DASHBOARD JAVASCRIPT
 // =====================================================
 
-// =====================================================
-// CONFIGURATION
-// =====================================================
-
 const API_URL = "http://localhost:5000";
 
-const adminToken =
-    localStorage.getItem("adminToken") ||
-    localStorage.getItem("token") ||
-    "";
+
+// =====================================================
+// GLOBAL DATA
+// =====================================================
+
+let allProducts = [];
+let allHeroes = [];
+let allScrollCategories = [];
+let allBestSellers = [];
+let currentStandout = null;
 
 
 // =====================================================
-// SECTION NAVIGATION
+// AUTH
 // =====================================================
 
-function showSection(sectionId, button) {
+function authHeaders() {
 
-    console.log("Opening section:", sectionId);
+    const token =
+        localStorage.getItem("adminToken") ||
+        localStorage.getItem("token") ||
+        "";
 
-    const section = document.getElementById(sectionId);
-
-    if (!section) {
-        console.error("Section not found:", sectionId);
-        return;
+    if (!token) {
+        return {};
     }
 
-    document
-        .querySelectorAll(".dashboard-section")
-        .forEach(section => {
-            section.classList.remove("active-section");
-        });
-
-    section.classList.add("active-section");
-
-    document
-        .querySelectorAll(".sidebar-btn")
-        .forEach(btn => {
-            btn.classList.remove("active");
-        });
-
-    if (button) {
-        button.classList.add("active");
-    }
-}
-
-
-function showSectionById(sectionId) {
-
-    const section = document.getElementById(sectionId);
-
-    if (!section) {
-        console.error("Section not found:", sectionId);
-        return;
-    }
-
-    document
-        .querySelectorAll(".dashboard-section")
-        .forEach(section => {
-            section.classList.remove("active-section");
-        });
-
-    section.classList.add("active-section");
-
-    document
-        .querySelectorAll(".sidebar-btn")
-        .forEach(btn => {
-            btn.classList.remove("active");
-        });
+    return {
+        Authorization: `Bearer ${token}`
+    };
 }
 
 
 // =====================================================
-// HELPER FUNCTIONS
+// SAFE JSON RESPONSE
 // =====================================================
 
-function getImageUrl(image) {
+async function parseResponse(response) {
 
-    if (!image) {
-        return "";
+    const text = await response.text();
+
+    if (!text) {
+        return {};
     }
 
-    if (
-        image.startsWith("http://") ||
-        image.startsWith("https://")
-    ) {
-        return image;
+    try {
+        return JSON.parse(text);
+    } catch (error) {
+        return {
+            message: text
+        };
     }
-
-    if (image.startsWith("/")) {
-        return `${API_URL}${image}`;
-    }
-
-    return image;
 }
 
+
+// =====================================================
+// HELPERS
+// =====================================================
 
 function escapeHTML(value) {
 
-    if (value === null || value === undefined) {
+    if (
+        value === null ||
+        value === undefined
+    ) {
         return "";
     }
 
@@ -114,123 +81,178 @@ function escapeHTML(value) {
 }
 
 
-function authHeaders() {
+function getImageUrl(image) {
 
-    return {
-        "Authorization": `Bearer ${adminToken}`
-    };
+    if (!image) {
+        return "";
+    }
+
+    image = String(image);
+
+    if (
+        image.startsWith("http://") ||
+        image.startsWith("https://")
+    ) {
+        return image;
+    }
+
+    if (image.startsWith("/")) {
+        return `${API_URL}${image}`;
+    }
+
+    return `${API_URL}/${image}`;
+}
+
+
+function getProductsArray(data) {
+
+    if (Array.isArray(data)) {
+        return data;
+    }
+
+    if (Array.isArray(data.products)) {
+        return data.products;
+    }
+
+    return [];
+}
+
+
+function getHeroesArray(data) {
+
+    if (Array.isArray(data)) {
+        return data;
+    }
+
+    if (Array.isArray(data.heroes)) {
+        return data.heroes;
+    }
+
+    if (data && data._id) {
+        return [data];
+    }
+
+    return [];
 }
 
 
 // =====================================================
-// DASHBOARD
+// SECTION NAVIGATION
+// =====================================================
+
+function showSection(sectionId, button) {
+
+    console.log(
+        "Opening section:",
+        sectionId
+    );
+
+    const section =
+        document.getElementById(sectionId);
+
+    if (!section) {
+
+        console.error(
+            "Section not found:",
+            sectionId
+        );
+
+        return;
+    }
+
+
+    document
+        .querySelectorAll(".dashboard-section")
+        .forEach(section => {
+
+            section.classList.remove(
+                "active-section"
+            );
+
+        });
+
+
+    section.classList.add(
+        "active-section"
+    );
+
+
+    document
+        .querySelectorAll(".sidebar-btn")
+        .forEach(btn => {
+
+            btn.classList.remove(
+                "active"
+            );
+
+        });
+
+
+    if (button) {
+
+        button.classList.add(
+            "active"
+        );
+
+    }
+
+}
+
+
+function showSectionById(sectionId) {
+
+    const section =
+        document.getElementById(sectionId);
+
+    if (!section) {
+
+        console.error(
+            "Section not found:",
+            sectionId
+        );
+
+        return;
+    }
+
+
+    document
+        .querySelectorAll(".dashboard-section")
+        .forEach(section => {
+
+            section.classList.remove(
+                "active-section"
+            );
+
+        });
+
+
+    section.classList.add(
+        "active-section"
+    );
+
+
+    document
+        .querySelectorAll(".sidebar-btn")
+        .forEach(btn => {
+
+            btn.classList.remove(
+                "active"
+            );
+
+        });
+
+}
+
+
+// =====================================================
+// DASHBOARD STATISTICS
 // =====================================================
 
 async function loadDashboardStats() {
 
-    try {
-
-        const response =
-            await fetch(`${API_URL}/api/products`);
-
-        const products =
-            await response.json();
-
-        if (!response.ok) {
-            throw new Error("Failed to load products");
-        }
-
-        const totalProducts =
-            document.getElementById("totalProducts");
-
-        const newArrivals =
-            document.getElementById("newArrivals");
-
-        const bestSellers =
-            document.getElementById("bestSellers");
-
-        if (totalProducts) {
-            totalProducts.textContent =
-                products.length;
-        }
-
-        if (newArrivals) {
-
-            newArrivals.textContent =
-                products.filter(
-                    product => product.newArrival === true
-                ).length;
-        }
-
-        if (bestSellers) {
-
-            bestSellers.textContent =
-                products.filter(
-                    product => product.bestSeller === true
-                ).length;
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Dashboard statistics error:",
-            error
-        );
-    }
-
-
-    try {
-
-        const response =
-            await fetch(`${API_URL}/api/heroes`);
-
-        const heroes =
-            await response.json();
-
-        if (!response.ok) {
-            throw new Error("Failed to load heroes");
-        }
-
-        const totalHeroes =
-            document.getElementById("totalHeroes");
-
-        if (totalHeroes) {
-            totalHeroes.textContent =
-                heroes.length;
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Hero statistics error:",
-            error
-        );
-    }
-}
-
-
-// =====================================================
-// PRODUCTS
-// =====================================================
-
-let allProducts = [];
-
-
-// -----------------------------------------------------
-// LOAD PRODUCTS
-// -----------------------------------------------------
-
-async function loadProducts() {
-
-    const container =
-        document.getElementById("productsContainer");
-
-    if (!container) {
-        return;
-    }
-
-    container.innerHTML =
-        "Loading products...";
+    // ---------------------------------------------
+    // PRODUCT COUNTS
+    // ---------------------------------------------
 
     try {
 
@@ -239,22 +261,194 @@ async function loadProducts() {
                 `${API_URL}/api/products`
             );
 
-        const products =
-            await response.json();
+
+        const data =
+            await parseResponse(response);
+
 
         if (!response.ok) {
 
             throw new Error(
-                products.message ||
+                data.message ||
                 "Failed to load products"
             );
+
         }
 
-        allProducts = products;
 
-        renderProducts(products);
+        const products =
+            getProductsArray(data);
+
+
+        const totalProducts =
+            document.getElementById(
+                "totalProducts"
+            );
+
+
+        const newArrivals =
+            document.getElementById(
+                "newArrivals"
+            );
+
+
+        const bestSellers =
+            document.getElementById(
+                "bestSellers"
+            );
+
+
+        if (totalProducts) {
+
+            totalProducts.textContent =
+                products.length;
+
+        }
+
+
+        if (newArrivals) {
+
+            newArrivals.textContent =
+                products.filter(
+                    product =>
+                        product.newArrival === true
+                ).length;
+
+        }
+
+
+        if (bestSellers) {
+
+            bestSellers.textContent =
+                products.filter(
+                    product =>
+                        product.bestSeller === true
+                ).length;
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Dashboard product statistics error:",
+            error
+        );
+
+    }
+
+
+    // ---------------------------------------------
+    // HERO COUNT
+    // IMPORTANT: backend is /api/hero
+    // ---------------------------------------------
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/api/hero`
+            );
+
+
+        const data =
+            await parseResponse(response);
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Failed to load heroes"
+            );
+
+        }
+
+
+        const heroes =
+            getHeroesArray(data);
+
+
+        const totalHeroes =
+            document.getElementById(
+                "totalHeroes"
+            );
+
+
+        if (totalHeroes) {
+
+            totalHeroes.textContent =
+                heroes.length;
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Hero statistics error:",
+            error
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// PRODUCTS
+// =====================================================
+
+async function loadProducts() {
+
+    const container =
+        document.getElementById(
+            "productsContainer"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML =
+        "Loading products...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/api/products`
+            );
+
+
+        const data =
+            await parseResponse(response);
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Failed to load products"
+            );
+
+        }
+
+
+        allProducts =
+            getProductsArray(data);
+
+
+        renderProducts(
+            allProducts
+        );
+
 
         loadDashboardStats();
+
 
     } catch (error) {
 
@@ -263,15 +457,18 @@ async function loadProducts() {
             error
         );
 
+
         container.innerHTML =
             `<p>Failed to load products.</p>`;
+
     }
+
 }
 
 
-// -----------------------------------------------------
+// =====================================================
 // RENDER PRODUCTS
-// -----------------------------------------------------
+// =====================================================
 
 function renderProducts(products) {
 
@@ -280,11 +477,16 @@ function renderProducts(products) {
             "productsContainer"
         );
 
+
     if (!container) {
         return;
     }
 
-    if (!products.length) {
+
+    if (
+        !Array.isArray(products) ||
+        products.length === 0
+    ) {
 
         container.innerHTML =
             "<p>No products found.</p>";
@@ -292,20 +494,34 @@ function renderProducts(products) {
         return;
     }
 
+
     container.innerHTML =
         products.map(product => {
+
 
             const mainImage =
                 product.image ||
                 (
-                    product.images &&
-                    product.images.length
+                    Array.isArray(
+                        product.images
+                    ) &&
+                    product.images.length > 0
                         ? product.images[0]
                         : ""
                 );
 
+
             const image =
-                getImageUrl(mainImage);
+                getImageUrl(
+                    mainImage
+                );
+
+
+            const productId =
+                Number(
+                    product.productId
+                );
+
 
             return `
 
@@ -314,15 +530,19 @@ function renderProducts(products) {
                     ${
                         image
                             ? `
+
                                 <img
-                                    src="${image}"
+                                    src="${escapeHTML(image)}"
                                     alt="${escapeHTML(
-                                        product.name
+                                        product.name ||
+                                        "Product"
                                     )}"
                                 >
+
                             `
                             :
                             `
+
                                 <div style="
                                     height:190px;
                                     display:flex;
@@ -332,93 +552,183 @@ function renderProducts(products) {
                                 ">
                                     No Image
                                 </div>
+
                             `
                     }
+
 
                     <div class="product-info">
 
                         <h3>
                             ${escapeHTML(
-                                product.name
+                                product.name ||
+                                "Unnamed Product"
                             )}
                         </h3>
 
-                        <p>
-                            ID:
-                            ${product.productId}
-                        </p>
 
                         <p>
-                            Category:
+                            <strong>ID:</strong>
                             ${escapeHTML(
-                                product.category
+                                product.productId ?? "-"
                             )}
                         </p>
 
+
                         <p>
-                            Price:
+                            <strong>Category:</strong>
+                            ${escapeHTML(
+                                product.category || "-"
+                            )}
+                        </p>
+
+
+                        <p>
+                            <strong>Price:</strong>
                             ₹${Number(
                                 product.price || 0
                             ).toFixed(2)}
                         </p>
 
+
                         <p>
-                            Rating:
-                            ${product.rating || 0}
+                            <strong>Dimensions:</strong>
+                            ${escapeHTML(
+                                product.dimensions || "-"
+                            )}
                         </p>
+
+
+                        <p>
+                            <strong>Shape:</strong>
+                            ${escapeHTML(
+                                product.shape || "-"
+                            )}
+                        </p>
+
+
+                        <p>
+                            <strong>Colour:</strong>
+                            ${escapeHTML(
+                                product.colour || "-"
+                            )}
+                        </p>
+
+
+                        <p>
+                            <strong>Material:</strong>
+                            ${escapeHTML(
+                                product.material || "-"
+                            )}
+                        </p>
+
+
+                        <p>
+                            <strong>MOQ:</strong>
+                            ${escapeHTML(
+                                product.moq ?? "-"
+                            )}
+                        </p>
+
+
+                        <p>
+                            <strong>Customization:</strong>
+                            ${escapeHTML(
+                                product.customization || "-"
+                            )}
+                        </p>
+
+
+                        <p>
+                            <strong>Rating:</strong>
+                            ${escapeHTML(
+                                product.rating ?? 0
+                            )}
+                        </p>
+
 
                         ${
                             product.badge
                                 ? `
+
                                     <p>
-                                        Badge:
+                                        <strong>Badge:</strong>
                                         ${escapeHTML(
                                             product.badge
                                         )}
                                     </p>
+
                                 `
                                 : ""
                         }
 
-                        <div>
+
+                        <div
+                            style="
+                                margin-top:10px;
+                                display:flex;
+                                gap:8px;
+                                flex-wrap:wrap;
+                            "
+                        >
 
                             ${
                                 product.newArrival
                                     ? `
+
                                         <span class="status-active">
                                             New Arrival
                                         </span>
+
                                     `
                                     : ""
                             }
 
+
                             ${
                                 product.bestSeller
                                     ? `
+
                                         <span class="status-active">
                                             Best Seller
                                         </span>
+
                                     `
                                     : ""
                             }
 
                         </div>
 
+
                         <div class="product-actions">
 
-                            <button
-                                class="edit-btn"
-                                onclick="editProduct('${product._id}')"
-                            >
-                                Edit
-                            </button>
+                            ${
+                                Number.isInteger(
+                                    productId
+                                ) &&
+                                productId > 0
+                                    ? `
+
+                                        <button
+                                            type="button"
+                                            class="edit-btn"
+                                            onclick="editProduct(${productId})"
+                                        >
+                                            Edit
+                                        </button>
+
+                                    `
+                                    : ""
+                            }
+
 
                             <button
-                                class="delete-btn"
-                                onclick="deleteProduct('${product._id}')"
-                            >
-                                Delete
-                            </button>
+                            type="button"
+                            class="delete-btn"
+                            onclick="deleteProduct(${Number(product.productId)})"
+                        >
+                            Delete
+                        </button>
 
                         </div>
 
@@ -429,12 +739,13 @@ function renderProducts(products) {
             `;
 
         }).join("");
+
 }
 
 
-// -----------------------------------------------------
-// SEARCH PRODUCTS
-// -----------------------------------------------------
+// =====================================================
+// PRODUCT SEARCH
+// =====================================================
 
 function searchProducts() {
 
@@ -443,14 +754,17 @@ function searchProducts() {
             "productSearch"
         );
 
+
     if (!input) {
         return;
     }
+
 
     const search =
         input.value
             .trim()
             .toLowerCase();
+
 
     if (!search) {
 
@@ -460,6 +774,7 @@ function searchProducts() {
 
         return;
     }
+
 
     const filtered =
         allProducts.filter(product => {
@@ -488,16 +803,44 @@ function searchProducts() {
                     .toLowerCase()
                     .includes(search)
 
+                ||
+
+                String(
+                    product.shape || ""
+                )
+                    .toLowerCase()
+                    .includes(search)
+
+                ||
+
+                String(
+                    product.colour || ""
+                )
+                    .toLowerCase()
+                    .includes(search)
+
+                ||
+
+                String(
+                    product.material || ""
+                )
+                    .toLowerCase()
+                    .includes(search)
+
             );
 
         });
 
-    renderProducts(filtered);
+
+    renderProducts(
+        filtered
+    );
+
 }
 
 
 // =====================================================
-// PRODUCT FORM
+// ADD PRODUCT
 // =====================================================
 
 function prepareAddProduct() {
@@ -507,8 +850,13 @@ function prepareAddProduct() {
     showSectionById(
         "addProductSection"
     );
+
 }
 
+
+// =====================================================
+// RESET PRODUCT FORM
+// =====================================================
 
 function resetProductForm() {
 
@@ -517,204 +865,632 @@ function resetProductForm() {
             "productForm"
         );
 
+
     if (form) {
+
         form.reset();
+
     }
+
 
     const editingId =
         document.getElementById(
             "editingProductId"
         );
 
+
     if (editingId) {
+
         editingId.value = "";
+
     }
+
+
+    const productId =
+        document.getElementById(
+            "productId"
+        );
+
+
+    if (productId) {
+
+        productId.readOnly = false;
+
+    }
+
 
     const title =
         document.getElementById(
             "productFormTitle"
         );
 
+
     if (title) {
+
         title.textContent =
             "Add Product";
+
     }
+
 
     const message =
         document.getElementById(
             "productMessage"
         );
 
+
     if (message) {
+
         message.textContent = "";
+
     }
+
 
     const mainPreview =
         document.getElementById(
             "mainImagePreview"
         );
 
+
     if (mainPreview) {
+
         mainPreview.innerHTML = "";
+
     }
+
 
     const additionalPreview =
         document.getElementById(
             "additionalImagesPreview"
         );
 
+
     if (additionalPreview) {
+
         additionalPreview.innerHTML = "";
+
     }
+
 }
 
 
-// -----------------------------------------------------
+// =====================================================
 // EDIT PRODUCT
-// -----------------------------------------------------
+// =====================================================
 
-async function editProduct(id) {
+async function editProduct(productId) {
 
-    const product =
-        allProducts.find(
-            item => item._id === id
-        );
+    const id =
+        Number(productId);
 
-    if (!product) {
+
+    if (
+        !Number.isInteger(id) ||
+        id <= 0
+    ) {
 
         alert(
-            "Product not found."
+            "Invalid product ID."
         );
 
         return;
     }
 
-    showSectionById(
-        "addProductSection"
-    );
 
-    document.getElementById(
-        "editingProductId"
-    ).value = product._id;
+    try {
 
-    document.getElementById(
-        "productId"
-    ).value =
-        product.productId || "";
+        const response =
+            await fetch(
+                `${API_URL}/api/products/${id}`
+            );
 
-    document.getElementById(
-        "productName"
-    ).value =
-        product.name || "";
 
-    document.getElementById(
-        "productCategory"
-    ).value =
-        product.category || "";
+        const data =
+            await parseResponse(
+                response
+            );
 
-    document.getElementById(
-        "productPrice"
-    ).value =
-        product.price || 0;
 
-    document.getElementById(
-        "productDimensions"
-    ).value =
-        product.dimensions || "";
+        if (!response.ok) {
 
-    document.getElementById(
-        "productRating"
-    ).value =
-        product.rating || 0;
+            throw new Error(
+                data.message ||
+                "Product not found"
+            );
 
-    document.getElementById(
-        "productBadge"
-    ).value =
-        product.badge || "";
+        }
 
-    document.getElementById(
-        "productDescription"
-    ).value =
-        product.description || "";
 
-    document.getElementById(
-        "productNewArrival"
-    ).checked =
-        product.newArrival === true;
+        const product =
+            data.product ||
+            data;
 
-    document.getElementById(
-        "productBestSeller"
-    ).checked =
-        product.bestSeller === true;
 
-    document.getElementById(
-        "productFormTitle"
-    ).textContent =
-        "Edit Product";
+        if (!product) {
 
-    const preview =
+            throw new Error(
+                "Product data not found"
+            );
+
+        }
+
+
+        showSectionById(
+            "addProductSection"
+        );
+
+
+        // ---------------------------------------------
+        // EDITING ID
+        // ---------------------------------------------
+
         document.getElementById(
-            "mainImagePreview"
+            "editingProductId"
+        ).value =
+            product.productId || id;
+
+
+        // ---------------------------------------------
+        // PRODUCT ID
+        // ---------------------------------------------
+
+        const productIdInput =
+            document.getElementById(
+                "productId"
+            );
+
+
+        if (productIdInput) {
+
+            productIdInput.value =
+                product.productId || id;
+
+            productIdInput.readOnly =
+                true;
+
+        }
+
+
+        // ---------------------------------------------
+        // BASIC FIELDS
+        // ---------------------------------------------
+
+        document.getElementById(
+            "productName"
+        ).value =
+            product.name || "";
+
+
+        document.getElementById(
+            "productCategory"
+        ).value =
+            product.category || "";
+
+
+        document.getElementById(
+            "productPrice"
+        ).value =
+            product.price ?? "";
+
+
+        document.getElementById(
+            "productDimensions"
+        ).value =
+            product.dimensions || "";
+
+
+        // ---------------------------------------------
+        // SHAPE
+        // ---------------------------------------------
+
+        document.getElementById(
+            "productShape"
+        ).value =
+            product.shape || "";
+
+
+        // ---------------------------------------------
+        // COLOUR
+        // ---------------------------------------------
+
+        document.getElementById(
+            "productColour"
+        ).value =
+            product.colour || "";
+
+
+        // ---------------------------------------------
+        // MATERIAL
+        // ---------------------------------------------
+
+        document.getElementById(
+            "productMaterial"
+        ).value =
+            product.material || "";
+
+
+        // ---------------------------------------------
+        // MOQ
+        // ---------------------------------------------
+
+        document.getElementById(
+            "productMOQ"
+        ).value =
+            product.moq ?? 1;
+
+
+        // ---------------------------------------------
+        // CUSTOMIZATION
+        // ---------------------------------------------
+
+        document.getElementById(
+            "productCustomization"
+        ).value =
+            product.customization || "";
+
+
+        // ---------------------------------------------
+        // RATING
+        // ---------------------------------------------
+
+        document.getElementById(
+            "productRating"
+        ).value =
+            product.rating ?? 0;
+
+
+        // ---------------------------------------------
+        // BADGE
+        // ---------------------------------------------
+
+        document.getElementById(
+            "productBadge"
+        ).value =
+            product.badge || "";
+
+
+        // ---------------------------------------------
+        // DESCRIPTION
+        // ---------------------------------------------
+
+        document.getElementById(
+            "productDescription"
+        ).value =
+            product.description || "";
+
+
+        // ---------------------------------------------
+        // NEW ARRIVAL
+        // ---------------------------------------------
+
+        document.getElementById(
+            "productNewArrival"
+        ).checked =
+            product.newArrival === true;
+
+
+        // ---------------------------------------------
+        // BEST SELLER
+        // ---------------------------------------------
+
+        document.getElementById(
+            "productBestSeller"
+        ).checked =
+            product.bestSeller === true;
+
+
+        // ---------------------------------------------
+        // FORM TITLE
+        // ---------------------------------------------
+
+        document.getElementById(
+            "productFormTitle"
+        ).textContent =
+            "Edit Product";
+
+
+        // ---------------------------------------------
+        // MAIN IMAGE PREVIEW
+        // ---------------------------------------------
+
+        const mainPreview =
+            document.getElementById(
+                "mainImagePreview"
+            );
+
+
+        const mainImage =
+            product.image ||
+            (
+                Array.isArray(
+                    product.images
+                ) &&
+                product.images.length
+                    ? product.images[0]
+                    : ""
+            );
+
+
+        if (
+            mainPreview &&
+            mainImage
+        ) {
+
+            mainPreview.innerHTML = `
+
+                <p>Current Image:</p>
+
+                <img
+                    src="${escapeHTML(
+                        getImageUrl(mainImage)
+                    )}"
+                    alt="${escapeHTML(
+                        product.name ||
+                        "Product"
+                    )}"
+                    style="
+                        width:150px;
+                        height:150px;
+                        object-fit:cover;
+                        border-radius:8px;
+                    "
+                >
+
+            `;
+
+        }
+
+
+        // ---------------------------------------------
+        // ADDITIONAL IMAGE PREVIEW
+        // ---------------------------------------------
+
+        const additionalPreview =
+            document.getElementById(
+                "additionalImagesPreview"
+            );
+
+
+        if (additionalPreview) {
+
+            additionalPreview.innerHTML = "";
+
+
+            if (
+                Array.isArray(
+                    product.images
+                )
+            ) {
+
+                product.images.forEach(
+                    image => {
+
+                        if (!image) {
+                            return;
+                        }
+
+
+                        const img =
+                            document.createElement(
+                                "img"
+                            );
+
+
+                        img.src =
+                            getImageUrl(
+                                image
+                            );
+
+
+                        img.alt =
+                            "Product image";
+
+
+                        img.style.width =
+                            "120px";
+
+
+                        img.style.height =
+                            "120px";
+
+
+                        img.style.objectFit =
+                            "cover";
+
+
+                        img.style.borderRadius =
+                            "8px";
+
+
+                        additionalPreview.appendChild(
+                            img
+                        );
+
+                    }
+                );
+
+            }
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Edit product error:",
+            error
         );
 
-    const image =
-        product.image ||
-        (
-            product.images &&
-            product.images.length
-                ? product.images[0]
-                : ""
+
+        alert(
+            error.message ||
+            "Unable to load product."
         );
 
-    if (image && preview) {
-
-        preview.innerHTML = `
-            <p>Current Image:</p>
-            <img
-                src="${getImageUrl(image)}"
-                alt="${escapeHTML(
-                    product.name
-                )}"
-            >
-        `;
     }
+
 }
 
 
-// -----------------------------------------------------
-// SAVE PRODUCT
-// -----------------------------------------------------
+// =====================================================
+// SAVE / UPDATE PRODUCT
+// =====================================================
 
 async function saveProduct(event) {
 
     event.preventDefault();
 
-    const editingId =
+
+    const editingInput =
         document.getElementById(
             "editingProductId"
-        ).value;
+        );
+
+
+    const editingId =
+        editingInput
+            ? editingInput.value.trim()
+            : "";
+
+
+    let productId =
+        null;
+
+
+    // ---------------------------------------------
+    // UPDATE ID VALIDATION
+    // ---------------------------------------------
+
+    if (editingId) {
+
+        productId =
+            Number(editingId);
+
+
+        if (
+            !Number.isInteger(
+                productId
+            ) ||
+            productId <= 0
+        ) {
+
+            alert(
+                "Invalid product ID."
+            );
+
+            return;
+
+        }
+
+    }
+
 
     const message =
         document.getElementById(
             "productMessage"
         );
 
-    message.textContent =
-        editingId
-            ? "Updating product..."
-            : "Adding product...";
+
+    if (message) {
+
+        message.style.color =
+            "#0d3328";
+
+        message.textContent =
+            editingId
+                ? "Updating product..."
+                : "Adding product...";
+
+    }
+
 
     try {
 
         const formData =
             new FormData();
 
-        formData.append(
-            "productId",
+
+        // ---------------------------------------------
+        // PRODUCT ID
+        // ---------------------------------------------
+
+        const productIdInput =
             document.getElementById(
                 "productId"
-            ).value
-        );
+            );
+
+
+        const enteredProductId =
+            productIdInput
+                ? productIdInput.value.trim()
+                : "";
+
+
+        if (editingId) {
+
+            formData.append(
+                "productId",
+                String(productId)
+            );
+
+        } else {
+
+            if (!enteredProductId) {
+
+                if (message) {
+
+                    message.style.color =
+                        "#b33";
+
+                    message.textContent =
+                        "Product ID is required.";
+
+                }
+
+                return;
+
+            }
+
+
+            const newProductId =
+                Number(
+                    enteredProductId
+                );
+
+
+            if (
+                !Number.isInteger(
+                    newProductId
+                ) ||
+                newProductId <= 0
+            ) {
+
+                if (message) {
+
+                    message.style.color =
+                        "#b33";
+
+                    message.textContent =
+                        "Product ID must be a valid number.";
+
+                }
+
+                return;
+
+            }
+
+
+            formData.append(
+                "productId",
+                String(newProductId)
+            );
+
+        }
+
+
+        // ---------------------------------------------
+        // PRODUCT FIELDS
+        // ---------------------------------------------
 
         formData.append(
             "name",
@@ -723,12 +1499,14 @@ async function saveProduct(event) {
             ).value.trim()
         );
 
+
         formData.append(
             "category",
             document.getElementById(
                 "productCategory"
             ).value.trim()
         );
+
 
         formData.append(
             "price",
@@ -737,12 +1515,54 @@ async function saveProduct(event) {
             ).value
         );
 
+
         formData.append(
             "dimensions",
             document.getElementById(
                 "productDimensions"
             ).value.trim()
         );
+
+
+        formData.append(
+            "shape",
+            document.getElementById(
+                "productShape"
+            ).value.trim()
+        );
+
+
+        formData.append(
+            "colour",
+            document.getElementById(
+                "productColour"
+            ).value.trim()
+        );
+
+
+        formData.append(
+            "material",
+            document.getElementById(
+                "productMaterial"
+            ).value.trim()
+        );
+
+
+        formData.append(
+            "moq",
+            document.getElementById(
+                "productMOQ"
+            ).value
+        );
+
+
+        formData.append(
+            "customization",
+            document.getElementById(
+                "productCustomization"
+            ).value.trim()
+        );
+
 
         formData.append(
             "rating",
@@ -751,12 +1571,14 @@ async function saveProduct(event) {
             ).value
         );
 
+
         formData.append(
             "badge",
             document.getElementById(
                 "productBadge"
             ).value.trim()
         );
+
 
         formData.append(
             "description",
@@ -765,66 +1587,105 @@ async function saveProduct(event) {
             ).value.trim()
         );
 
+
         formData.append(
             "newArrival",
             document.getElementById(
                 "productNewArrival"
             ).checked
+                ? "true"
+                : "false"
         );
+
 
         formData.append(
             "bestSeller",
             document.getElementById(
                 "productBestSeller"
             ).checked
+                ? "true"
+                : "false"
         );
 
+
+        // ---------------------------------------------
+        // MAIN IMAGE
+        // ---------------------------------------------
 
         const mainImage =
             document.getElementById(
                 "productImage"
             );
 
-        if (
-                mainImage.files &&
-                mainImage.files.length
-            ) {
-                formData.append(
-                    "mainImage",
-                    mainImage.files[0]
-                );
-            }
 
+        if (
+            mainImage &&
+            mainImage.files &&
+            mainImage.files.length > 0
+        ) {
+
+            formData.append(
+                "mainImage",
+                mainImage.files[0]
+            );
+
+        }
+
+
+        // ---------------------------------------------
+        // ADDITIONAL IMAGES
+        //
+        // MUST MATCH:
+        // upload.fields([
+        //   { name: "mainImage" },
+        //   { name: "additionalImages" }
+        // ])
+        // ---------------------------------------------
 
         const additionalImages =
             document.getElementById(
                 "productImages"
             );
 
+
         if (
-                additionalImages.files &&
-                additionalImages.files.length
+            additionalImages &&
+            additionalImages.files &&
+            additionalImages.files.length > 0
+        ) {
+
+            for (
+                const file of
+                additionalImages.files
             ) {
 
-                for (
-                    const file of additionalImages.files
-                ) {
+                formData.append(
+                    "additionalImages",
+                    file
+                );
 
-                    formData.append(
-                        "additionalImages",
-                        file
-                    );
-                }
             }
 
+        }
+
+
+        // ---------------------------------------------
+        // URL
+        // ---------------------------------------------
+
+        const url =
+            editingId
+                ? `${API_URL}/api/products/${productId}`
+                : `${API_URL}/api/products`;
+
+
+        // ---------------------------------------------
+        // REQUEST
+        // ---------------------------------------------
 
         const response =
             await fetch(
-
-                editingId
-                    ? `${API_URL}/api/products/${editingId}`
-                    : `${API_URL}/api/products`,
-
+                url,
                 {
                     method:
                         editingId
@@ -837,34 +1698,36 @@ async function saveProduct(event) {
                     body:
                         formData
                 }
-
             );
 
 
         const data =
-            await response.json();
+            await parseResponse(
+                response
+            );
 
 
         if (!response.ok) {
 
-            message.style.color =
-                "#b33";
-
-            message.textContent =
+            throw new Error(
                 data.message ||
-                "Product operation failed.";
+                "Product operation failed."
+            );
 
-            return;
         }
 
 
-        message.style.color =
-            "#0d3328";
+        if (message) {
 
-        message.textContent =
-            editingId
-                ? "Product updated successfully!"
-                : "Product added successfully!";
+            message.style.color =
+                "#0d3328";
+
+            message.textContent =
+                editingId
+                    ? "Product updated successfully!"
+                    : "Product added successfully!";
+
+        }
 
 
         await loadProducts();
@@ -891,30 +1754,73 @@ async function saveProduct(event) {
             error
         );
 
-        message.style.color =
-            "#b33";
 
-        message.textContent =
-            "Unable to connect to server.";
+        if (message) {
+
+            message.style.color =
+                "#b33";
+
+            message.textContent =
+                error.message ||
+                "Unable to connect to server.";
+
+        }
+
     }
+
 }
 
 
-// -----------------------------------------------------
+// =====================================================
 // DELETE PRODUCT
-// -----------------------------------------------------
+// =====================================================
 
-async function deleteProduct(id) {
+// =====================================================
+// DELETE PRODUCT
+// =====================================================
 
+async function deleteProduct(productId) {
+
+    // Convert to number
+    const id = Number(productId);
+
+    // Prevent NaN / invalid values
     if (
-        !confirm(
-            "Are you sure you want to delete this product?"
-        )
+        !Number.isInteger(id) ||
+        id <= 0
     ) {
+
+        console.error(
+            "Invalid product ID received for delete:",
+            productId
+        );
+
+        alert(
+            "Invalid product ID."
+        );
+
         return;
     }
 
+
+    const confirmDelete =
+        confirm(
+            `Are you sure you want to delete product ${id}?`
+        );
+
+
+    if (!confirmDelete) {
+        return;
+    }
+
+
     try {
+
+        console.log(
+            "Deleting product:",
+            id
+        );
+
 
         const response =
             await fetch(
@@ -925,10 +1831,20 @@ async function deleteProduct(id) {
                 }
             );
 
+
         const data =
-            await response.json();
+            await parseResponse(
+                response
+            );
+
 
         if (!response.ok) {
+
+            console.error(
+                "Delete product API error:",
+                data
+            );
+
 
             alert(
                 data.message ||
@@ -938,19 +1854,33 @@ async function deleteProduct(id) {
             return;
         }
 
+
         alert(
             "Product deleted successfully."
         );
 
+
+        // Reload products
         await loadProducts();
+
+
+        // Refresh dashboard statistics
+        await loadDashboardStats();
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Delete product error:",
+            error
+        );
+
 
         alert(
+            error.message ||
             "Unable to connect to server."
         );
+
     }
 }
 
@@ -959,9 +1889,6 @@ async function deleteProduct(id) {
 // HERO SECTION
 // =====================================================
 
-let allHeroes = [];
-
-
 async function loadHeroes() {
 
     const container =
@@ -969,34 +1896,51 @@ async function loadHeroes() {
             "heroesContainer"
         );
 
+
     if (!container) {
         return;
     }
 
+
     container.innerHTML =
         "Loading heroes...";
 
+
     try {
+
+        // IMPORTANT:
+        // Your working backend endpoint is /api/hero
 
         const response =
             await fetch(
-                `${API_URL}/api/heroes`
+                `${API_URL}/api/hero`
             );
 
-        const heroes =
-            await response.json();
+
+        const data =
+            await parseResponse(
+                response
+            );
+
 
         if (!response.ok) {
 
             throw new Error(
-                heroes.message ||
+                data.message ||
                 "Failed to load heroes"
             );
+
         }
 
-        allHeroes = heroes;
 
-        renderHeroes(heroes);
+        allHeroes =
+            getHeroesArray(data);
+
+
+        renderHeroes(
+            allHeroes
+        );
+
 
     } catch (error) {
 
@@ -1005,11 +1949,18 @@ async function loadHeroes() {
             error
         );
 
+
         container.innerHTML =
             "<p>Failed to load heroes.</p>";
+
     }
+
 }
 
+
+// =====================================================
+// RENDER HEROES
+// =====================================================
 
 function renderHeroes(heroes) {
 
@@ -1018,9 +1969,11 @@ function renderHeroes(heroes) {
             "heroesContainer"
         );
 
+
     if (!container) {
         return;
     }
+
 
     if (!heroes.length) {
 
@@ -1028,7 +1981,9 @@ function renderHeroes(heroes) {
             "<p>No heroes found.</p>";
 
         return;
+
     }
+
 
     container.innerHTML =
         heroes.map(hero => {
@@ -1038,6 +1993,7 @@ function renderHeroes(heroes) {
                     hero.image
                 );
 
+
             return `
 
                 <div class="hero-card">
@@ -1045,15 +2001,19 @@ function renderHeroes(heroes) {
                     ${
                         image
                             ? `
+
                                 <img
-                                    src="${image}"
+                                    src="${escapeHTML(image)}"
                                     alt="${escapeHTML(
-                                        hero.title
+                                        hero.title ||
+                                        "Hero"
                                     )}"
                                 >
+
                             `
                             :
                             `
+
                                 <div style="
                                     height:180px;
                                     display:flex;
@@ -1063,49 +2023,75 @@ function renderHeroes(heroes) {
                                 ">
                                     No Image
                                 </div>
+
                             `
                     }
+
 
                     <div class="hero-card-content">
 
                         <h3>
                             ${escapeHTML(
-                                hero.title
+                                hero.title ||
+                                ""
                             )}
                         </h3>
 
-                        <p>
-                            ${escapeHTML(
-                                hero.subtitle || ""
-                            )}
-                        </p>
 
                         <p>
                             ${escapeHTML(
-                                hero.description || ""
+                                hero.subtitle ||
+                                ""
                             )}
                         </p>
+
+
+                        <p>
+                            ${escapeHTML(
+                                hero.description ||
+                                ""
+                            )}
+                        </p>
+
+
+                        <p>
+                            Order:
+                            ${escapeHTML(
+                                hero.order ?? 0
+                            )}
+                        </p>
+
 
                         <span class="hero-status">
+
                             ${
                                 hero.active
                                     ? "Active"
                                     : "Inactive"
                             }
+
                         </span>
+
 
                         <div class="product-actions">
 
                             <button
+                                type="button"
                                 class="edit-btn"
-                                onclick="editHero('${hero._id}')"
+                                onclick="editHero('${escapeHTML(
+                                    hero._id || ""
+                                )}')"
                             >
                                 Edit
                             </button>
 
+
                             <button
+                                type="button"
                                 class="delete-btn"
-                                onclick="deleteHero('${hero._id}')"
+                                onclick="deleteHero('${escapeHTML(
+                                    hero._id || ""
+                                )}')"
                             >
                                 Delete
                             </button>
@@ -1119,12 +2105,13 @@ function renderHeroes(heroes) {
             `;
 
         }).join("");
+
 }
 
 
-// -----------------------------------------------------
+// =====================================================
 // ADD HERO
-// -----------------------------------------------------
+// =====================================================
 
 function prepareAddHero() {
 
@@ -1133,8 +2120,13 @@ function prepareAddHero() {
     showSectionById(
         "heroSection"
     );
+
 }
 
+
+// =====================================================
+// RESET HERO
+// =====================================================
 
 function resetHeroForm() {
 
@@ -1143,51 +2135,107 @@ function resetHeroForm() {
             "heroForm"
         );
 
+
     if (form) {
         form.reset();
     }
 
-    document.getElementById(
-        "editingHeroId"
-    ).value = "";
 
-    document.getElementById(
-        "heroActive"
-    ).checked = true;
+    const editing =
+        document.getElementById(
+            "editingHeroId"
+        );
 
-    document.getElementById(
-        "heroOrder"
-    ).value = 1;
 
-    document.getElementById(
-        "heroButtonText"
-    ).value = "Shop Now";
+    if (editing) {
+        editing.value = "";
+    }
 
-    document.getElementById(
-        "heroButtonLink"
-    ).value =
-        "index.html#gallery";
 
-    document.getElementById(
-        "heroImagePreview"
-    ).innerHTML = "";
+    const active =
+        document.getElementById(
+            "heroActive"
+        );
 
-    document.getElementById(
-        "heroMessage"
-    ).textContent = "";
+
+    if (active) {
+        active.checked = true;
+    }
+
+
+    const order =
+        document.getElementById(
+            "heroOrder"
+        );
+
+
+    if (order) {
+        order.value = 1;
+    }
+
+
+    const buttonText =
+        document.getElementById(
+            "heroButtonText"
+        );
+
+
+    if (buttonText) {
+        buttonText.value =
+            "Shop Now";
+    }
+
+
+    const buttonLink =
+        document.getElementById(
+            "heroButtonLink"
+        );
+
+
+    if (buttonLink) {
+
+        buttonLink.value =
+            "index.html#gallery";
+
+    }
+
+
+    const preview =
+        document.getElementById(
+            "heroImagePreview"
+        );
+
+
+    if (preview) {
+        preview.innerHTML = "";
+    }
+
+
+    const message =
+        document.getElementById(
+            "heroMessage"
+        );
+
+
+    if (message) {
+        message.textContent = "";
+    }
+
 }
 
 
-// -----------------------------------------------------
+// =====================================================
 // EDIT HERO
-// -----------------------------------------------------
+// =====================================================
 
 function editHero(id) {
 
     const hero =
         allHeroes.find(
-            item => item._id === id
+            item =>
+                item._id === id
         );
+
 
     if (!hero) {
 
@@ -1196,36 +2244,45 @@ function editHero(id) {
         );
 
         return;
+
     }
+
 
     showSectionById(
         "heroSection"
     );
+
 
     document.getElementById(
         "editingHeroId"
     ).value =
         hero._id;
 
+
     document.getElementById(
         "heroTitle"
     ).value =
         hero.title || "";
+
 
     document.getElementById(
         "heroSubtitle"
     ).value =
         hero.subtitle || "";
 
+
     document.getElementById(
         "heroDescription"
     ).value =
         hero.description || "";
 
+
     document.getElementById(
         "heroButtonText"
     ).value =
-        hero.buttonText || "Shop Now";
+        hero.buttonText ||
+        "Shop Now";
+
 
     document.getElementById(
         "heroButtonLink"
@@ -1233,10 +2290,12 @@ function editHero(id) {
         hero.buttonLink ||
         "index.html#gallery";
 
+
     document.getElementById(
         "heroOrder"
     ).value =
         hero.order || 1;
+
 
     document.getElementById(
         "heroActive"
@@ -1244,54 +2303,76 @@ function editHero(id) {
         hero.active !== false;
 
 
-    if (hero.image) {
-
+    const preview =
         document.getElementById(
             "heroImagePreview"
-        ).innerHTML = `
+        );
+
+
+    if (
+        preview &&
+        hero.image
+    ) {
+
+        preview.innerHTML = `
 
             <p>Current Image:</p>
 
             <img
-                src="${getImageUrl(hero.image)}"
+                src="${escapeHTML(
+                    getImageUrl(
+                        hero.image
+                    )
+                )}"
                 alt="${escapeHTML(
-                    hero.title
+                    hero.title ||
+                    "Hero"
                 )}"
             >
 
         `;
+
     }
+
 }
 
 
-// -----------------------------------------------------
+// =====================================================
 // SAVE HERO
-// -----------------------------------------------------
+// =====================================================
 
 async function saveHero(event) {
 
     event.preventDefault();
+
 
     const editingId =
         document.getElementById(
             "editingHeroId"
         ).value;
 
+
     const message =
         document.getElementById(
             "heroMessage"
         );
 
-    message.textContent =
-        editingId
-            ? "Updating hero..."
-            : "Uploading hero...";
+
+    if (message) {
+
+        message.textContent =
+            editingId
+                ? "Updating hero..."
+                : "Adding hero...";
+
+    }
 
 
     try {
 
         const formData =
             new FormData();
+
 
         formData.append(
             "title",
@@ -1300,12 +2381,14 @@ async function saveHero(event) {
             ).value.trim()
         );
 
+
         formData.append(
             "subtitle",
             document.getElementById(
                 "heroSubtitle"
             ).value.trim()
         );
+
 
         formData.append(
             "description",
@@ -1314,12 +2397,14 @@ async function saveHero(event) {
             ).value.trim()
         );
 
+
         formData.append(
             "buttonText",
             document.getElementById(
                 "heroButtonText"
             ).value.trim()
         );
+
 
         formData.append(
             "buttonLink",
@@ -1328,6 +2413,7 @@ async function saveHero(event) {
             ).value.trim()
         );
 
+
         formData.append(
             "order",
             document.getElementById(
@@ -1335,11 +2421,14 @@ async function saveHero(event) {
             ).value
         );
 
+
         formData.append(
             "active",
             document.getElementById(
                 "heroActive"
             ).checked
+                ? "true"
+                : "false"
         );
 
 
@@ -1348,7 +2437,9 @@ async function saveHero(event) {
                 "heroImage"
             );
 
+
         if (
+            image &&
             image.files &&
             image.files.length
         ) {
@@ -1357,16 +2448,19 @@ async function saveHero(event) {
                 "image",
                 image.files[0]
             );
+
         }
+
+
+        const url =
+            editingId
+                ? `${API_URL}/api/hero/${editingId}`
+                : `${API_URL}/api/hero`;
 
 
         const response =
             await fetch(
-
-                editingId
-                    ? `${API_URL}/api/heroes/${editingId}`
-                    : `${API_URL}/api/heroes`,
-
+                url,
                 {
                     method:
                         editingId
@@ -1383,42 +2477,35 @@ async function saveHero(event) {
 
 
         const data =
-            await response.json();
+            await parseResponse(
+                response
+            );
 
 
         if (!response.ok) {
 
-            message.style.color =
-                "#b33";
-
-            message.textContent =
+            throw new Error(
                 data.message ||
-                "Hero operation failed.";
+                "Hero operation failed."
+            );
 
-            return;
         }
 
 
-        message.style.color =
-            "#0d3328";
+        if (message) {
 
-        message.textContent =
-            editingId
-                ? "Hero updated successfully!"
-                : "Hero added successfully!";
+            message.style.color =
+                "#0d3328";
+
+            message.textContent =
+                editingId
+                    ? "Hero updated successfully!"
+                    : "Hero added successfully!";
+
+        }
 
 
         await loadHeroes();
-
-
-        setTimeout(
-            () => {
-
-                resetHeroForm();
-
-            },
-            700
-        );
 
 
     } catch (error) {
@@ -1428,18 +2515,26 @@ async function saveHero(event) {
             error
         );
 
-        message.style.color =
-            "#b33";
 
-        message.textContent =
-            "Unable to connect to server.";
+        if (message) {
+
+            message.style.color =
+                "#b33";
+
+            message.textContent =
+                error.message ||
+                "Unable to connect to server.";
+
+        }
+
     }
+
 }
 
 
-// -----------------------------------------------------
+// =====================================================
 // DELETE HERO
-// -----------------------------------------------------
+// =====================================================
 
 async function deleteHero(id) {
 
@@ -1451,53 +2546,68 @@ async function deleteHero(id) {
         return;
     }
 
+
     try {
 
         const response =
             await fetch(
-                `${API_URL}/api/heroes/${id}`,
+                `${API_URL}/api/hero/${id}`,
                 {
                     method: "DELETE",
-                    headers: authHeaders()
+                    headers:
+                        authHeaders()
                 }
             );
 
+
         const data =
-            await response.json();
+            await parseResponse(
+                response
+            );
+
 
         if (!response.ok) {
 
-            alert(
+            throw new Error(
                 data.message ||
                 "Failed to delete hero."
             );
 
-            return;
         }
+
 
         alert(
             "Hero deleted successfully."
         );
 
-        loadHeroes();
+
+        await loadHeroes();
+
+
+        loadDashboardStats();
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Delete hero error:",
+            error
+        );
+
 
         alert(
+            error.message ||
             "Unable to connect to server."
         );
+
     }
+
 }
 
 
 // =====================================================
 // SCROLL CATEGORIES
 // =====================================================
-
-let allScrollCategories = [];
-
 
 async function loadScrollCategories() {
 
@@ -1506,12 +2616,15 @@ async function loadScrollCategories() {
             "scrollCategoriesContainer"
         );
 
+
     if (!container) {
         return;
     }
 
+
     container.innerHTML =
         "Loading scroll categories...";
+
 
     try {
 
@@ -1520,124 +2633,36 @@ async function loadScrollCategories() {
                 `${API_URL}/api/scroll-categories`
             );
 
-        const categories =
-            await response.json();
+
+        const data =
+            await parseResponse(
+                response
+            );
+
 
         if (!response.ok) {
 
             throw new Error(
-                categories.message ||
+                data.message ||
                 "Failed to load scroll categories"
             );
+
         }
+
 
         allScrollCategories =
-            categories;
+            Array.isArray(data)
+                ? data
+                : Array.isArray(
+                    data.categories
+                )
+                    ? data.categories
+                    : [];
 
 
-        if (!categories.length) {
-
-            container.innerHTML =
-                "<p>No scroll categories found.</p>";
-
-            return;
-        }
-
-
-        container.innerHTML =
-            categories.map(category => {
-
-                const image =
-                    getImageUrl(
-                        category.image
-                    );
-
-                return `
-
-                    <div class="hero-card">
-
-                        ${
-                            image
-                                ? `
-                                    <img
-                                        src="${image}"
-                                        alt="${escapeHTML(
-                                            category.title
-                                        )}"
-                                    >
-                                `
-                                :
-                                `
-                                    <div style="
-                                        height:180px;
-                                        display:flex;
-                                        align-items:center;
-                                        justify-content:center;
-                                        background:#eee;
-                                    ">
-                                        No Image
-                                    </div>
-                                `
-                        }
-
-                        <div class="hero-card-content">
-
-                            <h3>
-                                ${escapeHTML(
-                                    category.title
-                                )}
-                            </h3>
-
-                            <p>
-                                Count:
-                                ${category.count || 0}
-                            </p>
-
-                            <p>
-                                Order:
-                                ${category.order || 0}
-                            </p>
-
-                            <p>
-                                Link:
-                                ${escapeHTML(
-                                    category.link || "#"
-                                )}
-                            </p>
-
-                            <span class="hero-status">
-                                ${
-                                    category.active
-                                        ? "Active"
-                                        : "Inactive"
-                                }
-                            </span>
-
-                            <div class="product-actions">
-
-                                <button
-                                    class="edit-btn"
-                                    onclick="editScrollCategory('${category._id}')"
-                                >
-                                    Edit
-                                </button>
-
-                                <button
-                                    class="delete-btn"
-                                    onclick="deleteScrollCategory('${category._id}')"
-                                >
-                                    Delete
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                `;
-
-            }).join("");
+        renderScrollCategories(
+            allScrollCategories
+        );
 
 
     } catch (error) {
@@ -1647,11 +2672,170 @@ async function loadScrollCategories() {
             error
         );
 
+
         container.innerHTML =
             "<p>Failed to load scroll categories.</p>";
+
     }
+
 }
 
+
+// =====================================================
+// RENDER SCROLL CATEGORIES
+// =====================================================
+
+function renderScrollCategories(
+    categories
+) {
+
+    const container =
+        document.getElementById(
+            "scrollCategoriesContainer"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    if (!categories.length) {
+
+        container.innerHTML =
+            "<p>No scroll categories found.</p>";
+
+        return;
+    }
+
+
+    container.innerHTML =
+        categories.map(category => {
+
+            const image =
+                getImageUrl(
+                    category.image
+                );
+
+
+            return `
+
+                <div class="hero-card">
+
+                    ${
+                        image
+                            ? `
+
+                                <img
+                                    src="${escapeHTML(image)}"
+                                    alt="${escapeHTML(
+                                        category.title ||
+                                        "Category"
+                                    )}"
+                                >
+
+                            `
+                            :
+                            `
+
+                                <div style="
+                                    height:180px;
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    background:#eee;
+                                ">
+                                    No Image
+                                </div>
+
+                            `
+                    }
+
+
+                    <div class="hero-card-content">
+
+                        <h3>
+                            ${escapeHTML(
+                                category.title ||
+                                ""
+                            )}
+                        </h3>
+
+
+                        <p>
+                            Count:
+                            ${escapeHTML(
+                                category.count ?? 0
+                            )}
+                        </p>
+
+
+                        <p>
+                            Order:
+                            ${escapeHTML(
+                                category.order ?? 0
+                            )}
+                        </p>
+
+
+                        <p>
+                            Link:
+                            ${escapeHTML(
+                                category.link || "#"
+                            )}
+                        </p>
+
+
+                        <span class="hero-status">
+
+                            ${
+                                category.active
+                                    ? "Active"
+                                    : "Inactive"
+                            }
+
+                        </span>
+
+
+                        <div class="product-actions">
+
+                            <button
+                                type="button"
+                                class="edit-btn"
+                                onclick="editScrollCategory('${escapeHTML(
+                                    category._id || ""
+                                )}')"
+                            >
+                                Edit
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="delete-btn"
+                                onclick="deleteScrollCategory('${escapeHTML(
+                                    category._id || ""
+                                )}')"
+                            >
+                                Delete
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+}
+
+
+// =====================================================
+// ADD SCROLL CATEGORY
+// =====================================================
 
 function prepareAddScrollCategory() {
 
@@ -1660,8 +2844,13 @@ function prepareAddScrollCategory() {
     showSectionById(
         "scrollCategorySection"
     );
+
 }
 
+
+// =====================================================
+// RESET SCROLL CATEGORY
+// =====================================================
 
 function resetScrollCategoryForm() {
 
@@ -1670,42 +2859,56 @@ function resetScrollCategoryForm() {
             "scrollCategoryForm"
         );
 
+
     if (form) {
         form.reset();
     }
+
 
     document.getElementById(
         "editingScrollCategoryId"
     ).value = "";
 
+
     document.getElementById(
         "scrollCategoryActive"
     ).checked = true;
+
 
     document.getElementById(
         "scrollCategoryOrder"
     ).value = 1;
 
+
     document.getElementById(
         "scrollCategoryCount"
     ).value = 0;
+
 
     document.getElementById(
         "scrollCategoryImagePreview"
     ).innerHTML = "";
 
+
     document.getElementById(
         "scrollCategoryMessage"
     ).textContent = "";
+
 }
 
+
+// =====================================================
+// EDIT SCROLL CATEGORY
+// =====================================================
 
 function editScrollCategory(id) {
 
     const category =
         allScrollCategories.find(
-            item => item._id === id
+            item =>
+                item._id === id
         );
+
 
     if (!category) {
 
@@ -1714,32 +2917,39 @@ function editScrollCategory(id) {
         );
 
         return;
+
     }
+
 
     document.getElementById(
         "editingScrollCategoryId"
     ).value =
         category._id;
 
+
     document.getElementById(
         "scrollCategoryTitle"
     ).value =
         category.title || "";
 
+
     document.getElementById(
         "scrollCategoryCount"
     ).value =
-        category.count || 0;
+        category.count ?? 0;
+
 
     document.getElementById(
         "scrollCategoryLink"
     ).value =
         category.link || "";
 
+
     document.getElementById(
         "scrollCategoryOrder"
     ).value =
-        category.order || 1;
+        category.order ?? 1;
+
 
     document.getElementById(
         "scrollCategoryActive"
@@ -1747,48 +2957,65 @@ function editScrollCategory(id) {
         category.active !== false;
 
 
-    if (category.image) {
-
+    const preview =
         document.getElementById(
             "scrollCategoryImagePreview"
-        ).innerHTML = `
+        );
+
+
+    if (
+        preview &&
+        category.image
+    ) {
+
+        preview.innerHTML = `
 
             <p>Current Image:</p>
 
             <img
-                src="${getImageUrl(
-                    category.image
+                src="${escapeHTML(
+                    getImageUrl(
+                        category.image
+                    )
                 )}"
                 alt="${escapeHTML(
-                    category.title
+                    category.title ||
+                    "Category"
                 )}"
             >
 
         `;
+
     }
+
 
     showSectionById(
         "scrollCategorySection"
     );
+
 }
 
 
-async function saveScrollCategory(event) {
+// =====================================================
+// SAVE SCROLL CATEGORY
+// =====================================================
+
+async function saveScrollCategory(
+    event
+) {
 
     event.preventDefault();
+
 
     const editingId =
         document.getElementById(
             "editingScrollCategoryId"
         ).value;
 
-    const imageInput =
-        document.getElementById(
-            "scrollCategoryImage"
-        );
 
     const formData =
         new FormData();
+
 
     formData.append(
         "title",
@@ -1797,12 +3024,14 @@ async function saveScrollCategory(event) {
         ).value.trim()
     );
 
+
     formData.append(
         "count",
         document.getElementById(
             "scrollCategoryCount"
         ).value
     );
+
 
     formData.append(
         "link",
@@ -1811,6 +3040,7 @@ async function saveScrollCategory(event) {
         ).value.trim()
     );
 
+
     formData.append(
         "order",
         document.getElementById(
@@ -1818,15 +3048,25 @@ async function saveScrollCategory(event) {
         ).value
     );
 
+
     formData.append(
         "active",
         document.getElementById(
             "scrollCategoryActive"
         ).checked
+            ? "true"
+            : "false"
     );
 
 
+    const imageInput =
+        document.getElementById(
+            "scrollCategoryImage"
+        );
+
+
     if (
+        imageInput &&
         imageInput.files &&
         imageInput.files.length
     ) {
@@ -1835,6 +3075,7 @@ async function saveScrollCategory(event) {
             "image",
             imageInput.files[0]
         );
+
     }
 
 
@@ -1842,6 +3083,7 @@ async function saveScrollCategory(event) {
         document.getElementById(
             "scrollCategoryMessage"
         );
+
 
     message.textContent =
         editingId
@@ -1870,20 +3112,23 @@ async function saveScrollCategory(event) {
                     body:
                         formData
                 }
+
             );
 
 
         const data =
-            await response.json();
+            await parseResponse(
+                response
+            );
 
 
         if (!response.ok) {
 
-            message.textContent =
+            throw new Error(
                 data.message ||
-                "Category operation failed.";
+                "Category operation failed."
+            );
 
-            return;
         }
 
 
@@ -1895,17 +3140,35 @@ async function saveScrollCategory(event) {
 
         await loadScrollCategories();
 
+
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Scroll category save error:",
+            error
+        );
+
+
+        message.style.color =
+            "#b33";
+
 
         message.textContent =
+            error.message ||
             "Unable to connect to server.";
+
     }
+
 }
 
 
-async function deleteScrollCategory(id) {
+// =====================================================
+// DELETE SCROLL CATEGORY
+// =====================================================
+
+async function deleteScrollCategory(
+    id
+) {
 
     if (
         !confirm(
@@ -1915,6 +3178,7 @@ async function deleteScrollCategory(id) {
         return;
     }
 
+
     try {
 
         const response =
@@ -1922,46 +3186,57 @@ async function deleteScrollCategory(id) {
                 `${API_URL}/api/scroll-categories/${id}`,
                 {
                     method: "DELETE",
-                    headers: authHeaders()
+                    headers:
+                        authHeaders()
                 }
             );
 
+
         const data =
-            await response.json();
+            await parseResponse(
+                response
+            );
+
 
         if (!response.ok) {
 
-            alert(
+            throw new Error(
                 data.message ||
                 "Failed to delete category."
             );
 
-            return;
         }
+
 
         alert(
             "Scroll category deleted successfully."
         );
 
-        loadScrollCategories();
+
+        await loadScrollCategories();
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Delete scroll category error:",
+            error
+        );
+
 
         alert(
+            error.message ||
             "Unable to connect to server."
         );
+
     }
+
 }
 
 
 // =====================================================
 // BEST SELLERS
 // =====================================================
-
-let allBestSellers = [];
-
 
 async function loadBestSellerProductOptions() {
 
@@ -1970,9 +3245,11 @@ async function loadBestSellerProductOptions() {
             "bestSellerProduct"
         );
 
+
     if (!select) {
         return;
     }
+
 
     try {
 
@@ -1981,14 +3258,26 @@ async function loadBestSellerProductOptions() {
                 `${API_URL}/api/products`
             );
 
-        const products =
-            await response.json();
+
+        const data =
+            await parseResponse(
+                response
+            );
+
 
         if (!response.ok) {
+
             throw new Error(
+                data.message ||
                 "Failed to load products"
             );
+
         }
+
+
+        const products =
+            getProductsArray(data);
+
 
         select.innerHTML =
             `
@@ -1998,39 +3287,50 @@ async function loadBestSellerProductOptions() {
             `;
 
 
-        products.forEach(product => {
+        products.forEach(
+            product => {
 
-            const option =
-                document.createElement(
-                    "option"
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    product.productId;
+
+
+                option.textContent =
+                    `${product.productId} - ${product.name}`;
+
+
+                option.dataset.name =
+                    product.name || "";
+
+
+                option.dataset.price =
+                    product.price || 0;
+
+
+                option.dataset.image =
+                    product.image ||
+                    (
+                        Array.isArray(
+                            product.images
+                        ) &&
+                        product.images.length
+                            ? product.images[0]
+                            : ""
+                    );
+
+
+                select.appendChild(
+                    option
                 );
 
-            option.value =
-                product.productId;
+            }
+        );
 
-            option.textContent =
-                `${product.productId} - ${product.name}`;
-
-            option.dataset.name =
-                product.name || "";
-
-            option.dataset.price =
-                product.price || 0;
-
-            option.dataset.image =
-                product.image ||
-                (
-                    product.images &&
-                    product.images.length
-                        ? product.images[0]
-                        : ""
-                );
-
-            select.appendChild(
-                option
-            );
-
-        });
 
     } catch (error) {
 
@@ -2039,15 +3339,22 @@ async function loadBestSellerProductOptions() {
             error
         );
 
+
         select.innerHTML =
             `
                 <option value="">
                     Unable to load products
                 </option>
             `;
+
     }
+
 }
 
+
+// =====================================================
+// LOAD BEST SELLERS
+// =====================================================
 
 async function loadBestSellers() {
 
@@ -2056,140 +3363,56 @@ async function loadBestSellers() {
             "bestSellersContainer"
         );
 
+
     if (!container) {
         return;
     }
 
+
     container.innerHTML =
         "Loading best sellers...";
+
 
     try {
 
         await loadBestSellerProductOptions();
+
 
         const response =
             await fetch(
                 `${API_URL}/api/best-sellers`
             );
 
-        const bestSellers =
-            await response.json();
+
+        const data =
+            await parseResponse(
+                response
+            );
+
 
         if (!response.ok) {
 
             throw new Error(
-                bestSellers.message ||
+                data.message ||
                 "Failed to load best sellers"
             );
+
         }
+
 
         allBestSellers =
-            bestSellers;
+            Array.isArray(data)
+                ? data
+                : Array.isArray(
+                    data.bestSellers
+                )
+                    ? data.bestSellers
+                    : [];
 
 
-        if (!bestSellers.length) {
-
-            container.innerHTML =
-                "<p>No best sellers found.</p>";
-
-            return;
-        }
-
-
-        container.innerHTML =
-            bestSellers.map(item => {
-
-                const image =
-                    getImageUrl(
-                        item.image
-                    );
-
-                return `
-
-                    <div class="hero-card">
-
-                        ${
-                            image
-                                ? `
-                                    <img
-                                        src="${image}"
-                                        alt="${escapeHTML(
-                                            item.name
-                                        )}"
-                                    >
-                                `
-                                :
-                                `
-                                    <div style="
-                                        height:180px;
-                                        display:flex;
-                                        align-items:center;
-                                        justify-content:center;
-                                        background:#eee;
-                                    ">
-                                        No Image
-                                    </div>
-                                `
-                        }
-
-                        <div class="hero-card-content">
-
-                            <h3>
-                                ${escapeHTML(
-                                    item.name
-                                )}
-                            </h3>
-
-                            <p>
-                                Product ID:
-                                ${item.productId}
-                            </p>
-
-                            <p>
-                                Price:
-                                ₹${Number(
-                                    item.price || 0
-                                ).toFixed(2)}
-                            </p>
-
-                            <p>
-                                Order:
-                                ${item.order || 0}
-                            </p>
-
-                            <span class="hero-status">
-                                ${
-                                    item.active
-                                        ? "Active"
-                                        : "Inactive"
-                                }
-                            </span>
-
-                            <div class="product-actions">
-
-                                <button
-                                    class="edit-btn"
-                                    onclick="editBestSeller('${item._id}')"
-                                >
-                                    Edit
-                                </button>
-
-                                <button
-                                    class="delete-btn"
-                                    onclick="deleteBestSeller('${item._id}')"
-                                >
-                                    Delete
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                `;
-
-            }).join("");
+        renderBestSellers(
+            allBestSellers
+        );
 
 
     } catch (error) {
@@ -2199,11 +3422,171 @@ async function loadBestSellers() {
             error
         );
 
+
         container.innerHTML =
             "<p>Failed to load best sellers.</p>";
+
     }
+
 }
 
+
+// =====================================================
+// RENDER BEST SELLERS
+// =====================================================
+
+function renderBestSellers(
+    bestSellers
+) {
+
+    const container =
+        document.getElementById(
+            "bestSellersContainer"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    if (!bestSellers.length) {
+
+        container.innerHTML =
+            "<p>No best sellers found.</p>";
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        bestSellers.map(item => {
+
+            const image =
+                getImageUrl(
+                    item.image
+                );
+
+
+            return `
+
+                <div class="hero-card">
+
+                    ${
+                        image
+                            ? `
+
+                                <img
+                                    src="${escapeHTML(image)}"
+                                    alt="${escapeHTML(
+                                        item.name ||
+                                        "Best Seller"
+                                    )}"
+                                >
+
+                            `
+                            :
+                            `
+
+                                <div style="
+                                    height:180px;
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    background:#eee;
+                                ">
+                                    No Image
+                                </div>
+
+                            `
+                    }
+
+
+                    <div class="hero-card-content">
+
+                        <h3>
+                            ${escapeHTML(
+                                item.name ||
+                                ""
+                            )}
+                        </h3>
+
+
+                        <p>
+                            Product ID:
+                            ${escapeHTML(
+                                item.productId ?? "-"
+                            )}
+                        </p>
+
+
+                        <p>
+                            Price:
+                            ₹${Number(
+                                item.price || 0
+                            ).toFixed(2)}
+                        </p>
+
+
+                        <p>
+                            Order:
+                            ${escapeHTML(
+                                item.order ?? 0
+                            )}
+                        </p>
+
+
+                        <span class="hero-status">
+
+                            ${
+                                item.active
+                                    ? "Active"
+                                    : "Inactive"
+                            }
+
+                        </span>
+
+
+                        <div class="product-actions">
+
+                            <button
+                                type="button"
+                                class="edit-btn"
+                                onclick="editBestSeller('${escapeHTML(
+                                    item._id || ""
+                                )}')"
+                            >
+                                Edit
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="delete-btn"
+                                onclick="deleteBestSeller('${escapeHTML(
+                                    item._id || ""
+                                )}')"
+                            >
+                                Delete
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+}
+
+
+// =====================================================
+// ADD BEST SELLER
+// =====================================================
 
 function prepareAddBestSeller() {
 
@@ -2214,8 +3597,13 @@ function prepareAddBestSeller() {
     showSectionById(
         "bestSellerSection"
     );
+
 }
 
+
+// =====================================================
+// RESET BEST SELLER
+// =====================================================
 
 function resetBestSellerForm() {
 
@@ -2224,38 +3612,51 @@ function resetBestSellerForm() {
             "bestSellerForm"
         );
 
+
     if (form) {
         form.reset();
     }
+
 
     document.getElementById(
         "editingBestSellerId"
     ).value = "";
 
+
     document.getElementById(
         "bestSellerActive"
     ).checked = true;
+
 
     document.getElementById(
         "bestSellerOrder"
     ).value = 1;
 
+
     document.getElementById(
         "bestSellerImagePreview"
     ).innerHTML = "";
 
+
     document.getElementById(
         "bestSellerMessage"
     ).textContent = "";
+
 }
 
+
+// =====================================================
+// EDIT BEST SELLER
+// =====================================================
 
 async function editBestSeller(id) {
 
     const item =
         allBestSellers.find(
-            seller => seller._id === id
+            seller =>
+                seller._id === id
         );
+
 
     if (!item) {
 
@@ -2264,34 +3665,42 @@ async function editBestSeller(id) {
         );
 
         return;
+
     }
 
+
     await loadBestSellerProductOptions();
+
 
     document.getElementById(
         "editingBestSellerId"
     ).value =
         item._id;
 
+
     document.getElementById(
         "bestSellerProduct"
     ).value =
         item.productId;
+
 
     document.getElementById(
         "bestSellerName"
     ).value =
         item.name || "";
 
+
     document.getElementById(
         "bestSellerPrice"
     ).value =
-        item.price || 0;
+        item.price ?? 0;
+
 
     document.getElementById(
         "bestSellerOrder"
     ).value =
-        item.order || 1;
+        item.order ?? 1;
+
 
     document.getElementById(
         "bestSellerActive"
@@ -2299,58 +3708,91 @@ async function editBestSeller(id) {
         item.active !== false;
 
 
-    if (item.image) {
-
+    const preview =
         document.getElementById(
             "bestSellerImagePreview"
-        ).innerHTML = `
+        );
+
+
+    if (
+        preview &&
+        item.image
+    ) {
+
+        preview.innerHTML = `
 
             <p>Current Image:</p>
 
             <img
-                src="${getImageUrl(
-                    item.image
+                src="${escapeHTML(
+                    getImageUrl(
+                        item.image
+                    )
                 )}"
                 alt="${escapeHTML(
-                    item.name
+                    item.name ||
+                    "Best Seller"
                 )}"
             >
 
         `;
+
     }
+
 
     showSectionById(
         "bestSellerSection"
     );
+
 }
 
 
-async function saveBestSeller(event) {
+// =====================================================
+// SAVE BEST SELLER
+// =====================================================
+
+async function saveBestSeller(
+    event
+) {
 
     event.preventDefault();
+
 
     const editingId =
         document.getElementById(
             "editingBestSellerId"
         ).value;
 
+
     const select =
         document.getElementById(
             "bestSellerProduct"
         );
 
-    const imageInput =
-        document.getElementById(
-            "bestSellerImage"
+
+    if (
+        !select ||
+        !select.value
+    ) {
+
+        alert(
+            "Please select a product."
         );
+
+        return;
+
+    }
+
 
     const formData =
         new FormData();
+
 
     formData.append(
         "productId",
         select.value
     );
+
 
     formData.append(
         "name",
@@ -2359,6 +3801,7 @@ async function saveBestSeller(event) {
         ).value.trim()
     );
 
+
     formData.append(
         "price",
         document.getElementById(
@@ -2366,12 +3809,6 @@ async function saveBestSeller(event) {
         ).value
     );
 
-    formData.append(
-        "active",
-        document.getElementById(
-            "bestSellerActive"
-        ).checked
-    );
 
     formData.append(
         "order",
@@ -2381,7 +3818,24 @@ async function saveBestSeller(event) {
     );
 
 
+    formData.append(
+        "active",
+        document.getElementById(
+            "bestSellerActive"
+        ).checked
+            ? "true"
+            : "false"
+    );
+
+
+    const imageInput =
+        document.getElementById(
+            "bestSellerImage"
+        );
+
+
     if (
+        imageInput &&
         imageInput.files &&
         imageInput.files.length
     ) {
@@ -2398,6 +3852,7 @@ async function saveBestSeller(event) {
                 select.selectedIndex
             ];
 
+
         if (
             option &&
             option.dataset.image
@@ -2407,7 +3862,9 @@ async function saveBestSeller(event) {
                 "imagePath",
                 option.dataset.image
             );
+
         }
+
     }
 
 
@@ -2415,6 +3872,7 @@ async function saveBestSeller(event) {
         document.getElementById(
             "bestSellerMessage"
         );
+
 
     message.textContent =
         editingId
@@ -2443,20 +3901,23 @@ async function saveBestSeller(event) {
                     body:
                         formData
                 }
+
             );
 
 
         const data =
-            await response.json();
+            await parseResponse(
+                response
+            );
 
 
         if (!response.ok) {
 
-            message.textContent =
+            throw new Error(
                 data.message ||
-                "Best seller operation failed.";
+                "Best seller operation failed."
+            );
 
-            return;
         }
 
 
@@ -2468,17 +3929,35 @@ async function saveBestSeller(event) {
 
         await loadBestSellers();
 
+
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Best seller save error:",
+            error
+        );
+
+
+        message.style.color =
+            "#b33";
+
 
         message.textContent =
+            error.message ||
             "Unable to connect to server.";
+
     }
+
 }
 
 
-async function deleteBestSeller(id) {
+// =====================================================
+// DELETE BEST SELLER
+// =====================================================
+
+async function deleteBestSeller(
+    id
+) {
 
     if (
         !confirm(
@@ -2488,6 +3967,7 @@ async function deleteBestSeller(id) {
         return;
     }
 
+
     try {
 
         const response =
@@ -2495,46 +3975,57 @@ async function deleteBestSeller(id) {
                 `${API_URL}/api/best-sellers/${id}`,
                 {
                     method: "DELETE",
-                    headers: authHeaders()
+                    headers:
+                        authHeaders()
                 }
             );
 
+
         const data =
-            await response.json();
+            await parseResponse(
+                response
+            );
+
 
         if (!response.ok) {
 
-            alert(
+            throw new Error(
                 data.message ||
                 "Failed to delete best seller."
             );
 
-            return;
         }
+
 
         alert(
             "Best seller deleted successfully."
         );
 
-        loadBestSellers();
+
+        await loadBestSellers();
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Delete best seller error:",
+            error
+        );
+
 
         alert(
+            error.message ||
             "Unable to connect to server."
         );
+
     }
+
 }
 
 
 // =====================================================
 // STANDOUT
 // =====================================================
-
-let currentStandout = null;
-
 
 async function loadStandout() {
 
@@ -2543,12 +4034,15 @@ async function loadStandout() {
             "standoutContainer"
         );
 
+
     if (!container) {
         return;
     }
 
+
     container.innerHTML =
         "Loading standout section...";
+
 
     try {
 
@@ -2558,34 +4052,49 @@ async function loadStandout() {
             );
 
 
-        if (response.status === 404) {
+        if (
+            response.status === 404
+        ) {
 
-            currentStandout = null;
+            currentStandout =
+                null;
+
 
             container.innerHTML =
                 "<p>No standout section configured yet.</p>";
 
+
             resetStandoutForm();
 
+
             return;
+
         }
 
 
-        const standout =
-            await response.json();
+        const data =
+            await parseResponse(
+                response
+            );
 
 
         if (!response.ok) {
 
             throw new Error(
-                standout.message ||
+                data.message ||
                 "Failed to load standout"
             );
+
         }
 
 
         currentStandout =
-            standout;
+            data.standout ||
+            data;
+
+
+        const standout =
+            currentStandout;
 
 
         document.getElementById(
@@ -2613,23 +4122,32 @@ async function loadStandout() {
             );
 
 
-        document.getElementById(
-            "standoutImagePreview"
-        ).innerHTML =
+        const preview =
+            document.getElementById(
+                "standoutImagePreview"
+            );
 
-            image
-                ? `
-                    <p>Current Image:</p>
 
-                    <img
-                        src="${image}"
-                        alt="${escapeHTML(
-                            standout.title ||
-                            "Standout"
-                        )}"
-                    >
-                `
-                : "";
+        if (preview) {
+
+            preview.innerHTML =
+                image
+                    ? `
+
+                        <p>Current Image:</p>
+
+                        <img
+                            src="${escapeHTML(image)}"
+                            alt="${escapeHTML(
+                                standout.title ||
+                                "Standout"
+                            )}"
+                        >
+
+                    `
+                    : "";
+
+        }
 
 
         container.innerHTML = `
@@ -2639,16 +4157,19 @@ async function loadStandout() {
                 ${
                     image
                         ? `
+
                             <img
-                                src="${image}"
+                                src="${escapeHTML(image)}"
                                 alt="${escapeHTML(
                                     standout.title ||
                                     "Standout"
                                 )}"
                             >
+
                         `
                         :
                         `
+
                             <div style="
                                 height:180px;
                                 display:flex;
@@ -2658,8 +4179,10 @@ async function loadStandout() {
                             ">
                                 No Image
                             </div>
+
                         `
                 }
+
 
                 <div class="hero-card-content">
 
@@ -2670,24 +4193,31 @@ async function loadStandout() {
                         )}
                     </h3>
 
+
                     <span class="hero-status">
+
                         ${
                             standout.active
                                 ? "Active"
                                 : "Inactive"
                         }
+
                     </span>
+
 
                     <div class="product-actions">
 
                         <button
+                            type="button"
                             class="edit-btn"
                             onclick="editStandout()"
                         >
                             Edit
                         </button>
 
+
                         <button
+                            type="button"
                             class="delete-btn"
                             onclick="deleteStandout()"
                         >
@@ -2699,6 +4229,7 @@ async function loadStandout() {
                 </div>
 
             </div>
+
         `;
 
 
@@ -2709,22 +4240,33 @@ async function loadStandout() {
             error
         );
 
+
         container.innerHTML =
             "<p>Failed to load standout section.</p>";
+
     }
+
 }
 
+
+// =====================================================
+// EDIT STANDOUT
+// =====================================================
 
 function editStandout() {
 
     if (!currentStandout) {
+
         return;
+
     }
+
 
     document.getElementById(
         "editingStandoutId"
     ).value =
         currentStandout._id || "";
+
 
     document.getElementById(
         "standoutTitle"
@@ -2732,16 +4274,23 @@ function editStandout() {
         currentStandout.title ||
         "What Makes Shailu's Concepts Stand Out?";
 
+
     document.getElementById(
         "standoutActive"
     ).checked =
         currentStandout.active !== false;
 
+
     showSectionById(
         "standoutSection"
     );
+
 }
 
+
+// =====================================================
+// RESET STANDOUT
+// =====================================================
 
 function resetStandoutForm() {
 
@@ -2750,9 +4299,11 @@ function resetStandoutForm() {
             "standoutForm"
         );
 
+
     if (form) {
         form.reset();
     }
+
 
     document.getElementById(
         "editingStandoutId"
@@ -2761,11 +4312,13 @@ function resetStandoutForm() {
             ? currentStandout._id || ""
             : "";
 
+
     document.getElementById(
         "standoutTitle"
     ).value =
         currentStandout?.title ||
         "What Makes Shailu's Concepts Stand Out?";
+
 
     document.getElementById(
         "standoutActive"
@@ -2774,32 +4327,39 @@ function resetStandoutForm() {
             ? currentStandout.active !== false
             : true;
 
+
     document.getElementById(
         "standoutImagePreview"
     ).innerHTML = "";
 
+
     document.getElementById(
         "standoutMessage"
     ).textContent = "";
+
 }
 
 
-async function saveStandout(event) {
+// =====================================================
+// SAVE STANDOUT
+// =====================================================
+
+async function saveStandout(
+    event
+) {
 
     event.preventDefault();
+
 
     const editingId =
         document.getElementById(
             "editingStandoutId"
         ).value;
 
-    const imageInput =
-        document.getElementById(
-            "standoutImage"
-        );
 
     const formData =
         new FormData();
+
 
     formData.append(
         "title",
@@ -2808,15 +4368,25 @@ async function saveStandout(event) {
         ).value.trim()
     );
 
+
     formData.append(
         "active",
         document.getElementById(
             "standoutActive"
         ).checked
+            ? "true"
+            : "false"
     );
 
 
+    const imageInput =
+        document.getElementById(
+            "standoutImage"
+        );
+
+
     if (
+        imageInput &&
         imageInput.files &&
         imageInput.files.length
     ) {
@@ -2825,6 +4395,7 @@ async function saveStandout(event) {
             "image",
             imageInput.files[0]
         );
+
     }
 
 
@@ -2833,10 +4404,11 @@ async function saveStandout(event) {
             "standoutMessage"
         );
 
+
     message.textContent =
         editingId
             ? "Updating standout..."
-            : "Uploading standout...";
+            : "Adding standout...";
 
 
     try {
@@ -2860,20 +4432,23 @@ async function saveStandout(event) {
                     body:
                         formData
                 }
+
             );
 
 
         const data =
-            await response.json();
+            await parseResponse(
+                response
+            );
 
 
         if (!response.ok) {
 
-            message.textContent =
+            throw new Error(
                 data.message ||
-                "Standout operation failed.";
+                "Standout operation failed."
+            );
 
-            return;
         }
 
 
@@ -2885,6 +4460,7 @@ async function saveStandout(event) {
 
         await loadStandout();
 
+
     } catch (error) {
 
         console.error(
@@ -2892,29 +4468,48 @@ async function saveStandout(event) {
             error
         );
 
+
+        message.style.color =
+            "#b33";
+
+
         message.textContent =
+            error.message ||
             "Unable to connect to server.";
+
     }
+
 }
 
 
+// =====================================================
+// DELETE STANDOUT
+// =====================================================
+
 async function deleteStandout() {
 
-    if (!currentStandout?._id) {
+    if (
+        !currentStandout ||
+        !currentStandout._id
+    ) {
 
         alert(
             "No standout section found."
         );
 
         return;
+
     }
+
 
     if (
         !confirm(
             "Are you sure you want to delete the standout section?"
         )
     ) {
+
         return;
+
     }
 
 
@@ -2925,22 +4520,25 @@ async function deleteStandout() {
                 `${API_URL}/api/standout/${currentStandout._id}`,
                 {
                     method: "DELETE",
-                    headers: authHeaders()
+                    headers:
+                        authHeaders()
                 }
             );
 
+
         const data =
-            await response.json();
+            await parseResponse(
+                response
+            );
 
 
         if (!response.ok) {
 
-            alert(
+            throw new Error(
                 data.message ||
                 "Failed to delete standout."
             );
 
-            return;
         }
 
 
@@ -2949,23 +4547,33 @@ async function deleteStandout() {
         );
 
 
-        currentStandout = null;
+        currentStandout =
+            null;
 
-        loadStandout();
+
+        await loadStandout();
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Delete standout error:",
+            error
+        );
+
 
         alert(
+            error.message ||
             "Unable to connect to server."
         );
+
     }
+
 }
 
 
 // =====================================================
-// BEST SELLER PRODUCT CHANGE
+// BEST SELLER PRODUCT SELECTION
 // =====================================================
 
 document.addEventListener(
@@ -2977,17 +4585,21 @@ document.addEventListener(
             event.target.id !==
                 "bestSellerProduct"
         ) {
+
             return;
+
         }
 
 
         const select =
             event.target;
 
+
         const option =
             select.options[
                 select.selectedIndex
             ];
+
 
         if (!option) {
             return;
@@ -2999,10 +4611,12 @@ document.addEventListener(
                 "bestSellerName"
             );
 
+
         const price =
             document.getElementById(
                 "bestSellerPrice"
             );
+
 
         const preview =
             document.getElementById(
@@ -3013,14 +4627,18 @@ document.addEventListener(
         if (name) {
 
             name.value =
-                option.dataset.name || "";
+                option.dataset.name ||
+                "";
+
         }
 
 
         if (price) {
 
             price.value =
-                option.dataset.price || 0;
+                option.dataset.price ||
+                0;
+
         }
 
 
@@ -3034,13 +4652,16 @@ document.addEventListener(
                 <p>Product Image:</p>
 
                 <img
-                    src="${getImageUrl(
-                        option.dataset.image
+                    src="${escapeHTML(
+                        getImageUrl(
+                            option.dataset.image
+                        )
                     )}"
                     alt="Product image"
                 >
 
             `;
+
         }
 
     }
@@ -3057,6 +4678,7 @@ document.addEventListener(
 
         const input =
             event.target;
+
 
         if (!input) {
             return;
@@ -3087,7 +4709,9 @@ document.addEventListener(
 
 
         const previewId =
-            previewMap[input.id];
+            previewMap[
+                input.id
+            ];
 
 
         if (!previewId) {
@@ -3099,6 +4723,7 @@ document.addEventListener(
             document.getElementById(
                 previewId
             );
+
 
         if (!preview) {
             return;
@@ -3112,7 +4737,9 @@ document.addEventListener(
             !input.files ||
             !input.files.length
         ) {
+
             return;
+
         }
 
 
@@ -3125,10 +4752,42 @@ document.addEventListener(
                     "img"
                 );
 
+
             image.src =
                 URL.createObjectURL(
                     file
                 );
+
+
+            image.alt =
+                "Preview";
+
+
+            image.style.width =
+                input.id ===
+                    "productImages"
+                    ? "120px"
+                    : "150px";
+
+
+            image.style.height =
+                input.id ===
+                    "productImages"
+                    ? "120px"
+                    : "150px";
+
+
+            image.style.objectFit =
+                "cover";
+
+
+            image.style.borderRadius =
+                "8px";
+
+
+            image.style.marginRight =
+                "8px";
+
 
             preview.appendChild(
                 image
@@ -3150,16 +4809,20 @@ function logout() {
         "adminToken"
     );
 
+
     localStorage.removeItem(
         "token"
     );
+
 
     localStorage.removeItem(
         "admin"
     );
 
+
     window.location.href =
         "admin-login.html";
+
 }
 
 
@@ -3174,6 +4837,7 @@ document.addEventListener(
         console.log(
             "Admin dashboard loaded"
         );
+
 
         loadDashboardStats();
 
