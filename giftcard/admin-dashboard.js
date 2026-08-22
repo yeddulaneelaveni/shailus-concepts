@@ -786,15 +786,14 @@ async function saveProduct(event) {
             );
 
         if (
-            mainImage.files &&
-            mainImage.files.length
-        ) {
-
-            formData.append(
-                "image",
-                mainImage.files[0]
-            );
-        }
+                mainImage.files &&
+                mainImage.files.length
+            ) {
+                formData.append(
+                    "mainImage",
+                    mainImage.files[0]
+                );
+            }
 
 
         const additionalImages =
@@ -803,20 +802,20 @@ async function saveProduct(event) {
             );
 
         if (
-            additionalImages.files &&
-            additionalImages.files.length
-        ) {
-
-            for (
-                const file of additionalImages.files
+                additionalImages.files &&
+                additionalImages.files.length
             ) {
 
-                formData.append(
-                    "images",
-                    file
-                );
+                for (
+                    const file of additionalImages.files
+                ) {
+
+                    formData.append(
+                        "additionalImages",
+                        file
+                    );
+                }
             }
-        }
 
 
         const response =

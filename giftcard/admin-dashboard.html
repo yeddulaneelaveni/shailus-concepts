@@ -6,6 +6,10 @@
 
     <title>Admin Dashboard — Shailu's Concepts</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="admin-dashboard.css">
 </head>
 
@@ -53,7 +57,7 @@
             class="sidebar-btn active"
             onclick="showSection('dashboardSection', this)"
         >
-            Dashboard
+            <span class="nav-icon">◆</span> Dashboard
         </button>
 
 
@@ -61,7 +65,7 @@
             class="sidebar-btn"
             onclick="showSection('productsSection', this); loadProducts()"
         >
-            Products
+            <span class="nav-icon">◆</span> Products
         </button>
 
 
@@ -69,7 +73,7 @@
             class="sidebar-btn"
             onclick="showSection('addProductSection', this); prepareAddProduct()"
         >
-            Add Product
+            <span class="nav-icon">◆</span> Add Product
         </button>
 
 
@@ -77,28 +81,28 @@
             class="sidebar-btn"
             onclick="showSection('heroSection', this); loadHeroes()"
         >
-            Hero Section
+            <span class="nav-icon">◆</span> Hero Section
         </button>
 
         <button
             class="sidebar-btn"
             onclick="showSection('scrollCategorySection', this); loadScrollCategories()"
         >
-            Scroll Categories
+            <span class="nav-icon">◆</span> Scroll Categories
         </button>
 
         <button
             class="sidebar-btn"
             onclick="showSection('bestSellerSection', this); loadBestSellers()"
         >
-            Best Sellers
+            <span class="nav-icon">◆</span> Best Sellers
         </button>
 
         <button
             class="sidebar-btn"
             onclick="showSection('standoutSection', this); loadStandout()"
         >
-            Standout Section
+            <span class="nav-icon">◆</span> Standout Section
         </button>
 
     </aside>
