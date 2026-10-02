@@ -19,6 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let activeCategory = "all";
     let searchText = "";
 
+    function getGalleryImagePath(path) {
+        return String(path || "").replace(/^\.\.\/assets\//, "assets/");
+    }
+
     function render(list) {
     galleryGrid.innerHTML = "";
 
@@ -35,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="gallery-card">
 
                 <div class="gallery-image" style="position:relative;">
-                    <img src="${product.image}" alt="${product.name}">
+                    <img src="${getGalleryImagePath(product.image)}" alt="${product.name}">
 
                     <div class="gallery-overlay">
                         <a href="views.html?id=${product.id}">

@@ -106,6 +106,7 @@ const createHero = async (req, res) => {
                 "index.html#gallery",
 
             active:
+                active === true ||
                 active === "true",
 
             order:
@@ -195,6 +196,7 @@ const updateHero = async (req, res) => {
 
         if (active !== undefined)
             hero.active =
+                active === true ||
                 active === "true";
 
 

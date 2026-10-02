@@ -104,6 +104,11 @@ const productSchema = new mongoose.Schema(
             trim: true
         },
 
+        relatedProducts: {
+            type: [Number],
+            default: []
+        },
+
 
         // ==========================================
         // PRODUCT SPECIFICATIONS

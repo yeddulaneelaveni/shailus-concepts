@@ -5,6 +5,7 @@ const router = express.Router();
 const {
     getProducts,
     getProductById,
+    getProductRelated,
     createProduct,
     updateProduct,
     deleteProduct
@@ -19,7 +20,7 @@ const upload = require("../middleware/uploadMiddleware");
 // =====================================================
 
 router.get("/", getProducts);
-
+router.get("/:productId/related", getProductRelated);
 router.get("/:productId", getProductById);
 
 

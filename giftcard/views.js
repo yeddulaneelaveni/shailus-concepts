@@ -513,13 +513,22 @@ function displayProductImages(product) {
 
             const thumb =
                 document.createElement(
-                    "div"
+                    "button"
                 );
 
+            thumb.type = "button";
             thumb.className =
                 index === 0
                     ? "thumb active"
                     : "thumb";
+            thumb.setAttribute(
+                "aria-label",
+                `Show image ${index + 1} of ${product.name || "product"}`
+            );
+            thumb.setAttribute(
+                "aria-pressed",
+                index === 0 ? "true" : "false"
+            );
 
             thumb.innerHTML = `
                 <img
@@ -549,6 +558,69 @@ function displayProductImages(product) {
     );
 }
 
+function switchImg(thumb, image) {
+
+    const mainImg =
+        document.getElementById("mainImg");
+
+    if (!mainImg || !image) {
+        return;
+    }
+
+    mainImg.src = image;
+
+    document.querySelectorAll(".thumb-row .thumb").forEach(
+        item => {
+            const isActive = item === thumb;
+            item.classList.toggle("active", isActive);
+            item.setAttribute(
+                "aria-pressed",
+                isActive ? "true" : "false"
+            );
+        }
+    );
+
+    const productDetails =
+        document.querySelector(".product-details");
+
+    if (productDetails) {
+        productDetails.dataset.img = image;
+    }
+}
+
+function openZoom() {
+
+    const dialog =
+        document.getElementById("imageZoomDialog");
+
+    const mainImg =
+        document.getElementById("mainImg");
+
+    const zoomedImg =
+        document.getElementById("zoomedImg");
+
+    if (!dialog || !mainImg || !mainImg.src || !zoomedImg) {
+        return;
+    }
+
+    zoomedImg.src = mainImg.src;
+    zoomedImg.alt = mainImg.alt || "Zoomed product image";
+
+    if (!dialog.open) {
+        dialog.showModal();
+    }
+}
+
+function closeZoom() {
+
+    const dialog =
+        document.getElementById("imageZoomDialog");
+
+    if (dialog && dialog.open) {
+        dialog.close();
+    }
+}
+
 // =====================================================
 // LOAD RELATED PRODUCTS
 // =====================================================
@@ -572,94 +644,23 @@ async function loadRelatedProducts(
     }
 
     try {
-
-        // =================================================
-        // GET ALL PRODUCTS
-        // =================================================
-
-        const response =
-            await fetch(
-                `${API_URL}/api/products`
-            );
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Unable to load products"
-            );
-        }
-
-        const products =
-            await response.json();
-
-        // =================================================
-        // CHECK CATEGORY
-        // =================================================
-
-        if (!currentProduct.category) {
-
-            displaySimilarProducts([]);
-
-            return;
-        }
-
-        // =================================================
-        // CURRENT CATEGORY
-        // =================================================
-
-        const currentCategory =
-            String(
-                currentProduct.category
-            )
-                .trim()
-                .toLowerCase();
-
-        // =================================================
-        // CURRENT PRODUCT ID
-        // =================================================
-
-        const currentId =
-            String(
-                currentProduct.productId
-            );
-
-        // =================================================
-        // FILTER RELATED PRODUCTS
-        // =================================================
-
-        const relatedProducts =
-            products.filter(
-                product => {
-
-                    const productCategory =
-                        String(
-                            product.category || ""
-                        )
-                            .trim()
-                            .toLowerCase();
-
-                    const productId =
-                        String(
-                            product.productId
-                        );
-
-                    return (
-                        productCategory ===
-                        currentCategory
-                    )
-                    &&
-                    productId !== currentId;
-                }
-            );
-
-        // =================================================
-        // DISPLAY RELATED PRODUCTS
-        // =================================================
-
-        displaySimilarProducts(
-            relatedProducts
+        const response = await fetch(
+            `${API_URL}/api/products/${currentProduct.productId}/related`
         );
 
+        if (!response.ok) {
+            throw new Error("Unable to load related products");
+        }
+
+        const payload = await response.json();
+        const relatedProducts = Array.isArray(payload.products)
+            ? payload.products
+            : [];
+
+        displaySimilarProducts(
+            relatedProducts,
+            payload.message || currentProduct.relatedProductsMessage || "Explore more gifts from Shailu's Concepts"
+        );
     }
     catch (error) {
 
@@ -668,15 +669,7 @@ async function loadRelatedProducts(
             error
         );
 
-        relatedGrid.innerHTML = `
-            <p style="
-                grid-column:1/-1;
-                text-align:center;
-                color:#777;
-            ">
-                Unable to load related products.
-            </p>
-        `;
+        displaySimilarProducts([], "Explore more gifts from Shailu's Concepts");
     }
 }
 
@@ -685,7 +678,8 @@ async function loadRelatedProducts(
 // =====================================================
 
 function displaySimilarProducts(
-    products
+    products,
+    emptyMessage = "Explore more gifts from Shailu's Concepts"
 ) {
 
     const relatedGrid =
@@ -699,25 +693,15 @@ function displaySimilarProducts(
 
     relatedGrid.innerHTML = "";
 
-    // =================================================
-    // NO RELATED PRODUCTS
-    // =================================================
-
     if (
         !products ||
         products.length === 0
     ) {
-
         relatedGrid.innerHTML = `
-            <p style="
-                grid-column:1/-1;
-                text-align:center;
-                color:#777;
-            ">
-                No related products found.
+            <p class="related-empty-message">
+                ${escapeHTML(emptyMessage)}
             </p>
         `;
-
         return;
     }
 
@@ -778,6 +762,8 @@ function displaySimilarProducts(
                     </div>
 
                     <div class="card-info">
+
+                        ${product.badge ? `<div class="product-badge">${escapeHTML(product.badge)}</div>` : ""}
 
                         <h3>
                             ${productName}
@@ -892,6 +878,20 @@ function showProductError(
 document.addEventListener(
     "DOMContentLoaded",
     function () {
+
+        const zoomDialog =
+            document.getElementById("imageZoomDialog");
+
+        if (zoomDialog) {
+            zoomDialog.addEventListener(
+                "click",
+                event => {
+                    if (event.target === zoomDialog) {
+                        closeZoom();
+                    }
+                }
+            );
+        }
 
         loadProductDetails();
 

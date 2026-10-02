@@ -34,7 +34,7 @@ exports.createBestSeller = async (req, res) => {
 
         const image = req.file
             ? `/uploads/best-sellers/${req.file.filename}`
-            : "";
+            : req.body.imagePath || "";
 
         if (!productId || !name || !image) {
             return res.status(400).json({

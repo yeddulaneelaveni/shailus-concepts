@@ -1,5 +1,180 @@
 const Product = require("../models/Product");
 
+const parseRelatedProductIds = (value) => {
+    if (value === undefined || value === null || value === "") return [];
+
+    let values = value;
+
+    if (typeof value === "string") {
+        try {
+            values = JSON.parse(value);
+        } catch (error) {
+            values = value.split(",");
+        }
+    }
+
+    if (!Array.isArray(values)) values = [values];
+
+    return [...new Set(values
+        .map(Number)
+        .filter(id => Number.isInteger(id) && id > 0))];
+};
+
+const getValidRelatedProductIds = async (value, currentProductId) => {
+    const ids = parseRelatedProductIds(value)
+        .filter(id => id !== Number(currentProductId));
+
+    if (!ids.length) return [];
+
+    const products = await Product.find({
+        productId: { $in: ids }
+    }).select("productId");
+
+    const validIds = new Set(products.map(product => product.productId));
+    return ids.filter(id => validIds.has(id));
+};
+
+const normalizeText = (value = "") => String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const getKeywordTokens = (value = "") => {
+    const normalized = normalizeText(value);
+    if (!normalized) return [];
+
+    const stopWords = new Set([
+        "the", "and", "for", "with", "from", "into", "that", "this",
+        "your", "more", "gift", "gifts", "return", "custom", "customized",
+        "about", "shop", "best", "new", "our", "all", "use", "used"
+    ]);
+
+    return normalized
+        .split(" ")
+        .filter(token => token.length > 2 && !stopWords.has(token));
+};
+
+const buildProductKeywords = (product = {}) => {
+    const parts = [
+        product.name,
+        product.category,
+        product.shape,
+        product.colour,
+        product.material,
+        product.badge,
+        product.description
+    ];
+
+    return [...new Set(parts.flatMap(getKeywordTokens))];
+};
+
+const calculateRelatedProductScore = (currentProduct, candidateProduct) => {
+    if (!currentProduct || !candidateProduct) return 0;
+    if (String(currentProduct.productId) === String(candidateProduct.productId)) return 0;
+
+    const currentCategory = normalizeText(currentProduct.category);
+    const candidateCategory = normalizeText(candidateProduct.category);
+    const currentShape = normalizeText(currentProduct.shape);
+    const candidateShape = normalizeText(candidateProduct.shape);
+    const currentColour = normalizeText(currentProduct.colour);
+    const candidateColour = normalizeText(candidateProduct.colour);
+    const currentMaterial = normalizeText(currentProduct.material);
+    const candidateMaterial = normalizeText(candidateProduct.material);
+
+    let score = 0;
+
+    if (currentCategory && candidateCategory) {
+        if (currentCategory === candidateCategory) score += 60;
+        else if (currentCategory.includes(candidateCategory) || candidateCategory.includes(currentCategory)) score += 24;
+        else {
+            const currentCategoryWords = new Set(getKeywordTokens(currentProduct.category));
+            const candidateCategoryWords = new Set(getKeywordTokens(candidateProduct.category));
+            const sharedCategoryWords = [...currentCategoryWords].filter(word => candidateCategoryWords.has(word));
+            score += sharedCategoryWords.length * 8;
+        }
+    }
+
+    if (currentShape && candidateShape && currentShape === candidateShape) score += 18;
+    if (currentColour && candidateColour && currentColour === candidateColour) score += 12;
+    if (currentMaterial && candidateMaterial && currentMaterial === candidateMaterial) score += 12;
+
+    const currentKeywords = new Set(buildProductKeywords(currentProduct));
+    const candidateKeywords = new Set(buildProductKeywords(candidateProduct));
+    const sharedKeywords = [...currentKeywords].filter(word => candidateKeywords.has(word));
+    score += sharedKeywords.length * 6;
+
+    if (currentProduct.name && candidateProduct.name) {
+        const currentName = normalizeText(currentProduct.name);
+        const candidateName = normalizeText(candidateProduct.name);
+        if (currentName.includes(candidateName) || candidateName.includes(currentName)) score += 8;
+    }
+
+    if (currentProduct.description && candidateProduct.description) {
+        const currentDescriptionWords = new Set(getKeywordTokens(currentProduct.description));
+        const candidateDescriptionWords = new Set(getKeywordTokens(candidateProduct.description));
+        const sharedDescriptionWords = [...currentDescriptionWords].filter(word => candidateDescriptionWords.has(word));
+        score += sharedDescriptionWords.length * 4;
+    }
+
+    return score;
+};
+
+const getAutomaticRelatedProducts = async (currentProductId) => {
+    const currentProduct = await Product.findOne({ productId: Number(currentProductId) });
+
+    if (!currentProduct) {
+        return [];
+    }
+
+    const allProducts = await Product.find({
+        productId: { $ne: Number(currentProductId) }
+    }).sort({ createdAt: -1, productId: -1 }).lean();
+
+    if (!allProducts.length) {
+        return [];
+    }
+
+    const scoredProducts = allProducts
+        .map(product => ({
+            product,
+            score: calculateRelatedProductScore(currentProduct.toObject ? currentProduct.toObject() : currentProduct, product)
+        }))
+        .filter(item => item.score > 0)
+        .sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return new Date(b.product.createdAt || 0) - new Date(a.product.createdAt || 0);
+        });
+
+    const prioritizedProducts = scoredProducts.length
+        ? scoredProducts.map(item => item.product)
+        : allProducts;
+
+    const uniqueProducts = [];
+    const seenIds = new Set();
+
+    for (const product of prioritizedProducts) {
+        const productId = Number(product.productId);
+        if (!Number.isInteger(productId) || productId <= 0 || seenIds.has(productId)) continue;
+        seenIds.add(productId);
+        uniqueProducts.push(product);
+        if (uniqueProducts.length >= 4) break;
+    }
+
+    return uniqueProducts.map(product => serializeProduct(product));
+};
+
+const serializeProduct = (product) => {
+    const data = product.toObject ? product.toObject() : product;
+    return {
+        ...data,
+        relatedProducts: Array.isArray(data.relatedProducts)
+            ? data.relatedProducts
+            : [],
+        relatedProductsMessage: "Explore more gifts from Shailu's Concepts"
+    };
+};
+
 
 // =====================================================
 // GET ALL PRODUCTS
@@ -15,7 +190,7 @@ const getProducts = async (req, res) => {
                 .sort({ productId: 1 });
 
 
-        res.status(200).json(products);
+        res.status(200).json(products.map(serializeProduct));
 
     } catch (error) {
 
@@ -59,7 +234,7 @@ const getProductById = async (req, res) => {
         }
 
 
-        res.status(200).json(product);
+        res.status(200).json(serializeProduct(product));
 
     } catch (error) {
 
@@ -72,6 +247,30 @@ const getProductById = async (req, res) => {
             message: "Failed to fetch product"
         });
 
+    }
+};
+
+const getProductRelated = async (req, res) => {
+    try {
+        const productId = Number(req.params.productId);
+
+        if (!Number.isInteger(productId) || productId <= 0) {
+            return res.status(400).json({
+                message: "Product ID must be a valid number"
+            });
+        }
+
+        const relatedProducts = await getAutomaticRelatedProducts(productId);
+
+        return res.status(200).json({
+            products: relatedProducts,
+            message: "Explore more gifts from Shailu's Concepts"
+        });
+    } catch (error) {
+        console.error("Get related products error:", error);
+        return res.status(500).json({
+            message: "Failed to fetch related products"
+        });
     }
 };
 
@@ -104,7 +303,8 @@ const createProduct = async (req, res) => {
             rating,
             newArrival,
             bestSeller,
-            description
+            description,
+            relatedProducts
         } = req.body;
 
 
@@ -253,6 +453,12 @@ const createProduct = async (req, res) => {
 
         }
 
+        const validRelatedProducts =
+            await getValidRelatedProductIds(
+                relatedProducts,
+                numericProductId
+            );
+
 
         // ==========================================
         // MAIN IMAGE
@@ -371,6 +577,9 @@ const createProduct = async (req, res) => {
 
                 description:
                     description.trim(),
+
+                relatedProducts:
+                    validRelatedProducts,
 
 
                 // ======================================
@@ -541,6 +750,14 @@ const updateProduct = async (req, res) => {
             product.description =
                 req.body.description;
 
+        }
+
+        if (req.body.relatedProducts !== undefined) {
+            product.relatedProducts =
+                await getValidRelatedProductIds(
+                    req.body.relatedProducts,
+                    productId
+                );
         }
 
 
@@ -778,14 +995,13 @@ const deleteProduct = async (req, res) => {
 
     try {
 
-        const productId =
-            Number(req.params.productId);
+        const rawProductId = req.params.productId;
+        const productId = Number(rawProductId);
 
-
-        // Prevent NaN from reaching Mongoose
         if (
-            !Number.isInteger(productId) ||
-            productId <= 0
+            rawProductId === undefined ||
+            rawProductId === null ||
+            rawProductId === ""
         ) {
 
             return res.status(400).json({
@@ -794,12 +1010,19 @@ const deleteProduct = async (req, res) => {
 
         }
 
+        let product = null;
 
-        const product =
-            await Product.findOneAndDelete({
+        if (Number.isInteger(productId)) {
+            product = await Product.findOneAndDelete({
                 productId: productId
             });
+        }
 
+        if (!product && rawProductId.length === 24) {
+            product = await Product.findOneAndDelete({
+                _id: rawProductId
+            });
+        }
 
         if (!product) {
 
@@ -847,6 +1070,8 @@ module.exports = {
     getProducts,
 
     getProductById,
+
+    getProductRelated,
 
     createProduct,
 

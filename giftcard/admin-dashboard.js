@@ -45,12 +45,26 @@ async function parseResponse(response) {
 
     const text = await response.text();
 
+    if (response.status === 401) {
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("token");
+        localStorage.removeItem("admin");
+
+        if (window.location.pathname.toLowerCase().indexOf("admin-login") === -1) {
+            window.location.href = "admin-login.html";
+        }
+    }
+
     if (!text) {
         return {};
     }
 
     try {
-        return JSON.parse(text);
+        const data = JSON.parse(text);
+        if (response.status === 401 && data && data.message) {
+            data.message = "Session expired. Please log in again.";
+        }
+        return data;
     } catch (error) {
         return {
             message: text
@@ -441,11 +455,9 @@ async function loadProducts() {
         allProducts =
             getProductsArray(data);
 
-
         renderProducts(
             allProducts
         );
-
 
         loadDashboardStats();
 
@@ -1158,7 +1170,6 @@ async function editProduct(productId) {
         ).value =
             product.description || "";
 
-
         // ---------------------------------------------
         // NEW ARRIVAL
         // ---------------------------------------------
@@ -1587,7 +1598,6 @@ async function saveProduct(event) {
             ).value.trim()
         );
 
-
         formData.append(
             "newArrival",
             document.getElementById(
@@ -1781,13 +1791,13 @@ async function saveProduct(event) {
 
 async function deleteProduct(productId) {
 
-    // Convert to number
     const id = Number(productId);
+    const deleteTarget = Number.isInteger(id) ? String(id) : String(productId || "");
 
-    // Prevent NaN / invalid values
     if (
-        !Number.isInteger(id) ||
-        id <= 0
+        productId === undefined ||
+        productId === null ||
+        deleteTarget.trim() === ""
     ) {
 
         console.error(
@@ -1802,10 +1812,9 @@ async function deleteProduct(productId) {
         return;
     }
 
-
     const confirmDelete =
         confirm(
-            `Are you sure you want to delete product ${id}?`
+            `Are you sure you want to delete product ${deleteTarget}?`
         );
 
 
@@ -1818,13 +1827,13 @@ async function deleteProduct(productId) {
 
         console.log(
             "Deleting product:",
-            id
+            deleteTarget
         );
 
 
         const response =
             await fetch(
-                `${API_URL}/api/products/${id}`,
+                `${API_URL}/api/products/${encodeURIComponent(deleteTarget)}`,
                 {
                     method: "DELETE",
                     headers: authHeaders()
@@ -2445,7 +2454,7 @@ async function saveHero(event) {
         ) {
 
             formData.append(
-                "image",
+                "heroImage",
                 image.files[0]
             );
 

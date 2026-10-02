@@ -168,6 +168,12 @@ h1,h2{font-family:'Fraunces',Georgia,serif;letter-spacing:-.01em}
 .checkbox-group{display:flex;align-items:center;gap:22px;padding-top:4px}
 .checkbox-group label{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px}
 .checkbox-group input[type="checkbox"]{width:17px;height:17px;accent-color:var(--ink)}
+.related-products-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-height:260px;overflow-y:auto;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--cream)}
+.related-product-option{display:flex;align-items:center;gap:10px;min-width:0;padding:8px;background:var(--paper);border:1px solid var(--line);border-radius:8px;cursor:pointer}
+.related-product-option input{width:17px;height:17px;flex:0 0 auto;accent-color:var(--ink)}
+.related-product-option img,.related-product-thumb{width:42px;height:42px;flex:0 0 auto;object-fit:cover;border-radius:6px;background:var(--cream)}
+.related-product-option span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:600;color:var(--ink)}
+@media(max-width:700px){.related-products-list{grid-template-columns:1fr}}
 .form-actions{display:flex;gap:12px;margin-top:26px}
 .form-message{margin-top:15px;font-weight:700;font-size:13.5px}
 

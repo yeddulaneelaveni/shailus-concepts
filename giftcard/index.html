@@ -328,17 +328,14 @@
 
   /* ============ AUTO-SCROLLING CATEGORY STRIP ============ */
   .scroll-strip-section{
-    width:100%; background:#fff; padding: 10px 0 60px; overflow:hidden;
+    width:100%; background:#fff; padding: 10px 0 60px; overflow-x:auto; overflow-y:hidden;
+    cursor:grab; scrollbar-width:none; -ms-overflow-style:none;
   }
+  .scroll-strip-section::-webkit-scrollbar{ display:none; }
   .scroll-strip-track{
-    display:flex; gap:22px; width:max-content;
-    animation: scrollStrip 32s linear infinite;
+    display:flex; gap:22px; width:max-content; padding:0 20px;
   }
-  .scroll-strip-section:hover .scroll-strip-track{ animation-play-state: paused; }
-  @keyframes scrollStrip{
-    from{ transform: translateX(0); }
-    to{ transform: translateX(-50%); }
-  }
+  .scroll-strip-section.is-dragging{ cursor:grabbing; user-select:none; }
   .strip-card{
     position:relative; width:270px; height:300px; border-radius:14px; overflow:hidden;
     flex-shrink:0; text-decoration:none; box-shadow: 0 8px 20px rgba(13,51,40,0.12);
@@ -357,7 +354,7 @@
     .strip-card-label{ font-size:14px; margin-top:8px; }
     .scroll-strip-track{ gap:16px; }
   }
-  @media (prefers-reduced-motion: reduce){ .scroll-strip-track{ animation:none; } }
+  @media (prefers-reduced-motion: reduce){ .scroll-strip-section{ scroll-behavior:auto; } }
 
   /* ============ SECTION HEADINGS (shared) ============ */
   .section-heading{ text-align:center; padding: 70px 20px 6px; }
@@ -392,46 +389,74 @@
   @media (max-width:640px){ .category-grid{ grid-template-columns: repeat(2,1fr); } }
 
   /* ============ PRODUCT GRID (New Collections) ============ */
-  .collections{ background:#faf7f2; padding:20px 40px 80px; text-align:center; }
-  .product-grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap:28px; max-width:1280px; margin:0 auto; }
+  .collections{ background:#faf7f2; padding:20px 40px 80px; text-align:center; overflow-x:hidden; }
+  .collections::-webkit-scrollbar, .product-grid::-webkit-scrollbar{ display:none; }
+  .product-grid{ max-width:1280px; margin:0 auto; overflow:hidden; }
+  .product-grid-track{ display:grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap:24px; width:100%; align-items:stretch; animation:none !important; transform:none !important; }
+  .product-grid-track.is-paused{ animation:none; }
+  .collections:hover .product-grid-track{ animation:none; }
+  .product-grid .product-card{ width:100%; }
   .product-card{
-    border:1px solid #e6e1d3; border-radius:8px; overflow:hidden; background:#fff;
-    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; display:flex; flex-direction:column;
+    border:1px solid #ece7d9; border-radius:14px; overflow:hidden; background:#fff;
+    transition: transform .2s ease, box-shadow .2s ease; display:flex; flex-direction:column;
   }
-  .product-card:hover{ transform: translateY(-4px); box-shadow: 0 10px 24px rgba(13,43,31,0.12); border-color: var(--gold); }
-  .product-card .img-wrap{ background:#f7f3ea; height:200px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
-  .product-card .img-wrap img{ width:100%; height:100%; object-fit:cover; }
-  .product-card .info{ padding:18px 16px 22px; flex:1; display:flex; flex-direction:column; align-items:center; }
-  .product-card .info h3{ font-family: 'Playfair Display', Georgia, serif; font-size:16px; color: var(--deep-green); font-weight:700; margin-bottom:8px; min-height:42px; }
-  .product-card .info .price{ font-size:15px; color: var(--gold); font-weight:700; margin-bottom:14px; }
-  .product-card .info .card-actions{ display:flex; gap:8px; width:100%; justify-content:center; flex-wrap:wrap; }
+  .product-card:hover{ transform: translateY(-3px); box-shadow: 0 8px 18px rgba(13,43,31,0.10); }
+  .product-grid .product-card .img-wrap{ position:relative; width:100%; height:auto; aspect-ratio:1 / 1; flex:0 0 auto; box-sizing:border-box; padding:6px; margin:0; background:#fff; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:14px; }
+  .product-grid .product-card .img-wrap .product-image{ display:block; width:100%; height:100%; max-width:100%; max-height:100%; margin:0 auto; padding:0; object-fit:contain; object-position:center; }
+  .product-grid .product-card .info{ padding:10px 12px 12px; flex:1; display:flex; flex-direction:column; align-items:center; }
+  .product-card .info h3{ font-family: 'Playfair Display', Georgia, serif; font-size:15px; color: var(--deep-green); font-weight:700; margin-bottom:4px; line-height:1.3; }
+  .product-card .info .price{ font-size:14px; color: var(--gold); font-weight:700; margin-bottom:8px; }
+  .product-card .info .card-actions{ display:flex; gap:8px; width:100%; justify-content:center; flex-wrap:wrap; margin-top:0; }
   .product-card .info .view-btn{
-    background: var(--deep-green); color: var(--gold-light); border:none; padding:9px 22px; font-family:inherit;
-    font-weight:700; font-size:13px; letter-spacing:0.5px; border-radius:4px; cursor:pointer; text-decoration:none;
+    background: var(--deep-green); color: var(--gold-light); border:none; padding:8px 18px; font-family:inherit;
+    font-weight:700; font-size:12.5px; letter-spacing:0.5px; border-radius:4px; cursor:pointer; text-decoration:none;
     transition: background .2s ease, color .2s ease;
   }
   .product-card .info .view-btn:hover{ background: var(--gold); color: var(--deep-green); }
   .product-card .info .add-cart-btn{
-    background: none; color: var(--deep-green); border:1.5px solid var(--deep-green); padding:9px 18px; font-family:inherit;
-    font-weight:700; font-size:13px; letter-spacing:0.5px; border-radius:4px; cursor:pointer;
+    background: none; color: var(--deep-green); border:1.5px solid var(--deep-green); padding:8px 14px; font-family:inherit;
+    font-weight:700; font-size:12.5px; letter-spacing:0.5px; border-radius:4px; cursor:pointer;
     transition: background .2s ease, color .2s ease, border-color .2s ease;
   }
   .product-card .info .add-cart-btn:hover{ background: var(--gold); color:#fff; border-color: var(--gold); }
   .product-card .info .add-cart-btn.added{ background: var(--deep-green); color:#fff; border-color: var(--deep-green); }
-
   /* ============ WHAT MAKES US STAND OUT ============ */
   .standout{ background:#fff; padding: 20px 40px 90px; }
   .standout-full{
-    max-width: 1200px;
-    margin: 40px auto 0;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(13,51,40,0.12);
+    max-width: 1200px; margin: 40px auto 0; border-radius: 22px; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(13,51,40,0.14);
   }
-  .standout-full img{
-    width: 100%;
-    height: auto;
-    display: block;
+  .before-after-container{
+    position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: #e9dfd2;
+    touch-action: none; user-select: none; cursor: ew-resize;
+  }
+  .before-image,
+  .after-image{
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;
+    pointer-events: none;
+  }
+  .before-image{ z-index: 1; }
+  .after-image-wrapper{
+    position: absolute; top: 0; right: 0; bottom: 0; left: 50%; z-index: 2; overflow: hidden;
+  }
+  .after-image-wrapper .after-image{ left: auto; right: auto; max-width: none; }
+  .comparison-divider{
+    position: absolute; top: 0; bottom: 0; left: 50%; z-index: 3; width: 2px; background: #fff;
+    box-shadow: 0 0 0 1px rgba(13,51,40,0.12), 0 0 12px rgba(0,0,0,0.2);
+    transform: translateX(-50%); pointer-events: none;
+  }
+  .comparison-handle{
+    position: absolute; top: 50%; left: 50%; z-index: 4; width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center; border: 2px solid #fff;
+    border-radius: 50%; background: var(--deep-green); color: var(--gold-light);
+    transform: translate(-50%, -50%); box-shadow: 0 4px 14px rgba(0,0,0,0.24); pointer-events: none;
+    font-size: 20px; line-height: 1;
+  }
+  @media (max-width: 700px){
+    .standout{ padding: 20px 20px 60px; }
+    .standout-full{ margin-top: 28px; border-radius: 18px; }
+    .before-after-container{ aspect-ratio: 4 / 3; }
+    .comparison-handle{ width: 38px; height: 38px; font-size: 18px; }
   }
 
   /* ============ SHOP BY PRICE RANGE ============ */
@@ -482,8 +507,8 @@
   .bs-track-outer{ overflow: hidden; width: 100%; }
   .bs-track{ display: flex; gap: 24px; transition: transform .4s ease; will-change: transform; }
   .bs-card{ flex: 0 0 calc(25% - 18px); background: #fff; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; align-items: center; gap: 14px; padding-bottom: 24px; }
-  .bs-img{ width: 100%; height: 240px; overflow: hidden; border-radius: 8px; background: #f7f3ea; position:relative; }
-  .bs-img img{ width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+  .bs-img{ width: 100%; height: 240px; overflow: hidden; border-radius: 8px; background: #f7f3ea; position:relative; padding:10px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; }
+  .bs-img img{ width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; object-position: center center; display: block; transition: transform .4s; }
   .bs-card:hover .bs-img img{ transform: scale(1.05); }
   .bs-card h3{ font-family: 'Playfair Display', Georgia, serif; font-size: 17px; font-weight: 700; color: var(--deep-green); }
   .bs-btn{
@@ -493,6 +518,8 @@
   }
   .bs-btn:hover{ background: var(--gold); color: var(--deep-green); }
   .bs-btn.added{ background: var(--gold); color: var(--deep-green); }
+  .bs-actions{ display:flex; justify-content:center; gap:8px; flex-wrap:wrap; width:100%; padding:0 12px; }
+  .bs-actions .bs-btn{ padding:10px 20px; }
 
   @media (max-width: 1024px){ .bs-card{ flex: 0 0 calc(33.33% - 16px); } }
   @media (max-width: 700px){ .bs-card{ flex: 0 0 calc(50% - 12px); } .best-sellers{ padding: 30px 20px 60px; } .best-sellers h2{ font-size: 32px; } }
@@ -558,7 +585,7 @@
   .cart-items{ flex:1; overflow-y:auto; padding: 16px 18px; }
   .cart-empty{ text-align:center; color:#888; font-size:14px; margin-top:40px; }
   .cart-item{ display:flex; gap:12px; align-items:center; padding: 12px 0; border-bottom: 1px solid #eee2cf; }
-  .cart-item img{ width:56px; height:56px; object-fit:cover; border-radius:6px; background:#f7f3ea; flex-shrink:0; }
+  .cart-item img{ width:64px; height:64px; max-width:64px; max-height:64px; object-fit:contain; object-position:center center; border-radius:6px; background:#fff; padding:4px; box-sizing:border-box; flex-shrink:0; display:block; }
   .cart-item-info{ flex:1; min-width:0; }
   .cart-item-info h4{ font-size:13.5px; color: var(--deep-green); font-weight:700; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .cart-item-info .ci-price{ font-size:12.5px; color: var(--gold); font-weight:700; }
@@ -604,10 +631,11 @@
     .hero{ min-height:480px; } .hero-text-col{ min-height:480px; }
     .hero-slide-text{ width:auto; } .hero-slide-text h1{ font-size:34px; } .hero-slide-text p{ font-size:15px; }
     .hero-slide-text{ right: 5%; bottom: 32px; }
-    .product-grid{ grid-template-columns: repeat(3, 1fr); }
+    .product-grid-track{ grid-template-columns:repeat(3, minmax(0, 1fr)); }
   }
   @media (max-width: 700px){
     .top-bar{ gap:10px; } .top-left, .top-right{ gap:12px; } .search-wrap.expanded .search-input{ width:110px; }
+    .product-grid-track{ grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; }
   }
   @media (max-width: 480px){
     .top-left, .top-right{ gap:14px; } .brand-center img{ height:36px; } .brand-name{ font-size:13px; letter-spacing:1px; }
@@ -616,12 +644,13 @@
     .hero-slide-text{ width:auto; } .hero-slide-text h1{ font-size:24px; line-height:1.3; } .hero-slide-text p{ font-size:13px; }
     .hero-slide-text{ right: 4%; bottom: 24px; }
     .hero-cta{ padding:11px 24px; font-size:13px; } .hero-arrow{ width:36px; height:36px; font-size:16px; }
-    .product-grid{ grid-template-columns:1fr; } .store-content h2{ font-size:32px; } .store-content p{ font-size:14px; }
+    .store-content h2{ font-size:32px; } .store-content p{ font-size:14px; }
     .visit-store{ min-height:340px; padding:60px 20px; }
   }
-  @media (max-width: 500px){ .product-grid{ grid-template-columns: repeat(2,1fr); } .cart-panel{ width: 100vw; } }
+  @media (max-width: 500px){ .cart-panel{ width: 100vw; } }
   @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
 </style>
+<link rel="stylesheet" href="responsive.css">
 </head>
 <body>
 
@@ -787,7 +816,9 @@
   </div>
 
   <div class="product-grid" id="productGrid">
-    <!-- Products are loaded dynamically from MongoDB -->
+    <div class="product-grid-track" id="productGridTrack">
+      <!-- Products are loaded dynamically from MongoDB -->
+    </div>
   </div>
 </section>
 
@@ -815,7 +846,48 @@
     <div class="section-underline"></div>
   </div>
   <div class="standout-full" id="standoutContainer">
-    <!-- Standout image is loaded dynamically from MongoDB -->
+    <div class="before-after-container" data-before-after tabindex="0" aria-label="Before and after image comparison">
+      <img class="before-image" src="assets/before.png" alt="Before">
+      <div class="after-image-wrapper">
+        <img class="after-image" src="assets/afterimage.png" alt="After">
+      </div>
+      <div class="comparison-divider" aria-hidden="true"></div>
+      <div class="comparison-handle" aria-hidden="true">&#8596;</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOME DECOR ============ -->
+<section class="best-sellers home-decor-section">
+  <div class="section-heading">
+    <h2>Home Decor</h2>
+    <div class="section-underline"></div>
+  </div>
+  <div class="bs-wrapper">
+    <button class="bs-arrow bs-prev" onclick="homeDecorSlide(-1)" aria-label="Previous home decor products">&#8249;</button>
+    <button class="bs-arrow bs-next" onclick="homeDecorSlide(1)" aria-label="Next home decor products">&#8250;</button>
+    <div class="bs-track-outer">
+      <div class="bs-track" id="homeDecorTrack">
+        <!-- Home decor products are loaded dynamically from MongoDB -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THOUGHTFUL RETURN GIFTS ============ -->
+<section class="best-sellers thoughtful-gifts-section">
+  <div class="section-heading">
+    <h2>Thoughtful Return Gifts</h2>
+    <div class="section-underline"></div>
+  </div>
+  <div class="bs-wrapper">
+    <button class="bs-arrow bs-prev" onclick="thoughtfulGiftsSlide(-1)" aria-label="Previous thoughtful return gifts">&#8249;</button>
+    <button class="bs-arrow bs-next" onclick="thoughtfulGiftsSlide(1)" aria-label="Next thoughtful return gifts">&#8250;</button>
+    <div class="bs-track-outer">
+      <div class="bs-track" id="thoughtfulGiftsTrack">
+        <!-- Return gifts are loaded dynamically from MongoDB -->
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1102,7 +1174,7 @@
 
 
     var grid =
-      document.querySelector('.product-grid');
+      document.querySelector('.product-grid-track');
 
     var emptyMsg =
       document.getElementById('searchEmptyMsg');
@@ -1257,6 +1329,8 @@
   // =====================================================
 
   var bsIndex = 0;
+  var homeDecorIndex = 0;
+  var thoughtfulGiftsIndex = 0;
 
 
   function bsGetVisible(){
@@ -1272,48 +1346,42 @@
   }
 
 
+  function slideProductCarousel(trackId, currentIndex, dir){
+
+    var track = document.getElementById(trackId);
+    if(!track) return 0;
+
+    var cards = track.querySelectorAll('.bs-card');
+    var total = cards.length;
+    if(!total) return 0;
+
+    var visible = bsGetVisible();
+    var max = Math.max(0, total - visible);
+    currentIndex = Math.max(0, Math.min(currentIndex + dir, max));
+
+    var cardW = cards[0].offsetWidth + 24;
+    track.style.transform = 'translateX(-' + (currentIndex * cardW) + 'px)';
+    return currentIndex;
+  }
+
   function bsSlide(dir){
+    bsIndex = slideProductCarousel('bsTrack', bsIndex, dir);
+  }
 
-    var total =
-      document.querySelectorAll('.bs-card').length;
+  function homeDecorSlide(dir){
+    homeDecorIndex = slideProductCarousel('homeDecorTrack', homeDecorIndex, dir);
+  }
 
-    var visible =
-      bsGetVisible();
-
-    var max =
-      total - visible;
-
-    bsIndex =
-      Math.max(
-        0,
-        Math.min(bsIndex + dir, max)
-      );
-
-
-    var card =
-      document.querySelector('.bs-card');
-
-    if(!card) return;
-
-
-    var gap = 24;
-
-    var cardW =
-      card.offsetWidth + gap;
-
-
-    document.getElementById('bsTrack')
-      .style.transform =
-      'translateX(-' +
-      (bsIndex * cardW) +
-      'px)';
-
+  function thoughtfulGiftsSlide(dir){
+    thoughtfulGiftsIndex = slideProductCarousel('thoughtfulGiftsTrack', thoughtfulGiftsIndex, dir);
   }
 
 
   window.addEventListener('resize', function(){
 
     bsSlide(0);
+    homeDecorSlide(0);
+    thoughtfulGiftsSlide(0);
 
   });
 
@@ -1812,18 +1880,41 @@
         return "";
     }
 
+  const normalizedPath = String(path).replace(/\\/g, "/");
+
+  if (/^https?:\/\//i.test(normalizedPath)) {
+    return normalizedPath;
+  }
+
     // Newly uploaded backend image
-    if (path.startsWith("/uploads/")) {
-        return "http://localhost:5000" + path;
+  if (/^\/?uploads\//i.test(normalizedPath)) {
+    return "http://localhost:5000/" + normalizedPath.replace(/^\/?uploads\//i, "uploads/");
     }
 
     // Old MongoDB frontend image paths
-    if (path.startsWith("../assets/")) {
-        return path.replace("../assets/", "assets/");
+  if (normalizedPath.startsWith("../assets/")) {
+    return normalizedPath.replace("../assets/", "assets/");
     }
 
-    return path;
+  return normalizedPath;
 }
+
+
+  function setupCollectionMarquee() {
+    const track = document.getElementById("productGridTrack");
+
+    if (!track) {
+      return;
+    }
+
+    track.style.animation = "none";
+    track.style.transform = "none";
+    track.style.setProperty("--collection-loop-distance", "0px");
+    track.style.setProperty("--collection-duration", "0s");
+    track.querySelectorAll('[data-collection-clone="true"]').forEach(function(clone) {
+      clone.remove();
+    });
+  }
 
 
   async function loadProductsFromBackend() {
@@ -1837,16 +1928,36 @@
       }
 
       const products = await response.json();
-      const productGrid = document.getElementById("productGrid");
+      const productGrid = document.getElementById("productGridTrack");
 
       if (!productGrid) {
         console.error("Product grid not found");
         return;
       }
 
+      const newArrivalProducts = Array.isArray(products)
+        ? products
+            .filter(product => product.newArrival === true || product.newArrival === "true")
+            .sort((a, b) => {
+              const aDate = new Date(a.createdAt || 0).getTime() || Number(a.productId || 0);
+              const bDate = new Date(b.createdAt || 0).getTime() || Number(b.productId || 0);
+              return bDate - aDate;
+            })
+        : [];
+
+      const collectionProducts = newArrivalProducts.length
+        ? newArrivalProducts
+        : Array.isArray(products)
+          ? [...products].sort((a, b) => {
+              const aDate = new Date(a.createdAt || 0).getTime() || Number(a.productId || 0);
+              const bDate = new Date(b.createdAt || 0).getTime() || Number(b.productId || 0);
+              return bDate - aDate;
+            })
+          : [];
+
       productGrid.innerHTML = "";
 
-      if (!Array.isArray(products) || products.length === 0) {
+      if (!Array.isArray(collectionProducts) || collectionProducts.length === 0) {
         productGrid.innerHTML = `
           <p style="grid-column:1/-1;text-align:center;padding:40px;color:#777;">
             No products available.
@@ -1854,7 +1965,7 @@
         return;
       }
 
-      products.forEach(function(product) {
+      collectionProducts.slice(0, 12).forEach(function(product) {
         let imagePath = "";
 
         if (product.image) {
@@ -1867,10 +1978,6 @@
           ? "₹" + Number(product.price).toFixed(2)
           : "Price on request";
 
-        const badgeHtml = product.badge
-          ? `<span style="position:absolute;top:10px;left:10px;background:var(--gold);color:var(--deep-green);padding:5px 9px;border-radius:4px;font-size:11px;font-weight:700;">${escapeHTML(product.badge)}</span>`
-          : "";
-
         const card = document.createElement("div");
         card.className = "product-card";
 
@@ -1881,8 +1988,7 @@
 
         card.innerHTML = `
           <div class="img-wrap" style="position:relative;">
-            ${imagePath ? `<img src="${imagePath}" alt="${escapeHTML(product.name || "Product")}" onerror="this.style.display='none';">` : ""}
-            ${badgeHtml}
+            ${imagePath ? `<img class="product-image" src="${imagePath}" alt="${escapeHTML(product.name || "Product")}" onerror="this.style.display='none';">` : ""}
           </div>
 
           <div class="info">
@@ -1901,15 +2007,18 @@
           </div>
         `;
 
+        card.dataset.collectionOriginal = "true";
         productGrid.appendChild(card);
       });
+
+      setupCollectionMarquee();
 
       console.log("MongoDB products rendered successfully:", products.length);
 
     } catch (error) {
       console.error("Backend product loading error:", error);
 
-      const productGrid = document.getElementById("productGrid");
+      const productGrid = document.getElementById("productGridTrack");
 
       if (productGrid) {
         productGrid.innerHTML = `
@@ -1956,7 +2065,10 @@
     try {
       console.log("Loading heroes from backend...");
 
-      const response = await fetch("http://localhost:5000/api/hero");
+      const response = await fetch(
+        `http://localhost:5000/api/hero?_=${Date.now()}`,
+        { cache: "no-store" }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to load hero");
@@ -1966,7 +2078,7 @@
 
       const activeHeroes = Array.isArray(heroes)
         ? heroes
-            .filter(hero => hero.active === true)
+            .filter(hero => hero.active === true || hero.active === "true")
             .sort((a, b) => Number(a.order || 0) - Number(b.order || 0))
         : [];
 
@@ -2004,27 +2116,11 @@
       }).join("");
 
       textColumn.innerHTML = activeHeroes.map((hero, index) => {
-        const title = hero.title
-          ? `<h1>${escapeHTML(hero.title)}</h1>`
-          : "";
-
-        const subtitle = hero.subtitle
-          ? `<p>${escapeHTML(hero.subtitle)}</p>`
-          : "";
-
-        const description = hero.description
-          ? `<p>${escapeHTML(hero.description)}</p>`
-          : "";
-
         const buttonText = hero.buttonText || "Shop Now";
         const buttonLink = hero.buttonLink || "#";
 
         return `
           <div class="hero-slide-text ${index === 0 ? "active" : ""}" data-slide="${index}">
-            ${title}
-            ${subtitle}
-            ${description}
-
             <a href="${escapeHTML(buttonLink)}" class="hero-cta">
               ${escapeHTML(buttonText)}
             </a>
@@ -2055,6 +2151,64 @@
   // DYNAMIC HOMEPAGE SECTIONS
   // =====================================================
 
+  let scrollStripTimer = null;
+  let scrollStripPaused = false;
+  let scrollStripDragging = false;
+
+  function startScrollStripLoop() {
+    const section = document.querySelector(".scroll-strip-section");
+    const track = document.getElementById("scrollStripTrack");
+    if (!section || !track) return;
+
+    if (scrollStripTimer) {
+      clearInterval(scrollStripTimer);
+    }
+
+    section.onmouseenter = () => { scrollStripPaused = true; };
+    section.onmouseleave = () => {
+      scrollStripPaused = false;
+      scrollStripDragging = false;
+      section.classList.remove("is-dragging");
+    };
+
+    section.onpointerdown = event => {
+      scrollStripDragging = true;
+      scrollStripPaused = true;
+      section.classList.add("is-dragging");
+      section.dataset.dragStartX = event.clientX;
+      section.dataset.dragStartScroll = section.scrollLeft;
+      section.setPointerCapture(event.pointerId);
+    };
+
+    section.onpointermove = event => {
+      if (!scrollStripDragging) return;
+      const startX = Number(section.dataset.dragStartX);
+      const startScroll = Number(section.dataset.dragStartScroll);
+      section.scrollLeft = startScroll - (event.clientX - startX);
+    };
+
+    section.onpointerup = event => {
+      scrollStripDragging = false;
+      scrollStripPaused = false;
+      section.classList.remove("is-dragging");
+      section.releasePointerCapture(event.pointerId);
+    };
+
+    scrollStripTimer = setInterval(() => {
+      if (scrollStripPaused || scrollStripDragging || !track.firstElementChild) return;
+
+      const firstCard = track.firstElementChild;
+      section.scrollLeft += 1;
+
+      if (firstCard.getBoundingClientRect().right <= section.getBoundingClientRect().left) {
+        const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        const distance = firstCard.offsetWidth + gap;
+        track.appendChild(firstCard);
+        section.scrollLeft -= distance;
+      }
+    }, 16);
+  }
+
   async function loadScrollCategoriesFromBackend() {
     try {
       const response = await fetch("http://localhost:5000/api/scroll-categories");
@@ -2073,9 +2227,7 @@
 
       if (!activeCategories.length) return;
 
-      const displayCategories = [...activeCategories, ...activeCategories];
-
-      track.innerHTML = displayCategories.map(category => {
+      track.innerHTML = activeCategories.map(category => {
         const imageUrl = getBackendImageUrl(category.image);
         const countHtml = Number(category.count) > 0
           ? `<sup>${escapeHTML(category.count)}</sup>` : "";
@@ -2094,6 +2246,7 @@
         `;
       }).join("");
 
+      startScrollStripLoop();
       console.log("MongoDB scroll categories rendered:", activeCategories.length);
     } catch (error) {
       console.error("Scroll categories loading error:", error);
@@ -2103,17 +2256,33 @@
 
   async function loadBestSellersFromBackend() {
     try {
-      const response = await fetch("http://localhost:5000/api/best-sellers");
-      if (!response.ok) throw new Error("Failed to load best sellers");
+      const [bestSellerResponse, productsResponse] = await Promise.all([
+        fetch("http://localhost:5000/api/best-sellers"),
+        fetch("http://localhost:5000/api/products")
+      ]);
+      if (!bestSellerResponse.ok || !productsResponse.ok) {
+        throw new Error("Failed to load best sellers");
+      }
 
-      const bestSellers = await response.json();
+      const bestSellers = await bestSellerResponse.json();
+      const products = await productsResponse.json();
       const track = document.getElementById("bsTrack");
       if (!track) return;
 
-      const activeBestSellers = Array.isArray(bestSellers)
+      const configuredBestSellers = Array.isArray(bestSellers)
         ? bestSellers.filter(item => item.active !== false)
             .sort((a,b) => Number(a.order || 0) - Number(b.order || 0))
         : [];
+      const flaggedProducts = Array.isArray(products)
+        ? products.filter(product => product.bestSeller === true || product.bestSeller === "true")
+        : [];
+      const seenProductIds = new Set();
+      const activeBestSellers = [...configuredBestSellers, ...flaggedProducts].filter(item => {
+        const id = String(item.productId ?? "");
+        if (!id || seenProductIds.has(id)) return false;
+        seenProductIds.add(id);
+        return true;
+      });
 
       track.innerHTML = "";
 
@@ -2124,7 +2293,8 @@
       }
 
       track.innerHTML = activeBestSellers.map(item => {
-        const imageUrl = getBackendImageUrl(item.image);
+        const imagePath = item.image || (Array.isArray(item.images) ? item.images[0] : "");
+        const imageUrl = getBackendImageUrl(imagePath);
 
         return `
           <div class="bs-card"
@@ -2138,9 +2308,14 @@
                    onerror="console.error('Best seller image failed:', this.src);">
             </div>
             <h3>${escapeHTML(item.name || "Product")}</h3>
-            <button class="bs-btn" onclick="addToCartFromBsCard(this)">
-              Add to Cart
-            </button>
+            <div class="bs-actions">
+              <a class="bs-btn" href="views.html?id=${encodeURIComponent(item.productId)}">
+                View
+              </a>
+              <button class="bs-btn" onclick="addToCartFromBsCard(this)">
+                Add to Cart
+              </button>
+            </div>
           </div>
         `;
       }).join("");
@@ -2155,51 +2330,171 @@
   }
 
 
-  async function loadStandoutFromBackend() {
+  async function loadHomeDecorFromBackend() {
+    const track = document.getElementById('homeDecorTrack');
+    if (!track) return;
+
     try {
-      const response = await fetch("http://localhost:5000/api/standout");
+      const response = await fetch('http://localhost:5000/api/products');
+      if (!response.ok) throw new Error('Failed to load home decor products');
 
-      const container = document.getElementById("standoutContainer");
-      const title = document.getElementById("standoutTitle");
+      const products = await response.json();
+      const homeDecorProducts = Array.isArray(products)
+        ? products.filter(product => String(product.category || '').toLowerCase().includes('home decor'))
+        : [];
 
-      if (!container || !title) return;
-
-      if (response.status === 404) {
-        container.innerHTML = `
-          <div style="padding:50px;text-align:center;color:#777;">
-            Standout section is not configured yet.
-          </div>
-        `;
-        console.log("No standout record found. Add one from the admin dashboard.");
+      if (!homeDecorProducts.length) {
+        track.innerHTML = '<p style="width:100%;text-align:center;padding:40px;color:#777;">No home decor products available.</p>';
         return;
       }
 
-      if (!response.ok) throw new Error("Failed to load standout");
+      track.innerHTML = homeDecorProducts.map(product => {
+        const imagePath = product.image || (Array.isArray(product.images) ? product.images[0] : '');
+        const imageUrl = getBackendImageUrl(imagePath);
 
-      const standout = await response.json();
-      const imageUrl = getBackendImageUrl(standout.image);
-
-      if (standout.title) title.textContent = standout.title;
-
-      if (!imageUrl) {
-        container.innerHTML = `
-          <div style="padding:50px;text-align:center;color:#777;">
-            Standout image is not available.
+        return `
+          <div class="bs-card"
+               data-id="${escapeHTML(product.productId ?? '')}"
+               data-name="${escapeHTML(product.name || 'Product')}"
+               data-price="${Number(product.price) || 0}"
+               data-img="${escapeHTML(imageUrl)}">
+            <div class="bs-img">
+              <img src="${imageUrl}"
+                   alt="${escapeHTML(product.name || 'Home decor product')}"
+                   onerror="console.error('Home decor image failed:', this.src);">
+            </div>
+            <h3>${escapeHTML(product.name || 'Product')}</h3>
+            <div class="bs-actions">
+              <a class="bs-btn" href="views.html?id=${encodeURIComponent(product.productId)}">View</a>
+              <button class="bs-btn" onclick="addToCartFromBsCard(this)">Add to Cart</button>
+            </div>
           </div>
         `;
-        return;
-      }
+      }).join('');
 
-      container.innerHTML = `
-        <img src="${imageUrl}"
-             alt="${escapeHTML(standout.title || "What Makes Shailu's Concepts Stand Out")}"
-             onerror="console.error('Standout image failed:', this.src);">
-      `;
-
-      console.log("MongoDB standout rendered successfully");
+      homeDecorIndex = 0;
+      requestAnimationFrame(() => homeDecorSlide(0));
+      console.log('MongoDB home decor products rendered:', homeDecorProducts.length);
     } catch (error) {
-      console.error("Standout loading error:", error);
+      console.error('Home decor loading error:', error);
+      track.innerHTML = '<p style="width:100%;text-align:center;padding:40px;color:#b33;">Unable to load home decor products.</p>';
     }
+  }
+
+
+  async function loadThoughtfulReturnGiftsFromBackend() {
+    const track = document.getElementById('thoughtfulGiftsTrack');
+    if (!track) return;
+
+    try {
+      const response = await fetch('http://localhost:5000/api/products');
+      if (!response.ok) throw new Error('Failed to load return gift products');
+
+      const products = await response.json();
+      const returnGiftProducts = Array.isArray(products)
+        ? products.filter(product => String(product.category || '').trim().toLowerCase() === 'thoughtful return gifts')
+        : [];
+
+      if (!returnGiftProducts.length) {
+        track.innerHTML = '<p style="width:100%;text-align:center;padding:40px;color:#777;">No thoughtful return gifts available.</p>';
+        return;
+      }
+
+      track.innerHTML = returnGiftProducts.map(product => {
+        const imagePath = product.image || (Array.isArray(product.images) ? product.images[0] : '');
+        const imageUrl = getBackendImageUrl(imagePath);
+
+        return `
+          <div class="bs-card"
+               data-id="${escapeHTML(product.productId ?? '')}"
+               data-name="${escapeHTML(product.name || 'Product')}"
+               data-price="${Number(product.price) || 0}"
+               data-img="${escapeHTML(imageUrl)}">
+            <div class="bs-img">
+              <img src="${imageUrl}"
+                   alt="${escapeHTML(product.name || 'Return gift')}"
+                   onerror="console.error('Return gift image failed:', this.src);">
+            </div>
+            <h3>${escapeHTML(product.name || 'Product')}</h3>
+            <div class="bs-actions">
+              <a class="bs-btn" href="views.html?id=${encodeURIComponent(product.productId)}">View</a>
+              <button class="bs-btn" onclick="addToCartFromBsCard(this)">Add to Cart</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      thoughtfulGiftsIndex = 0;
+      requestAnimationFrame(() => thoughtfulGiftsSlide(0));
+      console.log('MongoDB thoughtful return gifts rendered:', returnGiftProducts.length);
+    } catch (error) {
+      console.error('Thoughtful return gifts loading error:', error);
+      track.innerHTML = '<p style="width:100%;text-align:center;padding:40px;color:#b33;">Unable to load thoughtful return gifts.</p>';
+    }
+  }
+
+
+  function initBeforeAfterComparison(){
+    document.querySelectorAll('[data-before-after]').forEach(function(comparison){
+      var afterWrapper = comparison.querySelector('.after-image-wrapper');
+      var afterImage = comparison.querySelector('.after-image');
+      var divider = comparison.querySelector('.comparison-divider');
+      var handle = comparison.querySelector('.comparison-handle');
+      var position = 50;
+      var dragging = false;
+      var frameRequested = false;
+      var pendingPosition = position;
+
+      function render(){
+        frameRequested = false;
+        var width = comparison.clientWidth;
+        var left = width * position / 100;
+        afterWrapper.style.left = position + '%';
+        afterWrapper.style.width = (100 - position) + '%';
+        afterImage.style.width = width + 'px';
+        afterImage.style.left = -left + 'px';
+        divider.style.left = position + '%';
+        handle.style.left = position + '%';
+      }
+
+      function setPosition(nextPosition){
+        position = Math.max(0, Math.min(100, nextPosition));
+        if (!frameRequested) {
+          frameRequested = true;
+          requestAnimationFrame(render);
+        }
+      }
+
+      function updateFromPointer(event){
+        var bounds = comparison.getBoundingClientRect();
+        pendingPosition = ((event.clientX - bounds.left) / bounds.width) * 100;
+        setPosition(pendingPosition);
+      }
+
+      comparison.addEventListener('pointerdown', function(event){
+        dragging = true;
+        comparison.setPointerCapture(event.pointerId);
+        updateFromPointer(event);
+      });
+
+      comparison.addEventListener('pointermove', function(event){
+        if (dragging) updateFromPointer(event);
+      });
+
+      comparison.addEventListener('pointerup', function(event){
+        dragging = false;
+        if (comparison.hasPointerCapture(event.pointerId)) comparison.releasePointerCapture(event.pointerId);
+      });
+
+      comparison.addEventListener('pointercancel', function(){ dragging = false; });
+      comparison.addEventListener('keydown', function(event){
+        if (event.key === 'ArrowLeft') { event.preventDefault(); setPosition(position - 1); }
+        if (event.key === 'ArrowRight') { event.preventDefault(); setPosition(position + 1); }
+      });
+
+      window.addEventListener('resize', render);
+      render();
+    });
   }
 
 
@@ -2225,7 +2520,9 @@
   loadHeroFromBackend();
   loadScrollCategoriesFromBackend();
   loadBestSellersFromBackend();
-  loadStandoutFromBackend();
+  loadHomeDecorFromBackend();
+  loadThoughtfulReturnGiftsFromBackend();
+  initBeforeAfterComparison();
 
 
 </script>
