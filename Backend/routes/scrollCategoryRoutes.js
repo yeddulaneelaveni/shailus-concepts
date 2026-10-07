@@ -1,6 +1,6 @@
 const express = require("express");
-const multer = require("multer");
-const path = require("path");
+const adminMiddleware = require("../middleware/adminMiddleware");
+const imageUpload = require("../middleware/uploadMiddleware");
 
 const {
     getScrollCategories,
@@ -11,50 +11,38 @@ const {
 
 const router = express.Router();
 
+const multer = require("multer");
 const storage = multer.diskStorage({
-
     destination: function(req, file, cb) {
-        cb(
-            null,
-            path.join(
-                __dirname,
-                "../uploads/scroll"
-            )
-        );
+        cb(null, imageUpload.getUploadDirectory("scroll"));
     },
 
     filename: function(req, file, cb) {
-
-        const uniqueName =
-            Date.now() +
-            "-" +
-            file.originalname
-                .replace(/\s+/g, "-");
-
-        cb(null, uniqueName);
+        cb(null, imageUpload.createUploadFilename(file.originalname));
     }
 });
 
-const upload = multer({
-    storage: storage
-});
+const upload = imageUpload.createImageUpload(storage);
 
 router.get("/", getScrollCategories);
 
 router.post(
     "/",
+    adminMiddleware,
     upload.single("image"),
     createScrollCategory
 );
 
 router.put(
     "/:id",
+    adminMiddleware,
     upload.single("image"),
     updateScrollCategory
 );
 
 router.delete(
     "/:id",
+    adminMiddleware,
     deleteScrollCategory
 );
 

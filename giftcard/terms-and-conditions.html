@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="api-config.js"></script>
+  <script src="customer-state.js"></script>
+  <title>Terms &amp; Conditions | Shailu's Concepts</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="responsive.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --terms-green: #0D3328;
+      --terms-gold: #C9A84C;
+      --terms-cream: #F8F5EE;
+      --terms-sand: #F2E8D8;
+    }
+    body.terms-page { margin: 0; color: var(--terms-green); background: var(--terms-cream); font-family: 'Poppins', Arial, sans-serif; }
+    .terms-banner { padding: clamp(42px, 7vw, 78px) 20px; color: var(--terms-cream); background: var(--terms-green); text-align: center; border-bottom: 3px solid var(--terms-gold); }
+    .terms-banner h1 { margin: 0; color: var(--terms-gold); font-family: 'Playfair Display', Georgia, serif; font-size: clamp(2rem, 5vw, 3.3rem); }
+    .terms-banner p { max-width: 760px; margin: 14px auto 0; line-height: 1.7; }
+    .terms-content { width: min(100% - 32px, 960px); margin: 36px auto 64px; }
+    .terms-notice { margin-bottom: 20px; padding: 16px 18px; border-left: 4px solid var(--terms-gold); border-radius: 6px; background: var(--terms-sand); line-height: 1.7; }
+    .terms-section { margin: 14px 0; padding: 22px clamp(18px, 4vw, 30px); border: 1px solid rgba(201, 168, 76, .45); border-radius: 10px; background: #fff; }
+    .terms-section h2 { margin: 0 0 9px; color: var(--terms-green); font-family: 'Playfair Display', Georgia, serif; font-size: clamp(1.15rem, 3vw, 1.4rem); }
+    .terms-section p { margin: 0; color: #39453f; font-size: 14px; line-height: 1.8; }
+    .terms-section a { color: var(--terms-green); font-weight: 600; }
+    .terms-section a:hover { color: #8A6B21; }
+    @media (max-width: 600px) {
+      .terms-content { width: min(100% - 24px, 960px); margin-top: 24px; }
+      .terms-section { padding: 18px 16px; }
+      .terms-section p { font-size: 13.5px; }
+    }
+  </style>
+</head>
+<body class="terms-page">
+  <div id="header"></div>
+
+  <main>
+    <section class="terms-banner">
+      <h1>Terms &amp; Conditions</h1>
+      <p>Please read these general website terms before browsing or placing an order with Shailu's Concepts.</p>
+    </section>
+
+    <div class="terms-content">
+      <p class="terms-notice"><strong>General information:</strong> These terms are intended as general website information for customers in India and are not legal advice. If you have a question about an order or how a term applies, please contact us before proceeding.</p>
+
+      <section class="terms-section">
+        <h2>Introduction</h2>
+        <p>These terms describe general conditions for browsing this website and requesting or placing orders with Shailu's Concepts. By using the website, you agree to use it lawfully and provide accurate information when making an enquiry or order.</p>
+      </section>
+      <section class="terms-section">
+        <h2>Orders &amp; Product Information</h2>
+        <p>Product descriptions, images, dimensions, and other details are provided to help you make a selection. Handcrafted or decorative items may have reasonable variations. An order is subject to product availability and confirmation of the order details.</p>
+      </section>
+      <section class="terms-section">
+        <h2>Pricing &amp; Bulk Discounts</h2>
+        <p>Prices are shown in Indian rupees unless stated otherwise. The current quantity discount is based on the total number of pieces in an order: 1–9 pieces receive 0%, 10–50 pieces receive 20%, and 51 or more pieces receive 30%. The applicable amount is calculated by the server at checkout. Any specific quotation or customization arrangement should be confirmed with us before payment.</p>
+      </section>
+      <section class="terms-section">
+        <h2>Payment Terms</h2>
+        <p>Online payments are offered through the payment options shown at checkout. Payment confirmation is subject to successful processing and verification. Do not send payment credentials or one-time passwords to us by message; follow the payment provider's secure checkout instructions.</p>
+      </section>
+      <section class="terms-section">
+        <h2>Shipping &amp; Delivery</h2>
+        <p>Delivery arrangements, charges, and estimated timelines may depend on the destination, order contents, availability, and any customization. We will communicate order-specific details where applicable. An estimate is not a guaranteed delivery date unless separately confirmed in writing.</p>
+      </section>
+      <section class="terms-section">
+        <h2>Returns &amp; Refunds</h2>
+        <p>If an item arrives damaged, incorrect, or otherwise raises a concern, please contact us with your order details and relevant information so we can review it. Return, replacement, or refund options depend on the circumstances and applicable requirements; contact us before sending an item back. Nothing in these website terms is intended to limit rights that cannot lawfully be excluded.</p>
+      </section>
+      <section class="terms-section">
+        <h2>Product Availability</h2>
+        <p>Products and customization options may change or become unavailable. If an order cannot be fulfilled as requested, we will contact you to discuss available options before proceeding with a change.</p>
+      </section>
+      <section class="terms-section">
+        <h2>Customer Responsibilities</h2>
+        <p>Please provide complete and accurate contact, delivery, and order information. You are responsible for reviewing the selected items, quantities, delivery details, and order total before confirming an order.</p>
+      </section>
+      <section class="terms-section">
+        <h2>Privacy &amp; Data Handling</h2>
+        <p>Information supplied through the website may be used to manage your account, respond to enquiries, process orders, arrange delivery, and provide customer support. Payment processing may involve the payment provider you select. Please avoid submitting information that is not needed for your enquiry or order.</p>
+      </section>
+      <section class="terms-section">
+        <h2>Intellectual Property</h2>
+        <p>Website text, branding, design, and images are presented for the use of this website. Please do not copy, republish, or use this material commercially without permission from the relevant rights holder.</p>
+      </section>
+      <section class="terms-section">
+        <h2>Limitation of Liability</h2>
+        <p>We aim to keep website information useful and current, but online content may occasionally be incomplete or unavailable. These general terms do not exclude or restrict any responsibility that applicable law does not allow to be excluded or restricted.</p>
+      </section>
+      <section class="terms-section">
+        <h2>Changes to These Terms</h2>
+        <p>Website terms may be updated as the site or services change. The version displayed on this page applies to future use from the time it is published. Please review this page when returning to the website.</p>
+      </section>
+      <section class="terms-section">
+        <h2>Contact Information</h2>
+        <p>For questions about these terms or an order, contact Shailu's Concepts at <a href="mailto:shailusconcepts@gmail.com">shailusconcepts@gmail.com</a> or <a href="tel:+918825498438">+91 88254 98438</a>.</p>
+      </section>
+    </div>
+  </main>
+
+  <div id="footer"></div>
+  <script src="category-config.js"></script>
+  <script src="site-shell.js"></script>
+  <script src="site-header.js"></script>
+</body>
+</html>

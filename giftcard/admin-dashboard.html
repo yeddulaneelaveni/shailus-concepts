@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="api-config.js"></script>
 
     <title>Admin Dashboard — Shailu's Concepts</title>
 
@@ -68,7 +69,12 @@
         >
             <span class="nav-icon">◆</span> Products
         </button>
-
+<button
+    class="sidebar-btn"
+    onclick="showSection('ordersSection', this); loadOrders()"
+>
+    <span class="nav-icon">◆</span> Orders
+</button>
 
         <button
             class="sidebar-btn"
@@ -237,7 +243,35 @@
 
         </section>
 
+<!-- ================= ORDERS ================= -->
 
+<section
+    id="ordersSection"
+    class="dashboard-section"
+>
+
+    <div class="section-heading">
+
+        <div>
+
+            <h1>Orders</h1>
+
+            <p>
+                Manage customer orders, payments and shipping.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="orders-container">
+
+        Loading orders...
+
+    </div>
+
+</section>
 
         <!-- ================= ADD / EDIT PRODUCT ================= -->
 

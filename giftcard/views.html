@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="api-config.js"></script>
+<script src="customer-state.js"></script>
 <title>Lotus Air Tight Container – Shailu's Concepts</title>
 <style>
   :root{
@@ -770,9 +772,9 @@
           <a href="return-gifts.html#customisable-jute-bags">Customisable Jute Bags</a>
         </div>
       </div>
-      <a href="new-collection.html">New Collection</a>
-      <a href="combos.html">Combos</a>
-      <a href="corporate-gifts.html">Corporate Gifts</a>
+      <a href="/category/new-collection">New Collection</a>
+      <a href="/category/combos">Combos</a>
+      <a href="/category/corporate-gifts">Corporate Gifts</a>
       <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
     </div>
   </nav>
@@ -877,10 +879,10 @@
       <ul>
         <li><a href="#">Return Gifts</a></li>
         <li><a href="#">Favour Bags</a></li>
-        <li><a href="#">Corporate Gifts</a></li>
+        <li><a href="/category/corporate-gifts">Corporate Gifts</a></li>
         <li><a href="#">Kids Return Gifts</a></li>
         <li><a href="#">Customised Gifts</a></li>
-        <li><a href="#">Combos</a></li>
+        <li><a href="/category/combos">Combos</a></li>
       </ul>
     </div>
 
@@ -962,9 +964,9 @@ function toggleSearch(){const w=document.getElementById("searchWrap");if(!w)retu
 function filterProducts(v){v=String(v||"").trim();if(v)location.href="index.html?search="+encodeURIComponent(v);}
 function toggleDropdown(id){const e=document.getElementById(id);if(!e)return;const o=e.classList.contains("open");document.querySelectorAll(".dropdown.open,.has-submenu.open").forEach(x=>x.classList.remove("open"));if(!o)e.classList.add("open");}
 document.addEventListener("click",e=>document.querySelectorAll(".dropdown.open,.has-submenu.open").forEach(x=>{if(!x.contains(e.target))x.classList.remove("open");}));
-const CART_STORAGE_KEY="shailusCart";let cart=loadCart();
-function loadCart(){try{const x=JSON.parse(localStorage.getItem(CART_STORAGE_KEY)||"[]");return Array.isArray(x)?x:[]}catch{return[]}}
-function saveCart(){try{localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(cart))}catch{}}
+let cart=loadCart();
+function loadCart(){return window.ShailuCustomer.loadCart()}
+function saveCart(){window.ShailuCustomer.saveCart(cart)}
 function findCartItem(id){return cart.find(x=>String(x.id)===String(id))}
 function getCurrentMOQ(){const d=document.querySelector(".product-details");const n=Number(d?.dataset.moq);return Number.isInteger(n)&&n>0?n:1}
 function changeQty(delta){const i=document.getElementById("qtyInput");if(!i)return;const m=getCurrentMOQ();let n=parseInt(i.value,10)||m;n=Math.max(m,n+delta*m);i.value=n}
@@ -982,8 +984,12 @@ function openCart(){document.getElementById("cartPanel")?.classList.add("open");
 function closeCart(){document.getElementById("cartPanel")?.classList.remove("open");document.getElementById("cartOverlay")?.classList.remove("open")}
 function checkoutCart(){if(!cart.length)return showToast("Your cart is empty");location.href="checkout.html"}
 let toastTimer;function showToast(m){const t=document.getElementById("cartToast");if(!t)return;t.textContent=m;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2200)}
-window.addEventListener("storage",e=>{if(e.key===CART_STORAGE_KEY){cart=loadCart();renderCart()}});renderCart();
+window.addEventListener(window.ShailuCustomer.stateEvent,()=>{cart=loadCart();renderCart()});
+window.addEventListener(window.ShailuCustomer.cartEvent,()=>{cart=loadCart();renderCart()});renderCart();
 </script>
 <script src="views.js"></script>
+<script src="category-config.js"></script>
+<script src="site-shell.js"></script>
+<script src="site-header.js"></script>
 </body>
 </html>

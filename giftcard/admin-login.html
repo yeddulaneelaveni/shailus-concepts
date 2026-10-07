@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="api-config.js"></script>
+<script src="customer-state.js"></script>
 <title>Admin Login — Shailu's Concepts</title>
 <style>
   :root{
@@ -645,9 +647,9 @@
       </div>
     </div>
 
-    <a href="new-collection.html">New Collection</a>
-    <a href="combos.html">Combos</a>
-    <a href="corporate-gifts.html">Corporate Gifts</a>
+    <a href="/category/new-collection">New Collection</a>
+    <a href="/category/combos">Combos</a>
+    <a href="/category/corporate-gifts">Corporate Gifts</a>
     <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
   </div>
 </nav>
@@ -751,10 +753,10 @@
       <ul>
         <li><a href="index.html#">Return Gifts</a></li>
         <li><a href="index.html#">Favour Bags</a></li>
-        <li><a href="index.html#">Corporate Gifts</a></li>
+        <li><a href="/category/corporate-gifts">Corporate Gifts</a></li>
         <li><a href="index.html#">Kids Return Gifts</a></li>
         <li><a href="index.html#">Customised Gifts</a></li>
-        <li><a href="index.html#">Combos</a></li>
+        <li><a href="/category/combos">Combos</a></li>
       </ul>
     </div>
 
@@ -869,7 +871,7 @@
 
     try {
       const response = await fetch(
-        'http://localhost:5000/api/auth/admin-login',
+        `${window.API_BASE_URL}/api/auth/admin-login`,
         {
           method: 'POST',
           headers: {
@@ -912,6 +914,9 @@
   }
 
 </script>
+<script src="category-config.js"></script>
+<script src="site-shell.js"></script>
+<script src="site-header.js"></script>
 
 </body>
 </html>

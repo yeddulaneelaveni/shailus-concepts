@@ -91,7 +91,7 @@ video {
     margin-top: 48px;
     padding: 32px 24px 18px;
     color: #f8edcf;
-    background: #0d3328;
+    background: linear-gradient(180deg, #0d3328, #071f17);
 }
 
 .legacy-footer-inner {

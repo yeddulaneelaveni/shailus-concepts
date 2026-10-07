@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <script src="api-config.js"></script>
+    <script src="customer-state.js"></script>
+
+    <title>Track Your Order — Shailu's Concepts</title>
+    <link rel="stylesheet" href="responsive.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f3ec;
+            color: #073F32;
+            min-height: 100vh;
+        }
+
+        /* ================= HEADER ================= */
+
+        .track-header {
+            background: #073F32;
+            color: white;
+            padding: 18px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: white;
+        }
+
+        .brand h1 {
+            font-size: 22px;
+        }
+
+        .back-home {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-home:hover {
+            text-decoration: underline;
+        }
+
+        /* ================= MAIN ================= */
+
+        .page-container {
+            width: min(1000px, 92%);
+            margin: 50px auto;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title h2 {
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        .page-title p {
+            color: #666;
+        }
+
+        /* ================= TRACK FORM ================= */
+
+        .tracking-box {
+            max-width: 600px;
+            margin: 0 auto 35px;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #d8d2c7;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .field input:focus {
+            border-color: #073F32;
+        }
+
+        .track-btn {
+            width: 100%;
+            border: none;
+            background: #073F32;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .track-btn:hover {
+            background: #0b5544;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 15px;
+            color: #c0392b;
+            display: none;
+        }
+
+        /* ================= ORDER ================= */
+
+        #orderResult {
+            display: none;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.07);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .order-header h3 {
+            font-size: 22px;
+        }
+
+        .status-badge {
+            background: #e9f4ef;
+            color: #073F32;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        /* ================= TIMELINE ================= */
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 40px 0;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            top: 18px;
+            left: 5%;
+            right: 5%;
+            height: 3px;
+            background: #ddd;
+            z-index: 0;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 18px;
+            left: 5%;
+            height: 3px;
+            background: #073F32;
+            z-index: 1;
+            width: 0;
+            transition: width 0.5s ease;
+        }
+
+        .timeline-step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 14%;
+        }
+
+        .timeline-circle {
+            width: 36px;
+            height: 36px;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .timeline-step.completed .timeline-circle,
+        .timeline-step.current .timeline-circle {
+            background: #073F32;
+        }
+
+        .timeline-step.current .timeline-circle {
+            box-shadow: 0 0 0 5px #dcebe5;
+        }
+
+        .timeline-label {
+            font-size: 12px;
+            color: #777;
+            line-height: 1.3;
+        }
+
+        .timeline-step.completed .timeline-label,
+        .timeline-step.current .timeline-label {
+            color: #073F32;
+            font-weight: 700;
+        }
+
+        /* ================= DETAILS ================= */
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .detail-box {
+            background: #faf8f4;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .detail-box h4 {
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .detail-box p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* ================= PRODUCTS ================= */
+
+        .products {
+            margin-top: 25px;
+        }
+
+        .product {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .product:last-child {
+            border-bottom: none;
+        }
+
+        .product img {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #f5f1eb;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-info h4 {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .product-info p {
+            font-size: 13px;
+            color: #777;
+        }
+
+        .product-price {
+            font-weight: 700;
+        }
+
+        /* ================= TOTAL ================= */
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+            margin-top: 10px;
+            border-top: 2px solid #eee;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* ================= SHIPPING TRACKING ================= */
+
+        .shipment-box {
+            background: #eef6f2;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+            display: none;
+        }
+
+        .shipment-box h4 {
+            margin-bottom: 10px;
+        }
+
+        .shipment-box p {
+            margin-bottom: 7px;
+            color: #555;
+        }
+
+        .shipment-btn {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 10px 16px;
+            background: #073F32;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 700px) {
+
+            .track-header {
+                padding: 15px 18px;
+            }
+
+            .brand h1 {
+                font-size: 18px;
+            }
+
+            .brand img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .back-home {
+                font-size: 12px;
+            }
+
+            .page-container {
+                margin: 30px auto;
+            }
+
+            .page-title h2 {
+                font-size: 27px;
+            }
+
+            .tracking-box,
+            .order-card {
+                padding: 20px;
+            }
+
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .timeline {
+                flex-direction: column;
+                gap: 20px;
+                margin-left: 5px;
+            }
+
+            .timeline::before,
+            .timeline-progress {
+                left: 17px;
+                top: 18px;
+                bottom: 18px;
+                width: 3px !important;
+                height: 0;
+            }
+
+            .timeline-step {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                text-align: left;
+            }
+
+            .timeline-circle {
+                margin: 0;
+                flex-shrink: 0;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .product-price {
+                font-size: 13px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= HEADER ================= -->
+
+<header class="site-header" id="siteHeader"></header>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="page-container">
+
+
+    <div class="page-title">
+
+        <h2>Track Your Order</h2>
+
+        <p>
+            Enter your Order ID and phone number to see
+            your latest order status.
+        </p>
+
+    </div>
+
+
+    <!-- ================= TRACK FORM ================= -->
+
+    <div class="tracking-box">
+
+        <div class="field">
+
+            <label for="orderId">
+                Order ID
+            </label>
+
+            <input
+                type="text"
+                id="orderId"
+                placeholder="Example: SC-20261006-001"
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label for="phone">
+                Phone Number
+            </label>
+
+            <input
+                type="tel"
+                id="phone"
+                placeholder="Enter the phone number used for your order"
+                autocomplete="tel"
+            >
+
+        </div>
+
+
+        <button
+            class="track-btn"
+            onclick="trackOrder()"
+        >
+            Track My Order
+        </button>
+
+
+        <div
+            id="message"
+            class="message"
+        ></div>
+
+    </div>
+
+
+    <!-- ================= ORDER RESULT ================= -->
+
+    <section id="orderResult">
+
+
+        <div class="order-card">
+
+            <div class="order-header">
+
+                <div>
+
+                    <h3 id="displayOrderId">
+                        Order
+                    </h3>
+
+                    <p
+                        id="orderDate"
+                        style="color:#777;margin-top:6px;font-size:13px;"
+                    ></p>
+
+                </div>
+
+                <div
+                    id="statusBadge"
+                    class="status-badge"
+                >
+                    Order Placed
+                </div>
+
+            </div>
+
+
+            <!-- ================= TIMELINE ================= -->
+
+            <div class="timeline">
+
+                <div
+                    id="timelineProgress"
+                    class="timeline-progress"
+                ></div>
+
+
+                <div class="timeline-step">
+
+                    <div class="timeline-circle">
+                        ✓
+                    </div>
+
+                    <div class="timeline-label">
+                        Order<br>Placed
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-step">
+
+                    <div class="timeline-circle">
+                        ✓
+                    </div>
+
+                    <div class="timeline-label">
+                        Payment<br>Confirmed
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-step">
+
+                    <div class="timeline-circle">
+                        ✓
+                    </div>
+
+                    <div class="timeline-label">
+                        Processing
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-step">
+
+                    <div class="timeline-circle">
+                        ✓
+                    </div>
+
+                    <div class="timeline-label">
+                        Packed
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-step">
+
+                    <div class="timeline-circle">
+                        ✓
+                    </div>
+
+                    <div class="timeline-label">
+                        Shipped
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-step">
+
+                    <div class="timeline-circle">
+                        ✓
+                    </div>
+
+                    <div class="timeline-label">
+                        Out for<br>Delivery
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-step">
+
+                    <div class="timeline-circle">
+                        ✓
+                    </div>
+
+                    <div class="timeline-label">
+                        Delivered
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= SHIPMENT ================= -->
+
+            <div
+                id="shipmentBox"
+                class="shipment-box"
+            >
+
+                <h4>
+                    🚚 Shipment Details
+                </h4>
+
+                <p>
+                    <strong>Carrier:</strong>
+                    <span id="carrier"></span>
+                </p>
+
+                <p>
+                    <strong>Tracking Number:</strong>
+                    <span id="trackingNumber"></span>
+                </p>
+
+                <p id="deliveryDateRow">
+                    <strong>Estimated Delivery:</strong>
+                    <span id="estimatedDelivery"></span>
+                </p>
+
+                <a
+                    id="trackingLink"
+                    class="shipment-btn"
+                    href="#"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    Track Shipment
+                </a>
+
+            </div>
+
+
+            <!-- ================= PRODUCTS ================= -->
+
+            <div class="products">
+
+                <h3 style="margin-bottom:10px;">
+                    Your Products
+                </h3>
+
+                <div id="productsContainer"></div>
+
+            </div>
+
+
+            <!-- ================= DETAILS ================= -->
+
+            <div class="details-grid">
+
+
+                <div class="detail-box">
+
+                    <h4>
+                        💳 Payment
+                    </h4>
+
+                    <p id="paymentStatus"></p>
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <h4>
+                        📍 Shipping Address
+                    </h4>
+
+                    <p id="shippingAddress"></p>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================= TOTAL ================= -->
+
+            <div class="total-row">
+
+                <span>
+                    Total
+                </span>
+
+                <span id="totalAmount">
+                    ₹0.00
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<div id="footer"></div>
+
+<script>
+
+    const API_URL = window.API_BASE_URL;
+
+    window.ShailuCustomer.validateSession().then(function(session) {
+        if (!session) {
+            window.location.href =
+                "login.html?returnTo=" +
+                encodeURIComponent(window.location.pathname + window.location.search);
+        }
+    }).catch(function(error) {
+        console.error("Customer session validation failed:", error.message);
+    });
+
+
+    // =====================================================
+    // ESCAPE HTML
+    // =====================================================
+
+    function escapeHTML(value) {
+
+        if (
+            value === null ||
+            value === undefined
+        ) {
+            return "";
+        }
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    // =====================================================
+    // TRACK ORDER
+    // =====================================================
+
+    async function trackOrder() {
+        const orderId =
+            document
+                .getElementById("orderId")
+                .value
+                .trim();
+
+        const phone =
+            document
+                .getElementById("phone")
+                .value
+                .trim();
+
+        const message =
+            document.getElementById("message");
+
+        const result =
+            document.getElementById("orderResult");
+
+        let session;
+        try {
+            session = await window.ShailuCustomer.validateSession();
+        } catch (error) {
+            message.textContent = "Unable to validate your login. Please try again.";
+            message.style.display = "block";
+            return;
+        }
+        if (!session) {
+            window.location.href =
+                "login.html?returnTo=" +
+                encodeURIComponent(window.location.pathname + window.location.search);
+            return;
+        }
+
+        message.style.display = "none";
+
+        result.style.display = "none";
+
+
+        if (!orderId || !phone) {
+
+            message.textContent =
+                "Please enter your Order ID and phone number.";
+
+            message.style.display = "block";
+
+            return;
+        }
+
+
+        const button =
+            document.querySelector(".track-btn");
+
+        button.disabled = true;
+
+        button.textContent =
+            "Checking Order...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/api/orders/track`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${session.token}`
+                        },
+
+                        body: JSON.stringify({
+                            orderId,
+                            phone
+                        })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok || !data.success) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to find order."
+                );
+
+            }
+
+
+            renderOrder(data.order);
+
+
+        } catch (error) {
+
+            message.textContent =
+                error.message;
+
+            message.style.display =
+                "block";
+
+        } finally {
+
+            button.disabled = false;
+
+            button.textContent =
+                "Track My Order";
+
+        }
+
+    }
+
+
+    // =====================================================
+    // RENDER ORDER
+    // =====================================================
+
+    function renderOrder(order) {
+
+        document.getElementById(
+            "orderResult"
+        ).style.display = "block";
+
+
+        document.getElementById(
+            "displayOrderId"
+        ).textContent =
+            `Order #${order.orderId}`;
+
+
+        if (order.createdAt) {
+
+            const date =
+                new Date(order.createdAt);
+
+            document.getElementById(
+                "orderDate"
+            ).textContent =
+                `Placed on ${date.toLocaleDateString(
+                    "en-IN",
+                    {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric"
+                    }
+                )}`;
+
+        }
+
+
+        document.getElementById(
+            "statusBadge"
+        ).textContent =
+            order.orderStatus;
+
+
+        renderTimeline(
+            order.orderStatus
+        );
+
+
+        // -------------------------------------------------
+        // PRODUCTS
+        // -------------------------------------------------
+
+        const productsContainer =
+            document.getElementById(
+                "productsContainer"
+            );
+
+
+        productsContainer.innerHTML =
+            order.items
+                .map(item => {
+
+                    const image =
+                        item.image || "assets/logo.jpeg";
+
+                    return `
+
+                        <div class="product">
+
+                            <img
+                                src="${escapeHTML(image)}"
+                                alt="${escapeHTML(item.name)}"
+                            >
+
+                            <div class="product-info">
+
+                                <h4>
+                                    ${escapeHTML(item.name)}
+                                </h4>
+
+                                <p>
+                                    Quantity:
+                                    ${item.quantity}
+                                </p>
+
+                            </div>
+
+                            <div class="product-price">
+
+                                ₹${Number(
+                                    item.finalPrice
+                                ).toFixed(2)}
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                })
+                .join("");
+
+
+        // -------------------------------------------------
+        // PAYMENT
+        // -------------------------------------------------
+
+        document.getElementById(
+            "paymentStatus"
+        ).textContent =
+            order.paymentStatus === "Paid"
+                ? "✓ Payment Confirmed"
+                : order.paymentStatus;
+
+
+        // -------------------------------------------------
+        // SHIPPING ADDRESS
+        // -------------------------------------------------
+
+        const address =
+            order.shippingAddress || {};
+
+        document.getElementById(
+            "shippingAddress"
+        ).innerHTML = `
+
+            ${escapeHTML(address.address)}
+
+            ${address.apartment
+                ? `<br>${escapeHTML(address.apartment)}`
+                : ""
+            }
+
+            <br>
+            ${escapeHTML(address.city)},
+            ${escapeHTML(address.state)}
+
+            <br>
+            ${escapeHTML(address.country)}
+            -
+            ${escapeHTML(address.pinCode)}
+
+        `;
+
+
+        // -------------------------------------------------
+        // TOTAL
+        // -------------------------------------------------
+
+        document.getElementById(
+            "totalAmount"
+        ).textContent =
+            `₹${Number(
+                order.totalAmount
+            ).toFixed(2)}`;
+
+
+        // -------------------------------------------------
+        // SHIPMENT DETAILS
+        // -------------------------------------------------
+
+        const shipmentBox =
+            document.getElementById(
+                "shipmentBox"
+            );
+
+
+        if (
+            order.trackingNumber ||
+            order.carrier ||
+            order.trackingUrl
+        ) {
+
+            shipmentBox.style.display =
+                "block";
+
+
+            document.getElementById(
+                "carrier"
+            ).textContent =
+                order.carrier || "Not specified";
+
+
+            document.getElementById(
+                "trackingNumber"
+            ).textContent =
+                order.trackingNumber ||
+                "Not available";
+
+
+            if (order.estimatedDeliveryDate) {
+
+                document.getElementById(
+                    "estimatedDelivery"
+                ).textContent =
+                    new Date(
+                        order.estimatedDeliveryDate
+                    ).toLocaleDateString(
+                        "en-IN",
+                        {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric"
+                        }
+                    );
+
+            } else {
+
+                document.getElementById(
+                    "deliveryDateRow"
+                ).style.display =
+                    "none";
+
+            }
+
+
+            const link =
+                document.getElementById(
+                    "trackingLink"
+                );
+
+
+            if (order.trackingUrl) {
+
+                link.href =
+                    order.trackingUrl;
+
+                link.style.display =
+                    "inline-block";
+
+            } else {
+
+                link.style.display =
+                    "none";
+
+            }
+
+        } else {
+
+            shipmentBox.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    // =====================================================
+    // TIMELINE
+    // =====================================================
+
+    function renderTimeline(status) {
+
+        const steps = [
+            "Order Placed",
+            "Payment Confirmed",
+            "Processing",
+            "Packed",
+            "Shipped",
+            "Out for Delivery",
+            "Delivered"
+        ];
+
+
+        const stepElements =
+            document.querySelectorAll(
+                ".timeline-step"
+            );
+
+
+        stepElements.forEach(
+            step =>
+                step.classList.remove(
+                    "completed",
+                    "current"
+                )
+        );
+
+
+        let currentIndex =
+            steps.indexOf(status);
+
+
+        if (currentIndex === -1) {
+
+            if (status === "Cancelled") {
+
+                document.getElementById(
+                    "timelineProgress"
+                ).style.width = "0%";
+
+                document.getElementById(
+                    "statusBadge"
+                ).style.background =
+                    "#fdeaea";
+
+                document.getElementById(
+                    "statusBadge"
+                ).style.color =
+                    "#a83232";
+
+                return;
+
+            }
+
+            currentIndex = 0;
+
+        }
+
+
+        stepElements.forEach(
+            (step, index) => {
+
+                if (index < currentIndex) {
+
+                    step.classList.add(
+                        "completed"
+                    );
+
+                }
+
+                if (index === currentIndex) {
+
+                    step.classList.add(
+                        "current"
+                    );
+
+                }
+
+            }
+        );
+
+
+        const progress =
+            document.getElementById(
+                "timelineProgress"
+            );
+
+
+        const percentage =
+            currentIndex === 0
+                ? 0
+                : (
+                    currentIndex /
+                    (steps.length - 1)
+                ) * 90;
+
+
+        progress.style.width =
+            `${percentage}%`;
+
+    }
+
+
+    // =====================================================
+    // ENTER KEY
+    // =====================================================
+
+    document
+        .getElementById("phone")
+        .addEventListener(
+            "keydown",
+            function(event) {
+
+                if (event.key === "Enter") {
+
+                    trackOrder();
+
+                }
+
+            }
+        );
+
+
+    document
+        .getElementById("orderId")
+        .addEventListener(
+            "keydown",
+            function(event) {
+
+                if (event.key === "Enter") {
+
+                    trackOrder();
+
+                }
+
+            }
+        );
+
+</script>
+<script src="category-config.js"></script>
+<script src="site-shell.js"></script>
+<script src="site-header.js"></script>
+
+
+</body>
+
+</html>

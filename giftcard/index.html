@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="api-config.js"></script>
+<script src="customer-state.js"></script>
 <title>Shailu's Concepts — Return Gift Store For All Occasions</title>
 <style>
   :root{
@@ -14,6 +16,11 @@
     --header-cream: #fbeee2;
     --blush: #f3e2dd;
     --text-dark: #1a1a1a;
+    --taupe: #B9A080;
+    --cream-soft: #F5F1EB;
+    --brown-text: #5a4632;
+    --switch-green: #073F32;
+    --switch-border: #D8CFC2;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
@@ -178,153 +185,54 @@
   }
   .hero-dot.active{ background: var(--gold); border-color: var(--gold); }
 
+  /* ============ HERO <picture> WRAPPER ============ */
+  .hero-image-col picture{ display:contents; }
+
   /* ============ ABOUT / DISCOVER ============ */
-  .about-section {
-    width: 100%;
-    background: #ffffff;
-    padding: 70px 6.5%;
+  .about-section{
+    background: var(--cream-soft);
+    padding: clamp(56px, 7vw, 96px) clamp(16px, 4.5vw, 68px);
+    border-bottom: 1px solid rgba(201,164,85,0.3);
+  }
+  .about-container{
+    max-width: 1300px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.1fr 1fr;
+    align-items: center; gap: clamp(32px, 6vw, 90px);
+  }
+  .about-heading h2{
+    font-family: 'Playfair Display', Georgia, serif; font-weight: 600;
+    font-size: clamp(30px, 4vw, 56px); line-height: 1.15;
+    letter-spacing: 0.2px; color: var(--deep-green);
+  }
+  .about-heading h2 em{ font-style: italic; font-weight: 500; color: var(--gold); }
+  .about-description{
+    border-left: 2px solid var(--gold);
+    padding-left: clamp(20px, 3vw, 40px);
+  }
+  .about-description p{
+    font-size: clamp(14.5px, 1.25vw, 17px); line-height: 1.9; color: #4a3f33;
+  }
+  @media (max-width: 768px){
+    .about-container{ grid-template-columns: 1fr; gap: 22px; }
+    .about-description{ border-left: 0; border-top: 2px solid var(--gold); padding: 22px 0 0; }
   }
 
-  .about-container {
-    max-width: 1600px;
-    margin: 0 auto;
-
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
-    column-gap: 100px;
+  /* ============ LOGIN DROPDOWN (restored) ============ */
+  .login-dropdown{ position: relative; }
+  .login-menu{
+    display: none; position: absolute; top: calc(100% + 12px); right: 0;
+    min-width: 190px; padding: 8px; z-index: 1000;
+    background: linear-gradient(180deg, var(--deep-green), var(--green-mid));
+    border: 1px solid var(--gold); border-radius: 8px;
+    box-shadow: 0 14px 30px rgba(13,51,40,0.3);
   }
-
-  /* LEFT HEADING */
-
-  .about-heading h2 {
-    margin: 0;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(42px, 4vw, 58px);
-    line-height: 0.92;
-    font-weight: 500;
-    letter-spacing: -2.5px;
-    color: #3b3b3b;
+  .login-dropdown.open .login-menu{ display: block; }
+  .login-menu a{
+    display: block; padding: 11px 14px; color: var(--gold-light);
+    text-decoration: none; font-size: 14px; font-weight: 500;
+    border-radius: 6px; white-space: nowrap;
   }
-
-  .about-heading h2 em {
-    font-style: normal;
-    color: #a8866e;
-  }
-
-  /* RIGHT DESCRIPTION */
-
-  .about-description {
-    padding-top: 4px;
-  }
-
-  .about-description p {
-    margin: 0;
-    max-width: 720px;
-
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 21px;
-    line-height: 1.55;
-    font-weight: 400;
-    color: #111111;
-  }
-
-
-  /* ============ RESPONSIVE ABOUT ============ */
-
-  @media (max-width: 900px) {
-    .about-section {
-      padding: 55px 7%;
-    }
-
-    .about-container {
-      grid-template-columns: 1fr;
-      gap: 35px;
-    }
-
-    .about-heading h2 {
-      font-size: clamp(40px, 8vw, 52px);
-      line-height: 0.95;
-    }
-
-    .about-description {
-      padding-top: 0;
-    }
-
-    .about-description p {
-      font-size: 18px;
-      line-height: 1.6;
-    }
-  }
-
-  @media (max-width: 500px) {
-    .about-section {
-      padding: 45px 6%;
-    }
-
-    .about-heading h2 {
-      font-size: 38px;
-      letter-spacing: -1.5px;
-    }
-
-    .about-description p {
-      font-size: 17px;
-    }
-  }
-  /* ============ LOGIN DROPDOWN ============ */
-
-.login-dropdown {
-  position: relative;
-}
-
-.login-menu {
-  display: none;
-  position: absolute;
-  top: calc(100% + 12px);
-  right: 0;
-
-  min-width: 190px;
-
-  background: linear-gradient(
-    180deg,
-    var(--deep-green),
-    var(--green-mid)
-  );
-
-  border: 1px solid var(--gold);
-  border-radius: 8px;
-
-  box-shadow: 0 14px 30px rgba(13,51,40,0.3);
-
-  padding: 8px;
-
-  z-index: 1000;
-}
-
-.login-dropdown.open .login-menu {
-  display: block;
-}
-
-.login-menu a {
-  display: block;
-
-  padding: 11px 14px;
-
-  color: var(--gold-light);
-  text-decoration: none;
-
-  font-size: 14px;
-  font-weight: 500;
-
-  border-radius: 6px;
-
-  white-space: nowrap;
-}
-
-.login-menu a:hover {
-  background: rgba(201,164,85,0.15);
-  color: var(--gold);
-}
+  .login-menu a:hover{ background: rgba(201,164,85,0.15); color: var(--gold); }
 
   /* ============ AUTO-SCROLLING CATEGORY STRIP ============ */
   .scroll-strip-section{
@@ -467,15 +375,218 @@
     background: linear-gradient(135deg, var(--deep-green), var(--green-mid));
     border: 2px solid var(--gold);
     display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
-    color:#fff; transition: transform .2s ease, box-shadow .2s ease;
+    color:#fff; cursor:pointer; -webkit-tap-highlight-color:transparent;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
     box-shadow: 0 8px 20px rgba(13,51,40,0.18);
   }
-  .price-tile:hover{ transform: translateY(-4px); box-shadow: 0 14px 30px rgba(13,51,40,0.3); }
+  .price-tile:hover{ transform: translateY(-4px); border-color: var(--gold-light); box-shadow: 0 14px 30px rgba(13,51,40,0.3); }
+  .price-tile:focus-visible{ outline:3px solid var(--gold-light); outline-offset:3px; }
+  .price-tile.is-active{ transform: translateY(-4px); border-color: var(--gold-light); box-shadow: 0 0 0 3px rgba(201,164,85,0.45), 0 14px 30px rgba(13,51,40,0.3); }
+
+  /* Price range results */
+  .price-results{ max-width:1300px; margin:44px auto 0; }
+  .price-results[hidden]{ display:none; }
+  .price-results-head{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 16px; margin-bottom:18px; }
+  .price-results-title{ font-family:'Playfair Display', Georgia, serif; font-size:26px; font-weight:700; color: var(--deep-green); }
+  .price-results-count{ margin-left:10px; font-family:'Poppins', Arial, sans-serif; font-size:14px; font-weight:500; color:#6b5d4d; }
+  .price-results-close{
+    background:none; border:1px solid var(--switch-border); border-radius:10px; padding:8px 16px;
+    font:600 13px 'Poppins', Arial, sans-serif; color: var(--switch-green); cursor:pointer;
+    transition: background .2s ease, border-color .2s ease;
+  }
+  .price-results-close:hover{ background: var(--cream-soft); border-color: var(--taupe); }
+  .price-results .product-grid{ max-width:none; }
+  .price-results-empty{ grid-column:1 / -1; text-align:center; padding:36px 16px; color:#6b5d4d; font-size:15px; background:#fff; border:1px dashed var(--switch-border); border-radius:14px; }
   .price-tile .pt-label{ font-size:14px; letter-spacing:1px; text-transform:uppercase; opacity:0.85; margin-bottom:6px; }
   .price-tile .pt-amount{ font-family:'Playfair Display', Georgia, serif; font-size:30px; font-weight:800; color: var(--gold-light); }
 
   @media (max-width:900px){ .price-grid{ grid-template-columns: repeat(3,1fr); } }
   @media (max-width:520px){ .price-grid{ grid-template-columns: repeat(2,1fr); } }
+
+  /* ============ KONDApALLI SHOWCASE ============ */
+  .kondapalli-showcase-section{ width:100%; max-width:none; margin:0; padding:0 0 54px; background:#fff; box-sizing:border-box; }
+  .kondapalli-showcase{
+    --kondapalli-ivory:#F8F5EE;
+    --kondapalli-sand:#F2E8D8;
+    --kondapalli-brown:#4A3428;
+    --kondapalli-saffron:#0D3328;
+    --kondapalli-gold:#C9A84C;
+    display:grid;
+    grid-template-columns:minmax(0,7fr) minmax(0,3fr);
+    align-items:stretch;
+    gap:2%;
+    width:100%;
+    max-width:none;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    border:0;
+    border-radius:0;
+    background:#fff;
+    box-shadow:none;
+  }
+  .kondapalli-showcase:focus-visible{ outline:2px solid var(--kondapalli-gold); outline-offset:4px; }
+  .kondapalli-main-frame{
+    position:relative;
+    display:flex;
+    align-self:center;
+    align-items:center;
+    justify-content:center;
+    min-width:0;
+    width:100%;
+    height:auto;
+    min-height:0;
+    aspect-ratio:16 / 9;
+    overflow:hidden;
+    border-radius:22px;
+    background:var(--kondapalli-sand);
+    touch-action:pan-y;
+  }
+  .kondapalli-main-image{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+    opacity:1;
+    transform:translateX(0) scale(1);
+    transition:opacity 250ms ease,transform 250ms ease;
+  }
+  .kondapalli-main-image[hidden]{ display:none !important; }
+  .kondapalli-main-image.is-switching{ opacity:0; transform:translateX(12px) scale(.99); }
+  .kondapalli-details{
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    min-width:0;
+    width:100%;
+    max-width:390px;
+    justify-self:start;
+    padding:30px 0;
+    color:var(--kondapalli-brown);
+  }
+  .kondapalli-details h2{
+    margin:0;
+    color:var(--kondapalli-brown);
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:clamp(34px,3vw,44px);
+    font-weight:700;
+    line-height:1.05;
+  }
+  .kondapalli-details h2::after{
+    content:"";
+    display:block;
+    width:72%;
+    height:7px;
+    margin-top:7px;
+    border-radius:50%;
+    background:#DCE8DF;
+    transform:rotate(-1.5deg);
+  }
+  .kondapalli-subtitle{ margin:12px 0 18px; color:#796653; font-size:14px; line-height:1.6; }
+  .kondapalli-current-product{
+    min-width:0;
+    overflow:visible;
+    border:0;
+    border-radius:0;
+    background:transparent;
+    box-shadow:none;
+    text-align:center;
+    transition:none;
+  }
+  .kondapalli-current-product:hover{ transform:none; box-shadow:none; }
+  .kondapalli-preview-frame{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    aspect-ratio:1 / 1;
+    overflow:hidden;
+    border:1px solid rgba(74,52,40,.10);
+    border-radius:16px;
+    background:var(--kondapalli-sand);
+    box-shadow:0 8px 22px rgba(74,52,40,.08);
+  }
+  .kondapalli-preview-image{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+    opacity:1;
+    transform:translateX(0) scale(1);
+    transition:opacity 250ms ease,transform 250ms ease;
+  }
+  .kondapalli-preview-image[hidden]{ display:none !important; }
+  .kondapalli-preview-image.is-switching{ opacity:0; transform:translateX(12px) scale(.99); }
+  .kondapalli-product-id{ display:block; margin-top:12px; color:#927d62; font-size:10px; font-weight:700; }
+  .kondapalli-product-name{ margin:5px 0 3px; color:var(--kondapalli-brown); font-family:'Playfair Display',Georgia,serif; font-size:18px; line-height:1.3; }
+  .kondapalli-product-price{ margin:0; color:var(--kondapalli-saffron); font-size:15px; font-weight:700; }
+  .kondapalli-cart-button{
+    min-height:40px;
+    padding:10px 16px;
+    border:1px solid var(--kondapalli-brown);
+    border-radius:4px;
+    color:var(--kondapalli-brown);
+    background:transparent;
+    font:inherit;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    transition:background 200ms ease,color 200ms ease,border-color 200ms ease;
+  }
+  .kondapalli-cart-button:hover{ border-color:var(--kondapalli-saffron); color:#fff; background:var(--kondapalli-saffron); }
+  .kondapalli-cart-button.added{ border-color:var(--kondapalli-brown); color:#fff; background:var(--kondapalli-brown); }
+  .kondapalli-product-actions{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px; margin-top:10px; }
+  .kondapalli-view-more{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:40px;
+    padding:8px 12px;
+    border:1px solid var(--kondapalli-brown);
+    border-radius:4px;
+    color:var(--kondapalli-brown);
+    font-size:13px;
+    font-weight:700;
+    text-decoration:none;
+    transition:background 200ms ease,color 200ms ease,border-color 200ms ease;
+  }
+  .kondapalli-view-more:hover{ border-color:var(--kondapalli-saffron); color:#fff; background:var(--kondapalli-saffron); }
+  .kondapalli-product-actions .kondapalli-cart-button{ width:100%; margin:0; padding:8px 10px; }
+  .kondapalli-dots{ display:flex; align-items:center; justify-content:center; gap:14px; margin-top:20px; }
+  .kondapalli-dot{
+    width:9px;
+    height:9px;
+    padding:0;
+    border:0;
+    border-radius:50%;
+    background:#c9bda9;
+    cursor:pointer;
+    transition:transform 220ms ease,background-color 220ms ease,width 220ms ease,height 220ms ease;
+  }
+  .kondapalli-dot:hover{ transform:scale(1.25); }
+  .kondapalli-dot.is-active{ width:13px; height:13px; background:var(--kondapalli-saffron); }
+  .kondapalli-dot:focus-visible{ outline:2px solid var(--kondapalli-gold); outline-offset:4px; }
+  @media(max-width:900px){
+    .kondapalli-showcase-section{ padding:0 0 42px; }
+    .kondapalli-showcase{ grid-template-columns:minmax(0,1fr); row-gap:24px; }
+    .kondapalli-main-frame{ width:100%; height:auto; min-height:0; aspect-ratio:16 / 9; }
+    .kondapalli-details{ width:100%; max-width:none; justify-self:stretch; padding:4px 16px 10px; }
+    .kondapalli-subtitle{ margin-bottom:16px; }
+  }
+  @media(max-width:520px){
+    .kondapalli-showcase-section{ padding:0 0 32px; }
+    .kondapalli-showcase{ gap:20px; padding:0; border-radius:0; }
+    .kondapalli-main-frame{ aspect-ratio:1 / 1; border-radius:18px; }
+    .kondapalli-details{ padding:4px 16px 8px; }
+    .kondapalli-details h2{ font-size:32px; }
+    .kondapalli-subtitle{ margin:8px 0 14px; font-size:13px; }
+    .kondapalli-main-frame{ height:auto; min-height:0; }
+    .kondapalli-preview-frame{ aspect-ratio:1 / 1; }
+    .kondapalli-product-name{ font-size:17px; }
+    .kondapalli-dots{ margin-top:16px; }
+  }
 
   /* ============ VISIT OUR STORE ============ */
   .visit-store{
@@ -520,10 +631,51 @@
   .bs-btn.added{ background: var(--gold); color: var(--deep-green); }
   .bs-actions{ display:flex; justify-content:center; gap:8px; flex-wrap:wrap; width:100%; padding:0 12px; }
   .bs-actions .bs-btn{ padding:10px 20px; }
+  .homepage-category-switcher{ display:flex; justify-content:center; flex-wrap:wrap; gap:12px; margin:14px auto 0; }
+  .homepage-category-switcher button{
+    min-width:170px; min-height:56px; padding:0 30px;
+    border:1px solid var(--switch-border); border-radius:16px;
+    color:var(--switch-green); background:var(--cream-soft);
+    font:600 14.5px 'Poppins',Arial,sans-serif; letter-spacing:.2px; cursor:pointer;
+    transition:background .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease;
+  }
+  .homepage-category-switcher button:hover{ color:var(--switch-green); background:#ebe3d6; border-color:var(--taupe); }
+  .homepage-category-switcher button[aria-pressed="true"]{
+    color:var(--switch-green); background:var(--taupe); border-color:var(--taupe);
+    font-weight:700; box-shadow:0 6px 16px rgba(185,160,128,.35);
+  }
+  .homepage-category-switcher button[aria-pressed="true"]:hover{ color:var(--switch-green); background:#ad9272; border-color:#ad9272; }
+  .homepage-category-switcher button:focus,
+  .homepage-category-switcher button:focus-visible{ color:var(--switch-green); }
+  .homepage-category-switcher button:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .homepage-collection-section{ padding:28px clamp(16px, 4.5vw, 68px) 52px; }
+  .homepage-collection-section .section-heading{ padding:0 16px; }
+  .homepage-collection-section .section-heading h2{ margin:0; }
+  .homepage-collection-section .section-underline{ margin:8px auto 0; }
+  .homepage-collection-controls{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin:16px auto 18px; }
+  .homepage-collection-controls .homepage-category-switcher{ justify-content:flex-start; margin:0; }
+  .homepage-carousel-arrows{ display:flex; align-items:center; gap:8px; flex:0 0 auto; }
+  .homepage-collection-section .bs-arrow{ position:static; inset:auto; width:44px; height:44px; border:1px solid #e0d8cb; border-radius:10px; color:var(--deep-green); background:#fff; font-size:24px; line-height:1; cursor:pointer; }
+  .homepage-collection-section .bs-arrow:hover{ border-color:var(--taupe); color:#fff; background:var(--taupe); }
+  .homepage-collection-section .bs-arrow:disabled{ opacity:.35; cursor:not-allowed; color:var(--deep-green); background:#fff; border-color:#e0d8cb; }
+  .homepage-collection-section .bs-track-outer{ overflow-x:auto; overflow-y:hidden; scroll-snap-type:x proximity; overscroll-behavior-x:contain; -webkit-overflow-scrolling:touch; scrollbar-width:none; -ms-overflow-style:none; }
+  .homepage-collection-section .bs-track-outer::-webkit-scrollbar{ display:none; }
+  .homepage-collection-section .bs-card{ scroll-snap-align:start; }
+  .homepage-collection-section .bs-wrapper{ max-width:none; margin:0 auto; }
+  .homepage-collection-section .bs-track{ gap:20px; transition:transform .4s ease,opacity .22s ease; }
+  .homepage-collection-section .bs-track.is-changing{ opacity:.3; }
+  .homepage-collection-section .bs-card{ flex:0 0 calc(20% - 16px); }
+  .homepage-collection-section .bs-img{ height:clamp(190px, 19vw, 260px); }
+  .new-collection-section .section-heading p{ color:var(--brown-text); font-size:15px; margin-top:10px; }
+  .new-collection-view-all{ display:inline-flex; align-items:center; justify-content:center; min-height:42px; margin-top:22px; padding:10px 24px; border-radius:5px; background:var(--deep-green); color:var(--gold-light); font-size:13px; font-weight:700; text-decoration:none; transition:background .2s,color .2s; }
+  .new-collection-view-all:hover{ background:var(--gold); color:var(--deep-green); }
 
   @media (max-width: 1024px){ .bs-card{ flex: 0 0 calc(33.33% - 16px); } }
+  @media (max-width: 1024px){ .homepage-collection-section .bs-card{ flex-basis:calc(33.333% - 14px); } }
   @media (max-width: 700px){ .bs-card{ flex: 0 0 calc(50% - 12px); } .best-sellers{ padding: 30px 20px 60px; } .best-sellers h2{ font-size: 32px; } }
+  @media (max-width: 700px){ .homepage-collection-section{ padding:24px 30px 44px; } .homepage-collection-section .homepage-collection-controls{ margin:14px auto 16px; } .homepage-collection-section .bs-card{ flex-basis:calc(50% - 10px); } .homepage-collection-section .bs-img{ height:220px; } }
   @media (max-width: 440px){ .bs-card{ flex: 0 0 calc(100% - 0px); } }
+  @media (max-width: 520px){ .homepage-collection-section{ padding:22px 18px 38px; } .homepage-collection-controls{ align-items:flex-end; gap:10px; } .homepage-category-switcher{ overflow-x:auto; flex-wrap:nowrap; min-width:0; } .homepage-category-switcher button{ min-width:max-content; min-height:48px; padding:0 16px; } .homepage-collection-section .bs-card{ flex-basis:100%; } .homepage-collection-section .bs-img{ height:250px; } .homepage-collection-section .bs-arrow{ width:38px; height:38px; } }
 
   /* ============ TESTIMONIALS ============ */
   .testimonials{ background: var(--header-cream); padding: 20px 40px 90px; text-align:center; }
@@ -537,7 +689,7 @@
 
   /* ============ FOOTER ============ */
   .footer{ background: linear-gradient(180deg, var(--deep-green), #071f17); color: var(--gold-light); padding-top: 60px; }
-  .footer-top{ max-width: 1300px; margin: 0 auto; padding: 0 30px 50px; display: grid; grid-template-columns: 2fr 1fr 1fr 1.4fr 1.6fr; gap: 40px; }
+  .footer-top{ max-width: 1300px; margin: 0 auto; padding: 0 30px 50px; display: grid; grid-template-columns: 2fr 1fr 2fr 1.4fr 1.6fr; gap: 40px; }
   .footer-brand img{ height: 70px; width: auto; object-fit: contain; margin-bottom: 16px; border-radius: 8px; }
   .footer-brand p{ font-size: 13.5px; line-height: 1.8; color: rgba(230,207,143,0.8); margin-bottom: 16px; }
   .footer-rating{ display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -548,6 +700,9 @@
   .footer-col h4{ font-family: 'Playfair Display', Georgia, serif; font-size: 15px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
   .footer-divider{ width: 40px; height: 2px; background: var(--gold); margin-bottom: 20px; border-radius: 2px; }
   .footer-col ul{ list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col #footerCategoryList{ display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, auto); grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; row-gap: 10px; }
+  .footer-col #footerCategoryList li{ min-width: 0; }
+  .footer-col #footerCategoryList a{ display: block; overflow-wrap: anywhere; }
   .footer-col ul li a{ color: rgba(230,207,143,0.8); text-decoration: none; font-size: 14px; transition: color .2s; }
   .footer-col ul li a:hover{ color: var(--gold); }
   .footer-hours li{ display: flex; align-items: flex-start; gap: 10px; color: rgba(230,207,143,0.85); font-size: 14px; line-height: 1.6; }
@@ -648,6 +803,10 @@
     .visit-store{ min-height:340px; padding:60px 20px; }
   }
   @media (max-width: 500px){ .cart-panel{ width: 100vw; } }
+  @media (max-width: 1024px){
+    .hero{ aspect-ratio: 1000 / 1407; min-height: 0; }
+    .hero-text-col{ height: 100%; min-height: 0; padding: 24px 20px; }
+  }
   @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
 </style>
 <link rel="stylesheet" href="responsive.css">
@@ -741,25 +900,14 @@
 
       <div class="dropdown" id="returnGiftsDropdown">
         <button class="drop-toggle" type="button" onclick="event.stopPropagation(); toggleDropdown('returnGiftsDropdown')">
-          Return Gifts <span class="arrow">▾</span>
+          Categories <span class="arrow">▾</span>
         </button>
-        <div class="dropdown-menu">
-          <a href="return-gifts.html#kids-return-gifts">Kids Return Gifts</a>
-          <a href="return-gifts.html#pichwai-return-gifts">Pichwai Return Gifts</a>
-          <a href="return-gifts.html#german-silver-return-gifts">German Silver Return Gifts</a>
-          <a href="return-gifts.html#metal-jars-tins">Metal Jars &amp; Tins</a>
-          <a href="return-gifts.html#brass-return-gifts">Brass Return Gifts</a>
-          <a href="return-gifts.html#kondapalli-return-gifts">Kondapalli Return Gifts</a>
-          <a href="return-gifts.html#crockery-return-gifts">Crockery Return Gifts</a>
-          <a href="return-gifts.html#stainless-return-gifts">Stainless Return Gifts</a>
-          <a href="return-gifts.html#fancy-return-gifts">Fancy Return Gifts</a>
-          <a href="return-gifts.html#customisable-jute-bags">Customisable Jute Bags</a>
-        </div>
+        <div class="dropdown-menu" id="categoryDropdownMenu"></div>
       </div>
 
-      <a href="new-collection.html">New Collection</a>
-      <a href="combos.html">Combos</a>
-      <a href="corporate-gifts.html">Corporate Gifts</a>
+      <a href="/category/new-collection">New Collection</a>
+      <a href="/category/combos">Combos</a>
+      <a href="/category/corporate-gifts">Corporate Gifts</a>
       <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
 
     </div>
@@ -784,8 +932,7 @@
 
     <div class="about-heading">
       <h2>
-        Discover the <em>Magic</em> of<br>
-        Gifting with Shailu's Concepts
+        Discover the <em>Magic</em> of Gifting with Shailu's Concepts
       </h2>
     </div>
 
@@ -857,15 +1004,40 @@
   </div>
 </section>
 
+<!-- ============ NEW COLLECTION ============ -->
+<section class="best-sellers homepage-collection-section new-collection-section">
+  <div class="section-heading">
+    <h2>New Collection</h2>
+    <div class="section-underline"></div>
+    <p>Explore the latest additions to our gifting collection.</p>
+  </div>
+  <div class="bs-wrapper">
+    <div class="bs-track-outer">
+      <div class="bs-track" id="newCollectionTrack" aria-live="polite">
+        <!-- New Collection products load from the existing product API. -->
+      </div>
+    </div>
+  </div>
+  <a class="new-collection-view-all" data-category-link="new-collection" href="/category/new-collection">Explore New Collection</a>
+</section>
+
 <!-- ============ HOME DECOR ============ -->
-<section class="best-sellers home-decor-section">
+<section class="best-sellers homepage-collection-section home-decor-section">
   <div class="section-heading">
     <h2>Home Decor</h2>
     <div class="section-underline"></div>
   </div>
+  <div class="homepage-collection-controls">
+    <div class="homepage-category-switcher" role="group" aria-label="Home Decor product categories">
+      <button type="button" data-section="homeDecor" data-category="Crockery Gifts" aria-pressed="true" onclick="switchHomepageCategory('homeDecor', 'Crockery Gifts', this)">Crockery Gifts</button>
+      <button type="button" data-section="homeDecor" data-category="Brass Gifts" aria-pressed="false" onclick="switchHomepageCategory('homeDecor', 'Brass Gifts', this)">Brass Gifts</button>
+    </div>
+    <div class="homepage-carousel-arrows">
+      <button class="bs-arrow bs-prev" onclick="homeDecorSlide(-1)" aria-label="Previous home decor products">&#8249;</button>
+      <button class="bs-arrow bs-next" onclick="homeDecorSlide(1)" aria-label="Next home decor products">&#8250;</button>
+    </div>
+  </div>
   <div class="bs-wrapper">
-    <button class="bs-arrow bs-prev" onclick="homeDecorSlide(-1)" aria-label="Previous home decor products">&#8249;</button>
-    <button class="bs-arrow bs-next" onclick="homeDecorSlide(1)" aria-label="Next home decor products">&#8250;</button>
     <div class="bs-track-outer">
       <div class="bs-track" id="homeDecorTrack">
         <!-- Home decor products are loaded dynamically from MongoDB -->
@@ -875,14 +1047,22 @@
 </section>
 
 <!-- ============ THOUGHTFUL RETURN GIFTS ============ -->
-<section class="best-sellers thoughtful-gifts-section">
+<section class="best-sellers homepage-collection-section thoughtful-gifts-section">
   <div class="section-heading">
-    <h2>Thoughtful Return Gifts</h2>
+    <h2>Thoughtful Gifts</h2>
     <div class="section-underline"></div>
   </div>
+  <div class="homepage-collection-controls">
+    <div class="homepage-category-switcher" role="group" aria-label="Thoughtful Gifts product categories">
+      <button type="button" data-section="thoughtfulGifts" data-category="German Silver" aria-pressed="true" onclick="switchHomepageCategory('thoughtfulGifts', 'German Silver', this)">German Silver</button>
+      <button type="button" data-section="thoughtfulGifts" data-category="Combos" aria-pressed="false" onclick="switchHomepageCategory('thoughtfulGifts', 'Combos', this)">Combos</button>
+    </div>
+    <div class="homepage-carousel-arrows">
+      <button class="bs-arrow bs-prev" onclick="thoughtfulGiftsSlide(-1)" aria-label="Previous thoughtful gifts">&#8249;</button>
+      <button class="bs-arrow bs-next" onclick="thoughtfulGiftsSlide(1)" aria-label="Next thoughtful gifts">&#8250;</button>
+    </div>
+  </div>
   <div class="bs-wrapper">
-    <button class="bs-arrow bs-prev" onclick="thoughtfulGiftsSlide(-1)" aria-label="Previous thoughtful return gifts">&#8249;</button>
-    <button class="bs-arrow bs-next" onclick="thoughtfulGiftsSlide(1)" aria-label="Next thoughtful return gifts">&#8250;</button>
     <div class="bs-track-outer">
       <div class="bs-track" id="thoughtfulGiftsTrack">
         <!-- Return gifts are loaded dynamically from MongoDB -->
@@ -899,21 +1079,81 @@
     <p>Find what fits your budget.</p>
   </div>
   <div class="price-grid">
-    <a class="price-tile" href="return-gifts.html?price=under-100">
+    <a class="price-tile" href="return-gifts.html?price=under-100" data-range="below-100" aria-controls="priceResults" aria-expanded="false" onclick="return selectPriceRange(event, 'below-100', this)">
       <span class="pt-label">Below</span><span class="pt-amount">₹100</span>
     </a>
-    <a class="price-tile" href="return-gifts.html?price=above-100">
+    <a class="price-tile" href="return-gifts.html?price=above-100" data-range="above-100" aria-controls="priceResults" aria-expanded="false" onclick="return selectPriceRange(event, 'above-100', this)">
       <span class="pt-label">Above</span><span class="pt-amount">₹100</span>
     </a>
-    <a class="price-tile" href="return-gifts.html?price=above-200">
+    <a class="price-tile" href="return-gifts.html?price=above-200" data-range="above-200" aria-controls="priceResults" aria-expanded="false" onclick="return selectPriceRange(event, 'above-200', this)">
       <span class="pt-label">Above</span><span class="pt-amount">₹200</span>
     </a>
-    <a class="price-tile" href="return-gifts.html?price=above-500">
+    <a class="price-tile" href="return-gifts.html?price=above-500" data-range="above-500" aria-controls="priceResults" aria-expanded="false" onclick="return selectPriceRange(event, 'above-500', this)">
       <span class="pt-label">Above</span><span class="pt-amount">₹500</span>
     </a>
-    <a class="price-tile" href="return-gifts.html?price=above-1000">
+    <a class="price-tile" href="return-gifts.html?price=above-1000" data-range="above-1000" aria-controls="priceResults" aria-expanded="false" onclick="return selectPriceRange(event, 'above-1000', this)">
       <span class="pt-label">Above</span><span class="pt-amount">₹1000</span>
     </a>
+  </div>
+
+  <div class="price-results" id="priceResults" hidden>
+    <div class="price-results-head">
+      <h3 class="price-results-title"><span id="priceResultsTitle"></span><span class="price-results-count" id="priceResultsCount"></span></h3>
+      <button type="button" class="price-results-close" onclick="clearPriceRange()">Close</button>
+    </div>
+    <div class="product-grid">
+      <div class="product-grid-track" id="priceResultsTrack"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KONDApALLI BOMMALU SHOWCASE ============ -->
+<section class="kondapalli-showcase-section" id="kondapalli-return-gifts">
+  <div class="kondapalli-showcase" id="kondapalliShowcase" tabindex="0" aria-label="Kondapalli Bommalu product showcase">
+    <div class="kondapalli-main-frame">
+      <img class="kondapalli-main-image" id="kondapalliMainImage" src="" alt="Kondapalli Bommalu showcase">
+    </div>
+    <div class="kondapalli-details">
+      <h2>Kondapalli<br>Bommalu</h2>
+      <p class="kondapalli-subtitle">Handcrafted stories from Andhra Pradesh</p>
+      <div class="product-card kondapalli-current-product" id="kondapalliCurrentProduct">
+        <div class="kondapalli-preview-frame">
+          <img class="kondapalli-preview-image" id="kondapalliRightImage" src="" alt="Selected Kondapalli product">
+        </div>
+        <h3 class="kondapalli-product-name" id="kondapalliProductName"></h3>
+        <p class="kondapalli-product-price" id="kondapalliProductPrice"></p>
+        <div class="kondapalli-product-actions">
+          <a class="kondapalli-view-more" id="kondapalliViewMore" href="views.html?id=32">View More</a>
+          <button class="add-cart-btn kondapalli-cart-button" id="kondapalliAddToCart" type="button" onclick="addToCartFromCard(this)">Add to Cart</button>
+        </div>
+        <div class="kondapalli-dots" id="kondapalliDots" role="group" aria-label="Choose a Kondapalli product"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KIDS RETURN GIFTS (placed after Kondapalli Bommalu) ============ -->
+<section class="best-sellers homepage-collection-section kids-return-gifts-section">
+  <div class="section-heading">
+    <h2>Kids Return Gifts</h2>
+    <div class="section-underline"></div>
+  </div>
+  <div class="homepage-collection-controls">
+    <div class="homepage-category-switcher" role="group" aria-label="Kids Return Gifts product categories">
+      <button type="button" data-section="kidsReturnGifts" data-category="Kids Gifts" aria-pressed="true" onclick="switchHomepageCategory('kidsReturnGifts', 'Kids Gifts', this)">Kids Gifts</button>
+      <button type="button" data-section="kidsReturnGifts" data-category="Water Bottles" aria-pressed="false" onclick="switchHomepageCategory('kidsReturnGifts', 'Water Bottles', this)">Water Bottles</button>
+    </div>
+    <div class="homepage-carousel-arrows">
+      <button class="bs-arrow bs-prev" onclick="kidsReturnGiftsSlide(-1)" aria-label="Previous kids return gifts">&#8249;</button>
+      <button class="bs-arrow bs-next" onclick="kidsReturnGiftsSlide(1)" aria-label="Next kids return gifts">&#8250;</button>
+    </div>
+  </div>
+  <div class="bs-wrapper">
+    <div class="bs-track-outer">
+      <div class="bs-track" id="kidsReturnGiftsTrack">
+        <!-- Kids return gifts are loaded dynamically from MongoDB -->
+      </div>
+    </div>
   </div>
 </section>
 
@@ -979,9 +1219,9 @@
       <ul>
         <li><a href="index.html">Home</a></li>
         <li><a href="return-gifts.html">Return Gifts</a></li>
-        <li><a href="new-collection.html">New Collection</a></li>
-        <li><a href="combos.html">Combos</a></li>
-        <li><a href="corporate-gifts.html">Corporate Gifts</a></li>
+        <li><a href="/category/new-collection">New Collection</a></li>
+        <li><a href="/category/combos">Combos</a></li>
+        <li><a href="/category/corporate-gifts">Corporate Gifts</a></li>
         <li><a href="terms-and-conditions.html">Terms &amp; Conditions</a></li>
       </ul>
     </div>
@@ -989,13 +1229,7 @@
     <div class="footer-col">
       <h4>Category</h4>
       <div class="footer-divider"></div>
-      <ul>
-        <li><a href="return-gifts.html#kids-return-gifts">Kids Return Gifts</a></li>
-        <li><a href="return-gifts.html#pichwai-return-gifts">Pichwai Return Gifts</a></li>
-        <li><a href="return-gifts.html#german-silver-return-gifts">German Silver Return Gifts</a></li>
-        <li><a href="return-gifts.html#brass-return-gifts">Brass Return Gifts</a></li>
-        <li><a href="return-gifts.html#customisable-jute-bags">Customisable Jute Bags</a></li>
-      </ul>
+      <ul id="footerCategoryList"></ul>
     </div>
 
     <div class="footer-col">
@@ -1331,6 +1565,23 @@
   var bsIndex = 0;
   var homeDecorIndex = 0;
   var thoughtfulGiftsIndex = 0;
+  var kidsReturnGiftsIndex = 0;
+  var homepageProductsPromise = null;
+  var homepageSectionCategories = {
+    newCollection: { title: 'New Collection', trackId: 'newCollectionTrack', selected: 'New Collection' },
+    homeDecor: { title: 'Home Decor', trackId: 'homeDecorTrack', selected: 'Crockery Gifts' },
+    thoughtfulGifts: { title: 'Thoughtful Gifts', trackId: 'thoughtfulGiftsTrack', selected: 'German Silver' },
+    kidsReturnGifts: { title: 'Kids Return Gifts', trackId: 'kidsReturnGiftsTrack', selected: 'Kids Gifts' }
+  };
+  var homepageCategoryAliases = {
+    'Crockery Gifts': ['crockery gifts', 'crockery return gifts'],
+    'Wooden Trays & Boxes': ['wooden trays and boxes', 'wooden trays boxes'],
+    'Brass Gifts': ['brass gifts', 'brass return gifts', 'antique gold / brass', 'Brass gifts'],
+    'German Silver': ['german silver'],
+    'Combos': ['combos'],
+    'Kids Gifts': ['kids gifts', 'kids gifts photo frames'],
+    'Water Bottles': ['water bottle', 'water bottles']
+  };
 
 
   function bsGetVisible(){
@@ -1347,19 +1598,20 @@
 
 
   function slideProductCarousel(trackId, currentIndex, dir){
-
     var track = document.getElementById(trackId);
     if(!track) return 0;
 
     var cards = track.querySelectorAll('.bs-card');
     var total = cards.length;
-    if(!total) return 0;
+    if(!total){ track.style.transform = 'translateX(0)'; return 0; }
 
-    var visible = bsGetVisible();
+    var styles = getComputedStyle(track);
+    var gap = parseFloat(styles.columnGap || styles.gap) || 0;
+    var cardW = cards[0].offsetWidth + gap;
+    var visible = Math.max(1, Math.round((track.parentElement.clientWidth + gap) / cardW));
     var max = Math.max(0, total - visible);
     currentIndex = Math.max(0, Math.min(currentIndex + dir, max));
 
-    var cardW = cards[0].offsetWidth + 24;
     track.style.transform = 'translateX(-' + (currentIndex * cardW) + 'px)';
     return currentIndex;
   }
@@ -1368,20 +1620,166 @@
     bsIndex = slideProductCarousel('bsTrack', bsIndex, dir);
   }
 
+  // ---- One reusable, scroll-based carousel for Home Decor, Thoughtful Gifts and Kids Return Gifts ----
+  // Renders every product the backend returns; the track scrolls (arrows, touch swipe, trackpad).
+  function updateHomepageCarouselArrows(trackId){
+    var track = document.getElementById(trackId);
+    if(!track) return;
+    var outer = track.parentElement;
+    var section = track.closest('.homepage-collection-section');
+    if(!section) return;
+    var prev = section.querySelector('.homepage-carousel-arrows .bs-prev');
+    var next = section.querySelector('.homepage-carousel-arrows .bs-next');
+    var maxScroll = outer.scrollWidth - outer.clientWidth;
+    if(prev) prev.disabled = outer.scrollLeft <= 2;
+    if(next) next.disabled = outer.scrollLeft >= maxScroll - 2;
+  }
+
+  function scrollHomepageCarousel(trackId, dir){
+    var track = document.getElementById(trackId);
+    if(!track) return;
+    var outer = track.parentElement;
+    var card = track.querySelector('.bs-card');
+    if(!card) return;
+    var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    var cardW = card.offsetWidth + gap;
+    var visible = Math.max(1, Math.round((outer.clientWidth + gap) / cardW));
+    var step = Math.max(1, visible - 1) * cardW;
+    outer.scrollBy({ left: dir * step, behavior: 'smooth' });
+  }
+
+  function resetHomepageCarousel(trackId){
+    var track = document.getElementById(trackId);
+    if(!track) return;
+    track.parentElement.scrollTo({ left: 0, behavior: 'auto' });
+    updateHomepageCarouselArrows(trackId);
+  }
+
+  function initHomepageCarousels(){
+    ['homeDecorTrack', 'thoughtfulGiftsTrack', 'kidsReturnGiftsTrack'].forEach(function(id){
+      var track = document.getElementById(id);
+      if(!track) return;
+      var ticking = false;
+      track.parentElement.addEventListener('scroll', function(){
+        if(ticking) return;
+        ticking = true;
+        requestAnimationFrame(function(){ ticking = false; updateHomepageCarouselArrows(id); });
+      }, { passive: true });
+      updateHomepageCarouselArrows(id);
+    });
+  }
+
+  // dir = -1 / 1 scrolls; dir = 0 just refreshes the arrow state (used on resize)
   function homeDecorSlide(dir){
-    homeDecorIndex = slideProductCarousel('homeDecorTrack', homeDecorIndex, dir);
+    if(dir) scrollHomepageCarousel('homeDecorTrack', dir); else updateHomepageCarouselArrows('homeDecorTrack');
   }
 
   function thoughtfulGiftsSlide(dir){
-    thoughtfulGiftsIndex = slideProductCarousel('thoughtfulGiftsTrack', thoughtfulGiftsIndex, dir);
+    if(dir) scrollHomepageCarousel('thoughtfulGiftsTrack', dir); else updateHomepageCarouselArrows('thoughtfulGiftsTrack');
   }
 
+  function kidsReturnGiftsSlide(dir){
+    if(dir) scrollHomepageCarousel('kidsReturnGiftsTrack', dir); else updateHomepageCarouselArrows('kidsReturnGiftsTrack');
+  }
+
+  function normalizeHomepageCategory(value){
+    return String(value || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
+  }
+
+  function matchesHomepageCategory(product, category){
+    const aliases = (homepageCategoryAliases[category] || []).map(normalizeHomepageCategory);
+    // A product matches if its category OR subcategory equals the section's category (or an alias)
+    return [product.category, product.subcategory, product.subCategory].some(function(value){
+      return value && aliases.indexOf(normalizeHomepageCategory(value)) !== -1;
+    });
+  }
+
+  async function getHomepageProducts(){
+    if (!homepageProductsPromise) {
+      homepageProductsPromise = fetch(`${window.API_BASE_URL}/api/products`)
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to load homepage category products');
+          return response.json();
+        })
+        .then(products => Array.isArray(products) ? products : [])
+        .catch(error => {
+          homepageProductsPromise = null;
+          throw error;
+        });
+    }
+    return homepageProductsPromise;
+  }
+
+  function renderHomepageCategoryCard(product){
+    const imagePath = product.image || (Array.isArray(product.images) ? product.images[0] : '');
+    const imageUrl = getBackendImageUrl(imagePath);
+    return `
+      <div class="bs-card" data-id="${escapeHTML(product.productId ?? '')}" data-name="${escapeHTML(product.name || 'Product')}" data-price="${Number(product.price) || 0}" data-img="${escapeHTML(imageUrl)}">
+        <div class="bs-img">
+          <img src="${imageUrl}" alt="${escapeHTML(product.name || 'Product')}" onerror="console.error('Homepage category product image failed:', this.src);">
+        </div>
+        <h3>${escapeHTML(product.name || 'Product')}</h3>
+        <div class="bs-actions">
+          <a class="bs-btn" href="views.html?id=${encodeURIComponent(product.productId)}">View</a>
+          <button class="bs-btn" onclick="addToCartFromBsCard(this)">Add to Cart</button>
+        </div>
+      </div>
+    `;
+  }
+
+  async function loadHomepageCategory(sectionKey){
+    const section = homepageSectionCategories[sectionKey];
+    const track = document.getElementById(section.trackId);
+    if (!track) return;
+    track.classList.add('is-changing');
+
+    try {
+      const products = await getHomepageProducts();
+      const category = section.selected;
+      const matchingProducts = products.filter(product =>
+        sectionKey === 'newCollection'
+          ? product.newArrival === true
+          : matchesHomepageCategory(product, category)
+      );
+      if (!matchingProducts.length) {
+        track.innerHTML = `<p style="width:100%;text-align:center;padding:40px;color:#777;">No ${escapeHTML(category)} products available.</p>`;
+      } else {
+        track.innerHTML = matchingProducts.map(renderHomepageCategoryCard).join('');
+      }
+
+      if (sectionKey === 'homeDecor') homeDecorIndex = 0;
+      if (sectionKey === 'thoughtfulGifts') thoughtfulGiftsIndex = 0;
+      if (sectionKey === 'kidsReturnGifts') kidsReturnGiftsIndex = 0;
+      requestAnimationFrame(() => resetHomepageCarousel(section.trackId));
+      requestAnimationFrame(() => requestAnimationFrame(() => track.classList.remove('is-changing')));
+    } catch (error) {
+      console.error(`${section.title} loading error:`, error);
+      track.innerHTML = '<p style="width:100%;text-align:center;padding:40px;color:#b33;">Unable to load products right now.</p>';
+      requestAnimationFrame(() => track.classList.remove('is-changing'));
+    }
+  }
+
+  function switchHomepageCategory(sectionKey, category, button){
+    const section = homepageSectionCategories[sectionKey];
+    if (!section || !homepageCategoryAliases[category]) return;
+    section.selected = category;
+    const controls = button.closest('.homepage-category-switcher');
+    controls.querySelectorAll('button').forEach(function(option){
+      option.setAttribute('aria-pressed', String(option === button));
+    });
+    loadHomepageCategory(sectionKey);
+  }
+
+  function loadHomeDecorFromBackend(){ loadHomepageCategory('homeDecor'); }
+  function loadThoughtfulReturnGiftsFromBackend(){ loadHomepageCategory('thoughtfulGifts'); }
+  function loadKidsReturnGiftsFromBackend(){ loadHomepageCategory('kidsReturnGifts'); }
 
   window.addEventListener('resize', function(){
 
     bsSlide(0);
     homeDecorSlide(0);
     thoughtfulGiftsSlide(0);
+    kidsReturnGiftsSlide(0);
 
   });
 
@@ -1390,52 +1788,33 @@
   // CART
   // =====================================================
 
-  var CART_STORAGE_KEY =
-    'shailusCart';
-
   var cart =
     loadCart();
 
+  window.addEventListener(
+    window.ShailuCustomer.stateEvent,
+    function(){
+      cart = loadCart();
+      renderCart();
+    }
+  );
+
+  window.addEventListener(
+    window.ShailuCustomer.cartEvent,
+    function(){
+      cart = loadCart();
+      renderCart();
+    }
+  );
 
   function loadCart(){
-
-    try{
-
-      var raw =
-        localStorage.getItem(
-          CART_STORAGE_KEY
-        );
-
-      return raw
-        ? JSON.parse(raw)
-        : [];
-
-    }
-    catch(e){
-
-      return [];
-
-    }
-
+    return window.ShailuCustomer.loadCart();
   }
 
 
   function saveCart(){
 
-    try{
-
-      localStorage.setItem(
-        CART_STORAGE_KEY,
-        JSON.stringify(cart)
-      );
-
-    }
-    catch(e){
-
-      // Storage unavailable
-
-    }
-
+    window.ShailuCustomer.saveCart(cart);
   }
 
 
@@ -1653,22 +2032,45 @@
   }
 
 
-  function cartTotal(){
+ function cartTotal(){
 
-    return cart.reduce(
-      function(sum, c){
+  // Calculate total quantity of all products
+  var totalQty = cart.reduce(
+    function(sum, c){
+      return sum + Number(c.qty);
+    },
+    0
+  );
 
-        return sum +
-          (c.price * c.qty);
+  // Calculate subtotal
+  var subtotal = cart.reduce(
+    function(sum, c){
+      return sum + (Number(c.price) * Number(c.qty));
+    },
+    0
+  );
 
-      },
-      0
-    );
+  // Bulk discount
+  var discountPercentage = 0;
 
+  if(totalQty >= 10 && totalQty <= 50){
+    discountPercentage = 20;
+  }
+  else if(totalQty > 50){
+    discountPercentage = 30;
   }
 
+  var discountAmount =
+    subtotal * discountPercentage / 100;
 
-  function renderCart(){
+  var finalTotal =
+    subtotal - discountAmount;
+
+  return finalTotal;
+}
+
+
+function renderCart(){
 
     document.getElementById(
       'cartBadge'
@@ -1757,13 +2159,96 @@
     }
 
 
-    document.getElementById(
-      'cartTotalAmount'
-    ).textContent =
-      '₹' +
-      cartTotal().toFixed(2);
+    // ==============================
+    // BULK PRICING CALCULATION
+    // ==============================
 
-  }
+    var totalQty = cart.reduce(
+      function(sum, item){
+        return sum + Number(item.qty);
+      },
+      0
+    );
+
+
+    var subtotal = cart.reduce(
+      function(sum, item){
+        return sum +
+          (Number(item.price) * Number(item.qty));
+      },
+      0
+    );
+
+
+    var discountPercentage = 0;
+
+
+    // 1–9 pieces = 0%
+    // 10–50 pieces = 20%
+    // 51+ pieces = 30%
+
+    if(totalQty >= 10 && totalQty <= 50){
+
+      discountPercentage = 20;
+
+    }
+    else if(totalQty >= 51){
+
+      discountPercentage = 30;
+
+    }
+
+
+    var discountAmount =
+      subtotal * discountPercentage / 100;
+
+
+    var finalTotal =
+      subtotal - discountAmount;
+
+
+    // ==============================
+    // DISPLAY TOTAL
+    // ==============================
+
+    var totalElement =
+      document.getElementById(
+        'cartTotalAmount'
+      );
+
+
+    totalElement.innerHTML =
+
+      '<div style="font-size:14px; line-height:1.8;">' +
+
+        '<div>' +
+          'Subtotal: ₹' +
+          subtotal.toFixed(2) +
+        '</div>' +
+
+        (
+          discountPercentage > 0
+            ?
+              '<div style="color:#16803c;">' +
+                'Bulk Discount (' +
+                discountPercentage +
+                '%): -₹' +
+                discountAmount.toFixed(2) +
+              '</div>'
+            :
+              '<div>' +
+                'Bulk Discount: 0%' +
+              '</div>'
+        ) +
+
+        '<div style="font-size:18px; font-weight:700; margin-top:5px;">' +
+          'Total: ₹' +
+          finalTotal.toFixed(2) +
+        '</div>' +
+
+      '</div>';
+
+}
 
 
   function openCart(){
@@ -1888,7 +2373,7 @@
 
     // Newly uploaded backend image
   if (/^\/?uploads\//i.test(normalizedPath)) {
-    return "http://localhost:5000/" + normalizedPath.replace(/^\/?uploads\//i, "uploads/");
+    return `${window.API_BASE_URL}/` + normalizedPath.replace(/^\/?uploads\//i, "uploads/");
     }
 
     // Old MongoDB frontend image paths
@@ -1921,7 +2406,7 @@
     try {
       console.log("Loading products from backend...");
 
-      const response = await fetch("http://localhost:5000/api/products");
+      const response = await fetch(`${window.API_BASE_URL}/api/products`);
 
       if (!response.ok) {
         throw new Error("Failed to load products");
@@ -2047,11 +2532,11 @@
     }
 
     if (path.startsWith("/uploads/")) {
-      return "http://localhost:5000" + path;
+      return `${window.API_BASE_URL}${path}`;
     }
 
     if (path.startsWith("uploads/")) {
-      return "http://localhost:5000/" + path;
+      return `${window.API_BASE_URL}/` + path;
     }
 
     if (path.startsWith("../assets/")) {
@@ -2066,7 +2551,7 @@
       console.log("Loading heroes from backend...");
 
       const response = await fetch(
-        `http://localhost:5000/api/hero?_=${Date.now()}`,
+        `${window.API_BASE_URL}/api/hero?_=${Date.now()}`,
         { cache: "no-store" }
       );
 
@@ -2101,17 +2586,31 @@
         return;
       }
 
+      const responsiveHeroImages = [
+        "assets/res hero1.webp",
+        "assets/res hero2.webp",
+        "assets/res hero3.webp"
+      ];
+
       imageColumn.innerHTML = activeHeroes.map((hero, index) => {
-        const imageUrl = getBackendImageUrl(hero.image);
+        const imageUrl  = getBackendImageUrl(hero.image);
+        const tabletUrl = hero.tabletImage ? getBackendImageUrl(hero.tabletImage) : "";
+        const mobileUrl = hero.mobileImage ? getBackendImageUrl(hero.mobileImage) : "";
+        const responsiveUrl = responsiveHeroImages[index]
+          ? new URL(responsiveHeroImages[index], window.location.href).href
+          : mobileUrl || tabletUrl;
 
         return `
-          <img
-            src="${imageUrl}"
-            alt="${escapeHTML(hero.title || "Hero image")}"
-            class="${index === 0 ? "active" : ""}"
-            data-slide="${index}"
-            onerror="console.error('Hero image failed:', this.src);"
-          >
+          <picture>
+            <source media="(max-width: 1024px)" srcset="${escapeHTML(responsiveUrl)}">
+            <img
+              src="${imageUrl}"
+              alt="${escapeHTML(hero.title || "Hero image")}"
+              class="${index === 0 ? "active" : ""}"
+              data-slide="${index}"
+              onerror="console.error('Hero image failed:', this.src);"
+            >
+          </picture>
         `;
       }).join("");
 
@@ -2161,57 +2660,111 @@
     if (!section || !track) return;
 
     if (scrollStripTimer) {
-      clearInterval(scrollStripTimer);
+      cancelAnimationFrame(scrollStripTimer);
     }
 
-    section.onmouseenter = () => { scrollStripPaused = true; };
-    section.onmouseleave = () => {
-      scrollStripPaused = false;
-      scrollStripDragging = false;
-      section.classList.remove("is-dragging");
-    };
+    // Make sure there are always enough cards to loop forever:
+    // clone the set until the strip is at least twice as wide as the screen.
+    track.querySelectorAll('[data-strip-clone="true"]').forEach(function(c){ c.remove(); });
+    const originals = Array.from(track.children);
+    if (!originals.length) return;
 
-    section.onpointerdown = event => {
-      scrollStripDragging = true;
+    let guard = 0;
+    while (track.offsetWidth > 0 && track.offsetWidth < section.clientWidth * 2 && guard < 8) {
+      originals.forEach(function(card){
+        const clone = card.cloneNode(true);
+        clone.setAttribute("data-strip-clone", "true");
+        clone.setAttribute("aria-hidden", "true");
+        track.appendChild(clone);
+      });
+      guard++;
+    }
+
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    const SPEED = 60; // pixels per second
+    let pos = section.scrollLeft;
+    let last = performance.now();
+    let resumeTimer = null;
+
+    // Pause briefly while the visitor touches / wheels the strip, then carry on.
+    function pauseFor(ms) {
       scrollStripPaused = true;
-      section.classList.add("is-dragging");
-      section.dataset.dragStartX = event.clientX;
-      section.dataset.dragStartScroll = section.scrollLeft;
-      section.setPointerCapture(event.pointerId);
-    };
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(function(){ scrollStripPaused = false; }, ms);
+    }
 
-    section.onpointermove = event => {
+    section.addEventListener("touchstart", function(){ pauseFor(2500); }, { passive: true });
+    section.addEventListener("touchmove", function(){ pauseFor(2500); }, { passive: true });
+    section.addEventListener("touchend", function(){ pauseFor(1200); }, { passive: true });
+    section.addEventListener("touchcancel", function(){ pauseFor(1200); }, { passive: true });
+    section.addEventListener("wheel", function(){ pauseFor(1500); }, { passive: true });
+
+    // Mouse drag (only starts after a small movement, so plain clicks on cards still open the link)
+    let startX = 0, startScroll = 0, moved = false, activePointer = null;
+
+    function endDrag(event) {
       if (!scrollStripDragging) return;
-      const startX = Number(section.dataset.dragStartX);
-      const startScroll = Number(section.dataset.dragStartScroll);
-      section.scrollLeft = startScroll - (event.clientX - startX);
-    };
-
-    section.onpointerup = event => {
       scrollStripDragging = false;
-      scrollStripPaused = false;
       section.classList.remove("is-dragging");
-      section.releasePointerCapture(event.pointerId);
+      try { section.releasePointerCapture(event.pointerId); } catch (e) {}
+      setTimeout(function(){ moved = false; }, 60);
+    }
+
+    section.onpointerdown = function(event) {
+      if (event.pointerType !== "mouse" || event.button !== 0) return;
+      scrollStripDragging = true;
+      moved = false;
+      activePointer = event.pointerId;
+      startX = event.clientX;
+      startScroll = section.scrollLeft;
     };
 
-    scrollStripTimer = setInterval(() => {
-      if (scrollStripPaused || scrollStripDragging || !track.firstElementChild) return;
-
-      const firstCard = track.firstElementChild;
-      section.scrollLeft += 1;
-
-      if (firstCard.getBoundingClientRect().right <= section.getBoundingClientRect().left) {
-        const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-        const distance = firstCard.offsetWidth + gap;
-        track.appendChild(firstCard);
-        section.scrollLeft -= distance;
+    section.onpointermove = function(event) {
+      if (!scrollStripDragging || event.pointerId !== activePointer) return;
+      const dx = event.clientX - startX;
+      if (!moved && Math.abs(dx) > 5) {
+        moved = true;
+        section.classList.add("is-dragging");
+        try { section.setPointerCapture(event.pointerId); } catch (e) {}
       }
-    }, 16);
+      if (moved) section.scrollLeft = startScroll - dx;
+    };
+
+    section.onpointerup = endDrag;
+    section.onpointercancel = endDrag;
+    section.onlostpointercapture = endDrag;
+    section.onclick = function(event) {
+      if (moved) { event.preventDefault(); event.stopPropagation(); }
+    };
+
+    function step(now) {
+      const dt = Math.min(now - last, 100);
+      last = now;
+
+      if (!scrollStripPaused && !scrollStripDragging) {
+        pos += SPEED * dt / 1000;
+        section.scrollLeft = pos;
+
+        // When the first card has fully left the screen, move it to the end (seamless loop)
+        const first = track.firstElementChild;
+        if (first && first.getBoundingClientRect().right <= section.getBoundingClientRect().left) {
+          pos -= first.offsetWidth + gap;
+          track.appendChild(first);
+          section.scrollLeft = pos;
+        }
+      } else {
+        pos = section.scrollLeft; // follow whatever the visitor did, then resume from there
+      }
+
+      scrollStripTimer = requestAnimationFrame(step);
+    }
+
+    scrollStripTimer = requestAnimationFrame(step);
   }
 
   async function loadScrollCategoriesFromBackend() {
     try {
-      const response = await fetch("http://localhost:5000/api/scroll-categories");
+      const response = await fetch(`${window.API_BASE_URL}/api/scroll-categories`);
       if (!response.ok) throw new Error("Failed to load scroll categories");
 
       const categories = await response.json();
@@ -2257,8 +2810,8 @@
   async function loadBestSellersFromBackend() {
     try {
       const [bestSellerResponse, productsResponse] = await Promise.all([
-        fetch("http://localhost:5000/api/best-sellers"),
-        fetch("http://localhost:5000/api/products")
+        fetch(`${window.API_BASE_URL}/api/best-sellers`),
+        fetch(`${window.API_BASE_URL}/api/products`)
       ]);
       if (!bestSellerResponse.ok || !productsResponse.ok) {
         throw new Error("Failed to load best sellers");
@@ -2330,12 +2883,12 @@
   }
 
 
-  async function loadHomeDecorFromBackend() {
+  async function loadLegacyHomeDecorFromBackend() {
     const track = document.getElementById('homeDecorTrack');
     if (!track) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/products');
+      const response = await fetch(`${window.API_BASE_URL}/api/products`);
       if (!response.ok) throw new Error('Failed to load home decor products');
 
       const products = await response.json();
@@ -2382,12 +2935,12 @@
   }
 
 
-  async function loadThoughtfulReturnGiftsFromBackend() {
+  async function loadLegacyThoughtfulReturnGiftsFromBackend() {
     const track = document.getElementById('thoughtfulGiftsTrack');
     if (!track) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/products');
+      const response = await fetch(`${window.API_BASE_URL}/api/products`);
       if (!response.ok) throw new Error('Failed to load return gift products');
 
       const products = await response.json();
@@ -2431,6 +2984,116 @@
       console.error('Thoughtful return gifts loading error:', error);
       track.innerHTML = '<p style="width:100%;text-align:center;padding:40px;color:#b33;">Unable to load thoughtful return gifts.</p>';
     }
+  }
+
+
+  // =====================================================
+  // SHOP BY PRICE RANGE (driven by live backend prices)
+  // =====================================================
+
+  var priceRanges = {
+    'below-100':  { label: 'Below \u20B9100',  test: function(p){ return p < 100; } },
+    'above-100':  { label: 'Above \u20B9100',  test: function(p){ return p >= 100; } },
+    'above-200':  { label: 'Above \u20B9200',  test: function(p){ return p >= 200; } },
+    'above-500':  { label: 'Above \u20B9500',  test: function(p){ return p >= 500; } },
+    'above-1000': { label: 'Above \u20B91000', test: function(p){ return p >= 1000; } }
+  };
+  var activePriceRange = null;
+
+  // Turns 99, "99", "\u20B91,499" or "1,499.50" into a real number. Returns NaN if there is no price.
+  function normalizePrice(value){
+    if (typeof value === 'number') return isFinite(value) ? value : NaN;
+    var cleaned = String(value == null ? '' : value).replace(/[^0-9.]/g, '');
+    var n = parseFloat(cleaned);
+    return isFinite(n) ? n : NaN;
+  }
+
+  function renderPriceRangeCard(product){
+    var imagePath = '';
+    if (product.image) imagePath = fixImagePath(product.image);
+    else if (Array.isArray(product.images) && product.images.length) imagePath = fixImagePath(product.images[0]);
+
+    var price = normalizePrice(product.price);
+    var priceText = price > 0 ? '\u20B9' + price.toFixed(2) : 'Price on request';
+
+    return `
+      <div class="product-card"
+           data-id="${escapeHTML(product.productId ?? '')}"
+           data-name="${escapeHTML(product.name || '')}"
+           data-price="${price > 0 ? price : 0}"
+           data-img="${escapeHTML(imagePath)}">
+        <div class="img-wrap" style="position:relative;">
+          ${imagePath ? `<img class="product-image" src="${escapeHTML(imagePath)}" alt="${escapeHTML(product.name || 'Product')}" onerror="this.style.display='none';">` : ''}
+        </div>
+        <div class="info">
+          <h3>${escapeHTML(product.name || 'Product')}</h3>
+          <div class="price">${priceText}</div>
+          <div class="card-actions">
+            <a href="views.html?id=${encodeURIComponent(product.productId)}" class="view-btn">View</a>
+            <button class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function clearPriceRange(){
+    activePriceRange = null;
+    document.getElementById('priceResults').hidden = true;
+    document.querySelectorAll('.price-tile').forEach(function(t){
+      t.classList.remove('is-active');
+      t.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  async function selectPriceRange(event, key, tile){
+    if (event) event.preventDefault();
+    var range = priceRanges[key];
+    if (!range) return false;
+
+    // Clicking the open range again closes it
+    if (activePriceRange === key) { clearPriceRange(); return false; }
+
+    var wasHidden = document.getElementById('priceResults').hidden;
+    activePriceRange = key;
+    document.querySelectorAll('.price-tile').forEach(function(t){
+      var on = (t === tile);
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-expanded', String(on));
+    });
+
+    var panel = document.getElementById('priceResults');
+    var track = document.getElementById('priceResultsTrack');
+    var title = document.getElementById('priceResultsTitle');
+    var count = document.getElementById('priceResultsCount');
+
+    title.textContent = range.label;
+    count.textContent = '';
+    panel.hidden = false;
+    track.innerHTML = '<p class="price-results-empty">Loading products...</p>';
+
+    try {
+      // Reuses the products already fetched for the homepage sections (no extra request per click)
+      var products = await getHomepageProducts();
+      if (activePriceRange !== key) return false;
+
+      var matches = products
+        .map(function(product){ return { product: product, price: normalizePrice(product.price) }; })
+        .filter(function(item){ return item.price > 0 && range.test(item.price); })
+        .sort(function(a, b){ return a.price - b.price; });
+
+      count.textContent = matches.length + (matches.length === 1 ? ' product' : ' products');
+
+      track.innerHTML = matches.length
+        ? matches.map(function(item){ return renderPriceRangeCard(item.product); }).join('')
+        : '<p class="price-results-empty">No products found in this price range.</p>';
+    } catch (error) {
+      console.error('Price range loading error:', error);
+      track.innerHTML = '<p class="price-results-empty">Unable to load products right now. Please try again.</p>';
+    }
+
+    if (wasHidden) panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    return false;
   }
 
 
@@ -2520,12 +3183,52 @@
   loadHeroFromBackend();
   loadScrollCategoriesFromBackend();
   loadBestSellersFromBackend();
+  loadHomepageCategory('newCollection');
   loadHomeDecorFromBackend();
   loadThoughtfulReturnGiftsFromBackend();
+  loadKidsReturnGiftsFromBackend();
+  initHomepageCarousels();
   initBeforeAfterComparison();
 
 
 </script>
+<script src="category-config.js"></script>
+<script>
+  (function () {
+    function renderCategoryLinks() {
+      const dropdownMenu = document.getElementById('categoryDropdownMenu');
+      const footerCategoryList = document.getElementById('footerCategoryList');
+
+      if (!window.ShailuCategoryConfig || !window.ShailuCategoryConfig.CATEGORY_DEFINITIONS) {
+        return;
+      }
+
+      const categories = window.ShailuCategoryConfig.CATEGORY_DEFINITIONS;
+      document.querySelectorAll('[data-category-link]').forEach(function (link) {
+        link.href = window.ShailuCategoryConfig.buildCategoryUrl(link.dataset.categoryLink);
+      });
+
+      if (dropdownMenu) {
+        dropdownMenu.innerHTML = categories.map(function (category) {
+          const href = window.ShailuCategoryConfig.buildCategoryUrl(category.slug);
+          return '<a href="' + href + '">' + category.title + '</a>';
+        }).join('');
+      }
+
+      if (footerCategoryList) {
+        footerCategoryList.innerHTML = categories.map(function (category) {
+          const href = window.ShailuCategoryConfig.buildCategoryUrl(category.slug);
+          return '<li><a href="' + href + '">' + category.title + '</a></li>';
+        }).join('');
+      }
+    }
+
+    renderCategoryLinks();
+  })();
+</script>
+<script src="kondapalli-showcase.js"></script>
+<script src="site-shell.js"></script>
+<script src="site-header.js"></script>
 
 </body>
 </html>

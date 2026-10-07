@@ -3,16 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="api-config.js"></script>
+<script src="customer-state.js"></script>
 <title>Checkout — Shailu's Concepts</title>
 <style>
   :root{
-    --deep-green: #0d3328;
-    --green-mid: #134a3a;
-    --gold: #c9a455;
-    --gold-light: #e6cf8f;
-    --cream: #fdfaf3;
-    --header-cream: #fbeee2;
-    --blush: #f3e2dd;
+    --deep-green: #0D3328;
+    --green-mid: #17483A;
+    --gold: #C9A84C;
+    --gold-light: #E8D39A;
+    --cream: #F8F5EE;
+    --header-cream: #F2E8D8;
+    --blush: #F2E8D8;
     --text-dark: #1a1a1a;
   }
 
@@ -22,7 +24,7 @@
 
   body{
     font-family: 'Poppins', Arial, sans-serif;
-    background:#fff;
+    background:var(--cream);
     color: var(--text-dark);
   }
 
@@ -201,8 +203,8 @@
     padding:10px 20px; font-size:14px; font-weight:500; white-space:nowrap;
   }
 
-  .dropdown-menu a:hover{ background: rgba(201,164,85,0.15); color: var(--gold); }
-  .dropdown-menu hr{ border:none; border-top:1px solid rgba(201,164,85,0.25); margin:6px 14px; }
+  .dropdown-menu a:hover{ background: rgba(201,168,76,0.15); color: var(--gold); }
+  .dropdown-menu hr{ border:none; border-top:1px solid rgba(201,168,76,0.3); margin:6px 14px; }
 
   .has-submenu{ position:relative; }
 
@@ -214,7 +216,7 @@
   }
 
   .has-submenu > .sub-toggle:hover,
-  .has-submenu.open > .sub-toggle{ background: rgba(201,164,85,0.15); color: var(--gold); }
+  .has-submenu.open > .sub-toggle{ background: rgba(201,168,76,0.15); color: var(--gold); }
 
   .submenu{
     display:none; position:absolute; top:0; left:100%;
@@ -225,7 +227,7 @@
 
   .has-submenu.open .submenu{ display:block; }
   .submenu a{ color: var(--gold-light); padding:10px 20px; font-size:13.5px; }
-  .submenu a:hover{ background: rgba(201,164,85,0.15); color: var(--gold); }
+  .submenu a:hover{ background: rgba(201,168,76,0.15); color: var(--gold); }
 
 
   /* ============ RESPONSIVE NAVBAR ============ */
@@ -262,7 +264,7 @@
       color: var(--gold-light);
     }
     .nav-row a:hover, .nav-row .drop-toggle:hover{ color: var(--gold); }
-    .nav-row a.active{ border-bottom:none; background: rgba(201,164,85,0.12); color: var(--gold); }
+    .nav-row a.active{ border-bottom:none; background: rgba(201,168,76,0.12); color: var(--gold); }
 
     .dropdown-menu{
       position:static; transform:none; width:100%;
@@ -307,20 +309,20 @@
     color: var(--deep-green);
     margin-bottom:18px;
     padding-bottom:10px;
-    border-bottom:1px solid #e6e1d3;
+    border-bottom:1px solid rgba(201,168,76,0.45);
   }
 
   .checkout-section{ margin-bottom:38px; }
 
   .checkout-section-head{
     display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:18px; padding-bottom:10px; border-bottom:1px solid #e6e1d3;
+    margin-bottom:18px; padding-bottom:10px; border-bottom:1px solid rgba(201,168,76,0.45);
   }
 
   .checkout-section-head h2{ margin:0; padding:0; border:none; }
 
   .sign-in-link{
-    color: var(--green-mid); font-size:14px; font-weight:600;
+    color: var(--deep-green); font-size:14px; font-weight:600;
     text-decoration:none;
   }
   .sign-in-link:hover{ text-decoration:underline; color: var(--deep-green); }
@@ -336,14 +338,15 @@
   }
 
   .field input, .field select{
-    width:100%; padding:13px 14px; border:1.5px solid #d8d2c2;
+    width:100%; padding:13px 14px; border:1.5px solid #D8CBAE;
     border-radius:6px; font-family:inherit; font-size:14.5px;
-    color: var(--text-dark); background:#fff;
+    color: var(--text-dark); background:#FFFEFA;
     transition: border-color .2s ease;
   }
 
   .field input:focus, .field select:focus{
-    outline:none; border-color: var(--deep-green);
+    outline:none; border-color: var(--gold);
+    box-shadow:0 0 0 2px rgba(201,168,76,0.16);
   }
 
   .checkbox-row{
@@ -358,59 +361,59 @@
 
   .delivery-toggle{
     display:grid; grid-template-columns: 1fr 1fr; gap:0;
-    border:1.5px solid #d8d2c2; border-radius:6px; overflow:hidden;
+    border:1.5px solid #D8CBAE; border-radius:6px; overflow:hidden;
     margin-bottom:18px;
   }
 
   .delivery-toggle button{
-    background:#fff; border:none; padding:14px; font-family:inherit;
+    background:#FFFEFA; border:none; padding:14px; font-family:inherit;
     font-size:14.5px; font-weight:600; color: var(--text-dark);
     cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
     transition: background .2s ease, color .2s ease;
-    border-right:1.5px solid #d8d2c2;
+    border-right:1.5px solid #D8CBAE;
   }
 
   .delivery-toggle button:last-child{ border-right:none; }
 
   .delivery-toggle button.active{
-    background: var(--deep-green); color:#fff;
+    background: var(--deep-green); color:var(--gold-light);
   }
 
   .ship-method-box{
-    border:1.5px solid #d8d2c2; border-radius:6px;
-    padding:18px; font-size:14px; color:#777;
-    background:#faf8f3; margin-bottom:18px;
+    border:1.5px solid #D8CBAE; border-radius:6px;
+    padding:18px; font-size:14px; color:#625C50;
+    background:var(--header-cream); margin-bottom:18px;
   }
 
   .payment-box{
-    border:1.5px solid var(--deep-green); border-radius:6px;
+    border:1.5px solid var(--gold); border-radius:6px;
     padding:0; margin-bottom:18px; overflow:hidden;
   }
 
   .payment-option-head{
     display:flex; align-items:center; justify-content:space-between;
-    padding:16px 18px; background: var(--header-cream);
-    font-weight:700; font-size:14.5px; color: var(--deep-green);
+    padding:16px 18px; background: var(--deep-green);
+    font-weight:700; font-size:14.5px; color: var(--gold-light);
   }
 
   .payment-badges{ display:flex; gap:6px; align-items:center; }
   .payment-badges span{
     font-size:10.5px; font-weight:700; padding:3px 7px;
-    border-radius:3px; background:#fff; border:1px solid #ddd; color:#555;
+    border-radius:3px; background:var(--cream); border:1px solid var(--gold); color:var(--deep-green);
   }
 
   .payment-option-note{
-    padding:14px 18px; font-size:13px; color:#666; text-align:center;
-    border-top:1px solid #e6e1d3; background:#fff;
+    padding:14px 18px; font-size:13px; color:#514D43; text-align:center;
+    border-top:1px solid rgba(201,168,76,0.45); background:#FFFEFA;
   }
 
   .billing-option{
     display:flex; align-items:center; gap:12px;
-    padding:16px 18px; border:1.5px solid #d8d2c2; border-radius:6px;
+    padding:16px 18px; border:1.5px solid #D8CBAE; border-radius:6px;
     margin-bottom:10px; cursor:pointer; transition: border-color .2s ease;
   }
 
-  .billing-option.selected{ border-color: var(--deep-green); background: rgba(13,51,40,0.03); }
+  .billing-option.selected{ border-color: var(--gold); background: rgba(201,168,76,0.12); }
 
   .billing-option input[type="radio"]{
     width:18px; height:18px; accent-color: var(--deep-green); cursor:pointer;
@@ -420,12 +423,13 @@
 
   .pay-now-btn{
     width:100%; background: var(--deep-green); color: var(--gold-light);
-    border:none; padding:17px; border-radius:6px; font-weight:700;
+    border:1px solid var(--gold); padding:17px; border-radius:6px; font-weight:700;
     font-size:16px; letter-spacing:0.5px; cursor:pointer; margin-top:10px;
     transition: background .2s ease;
   }
 
-  .pay-now-btn:hover{ background: var(--green-mid); }
+  .pay-now-btn:hover{ background:var(--gold); color:var(--deep-green); }
+  .pay-now-btn:focus-visible{ outline:3px solid rgba(201,168,76,0.45); outline-offset:3px; }
 
   .checkout-footnote{
     text-align:center; font-size:12.5px; color:#999; margin-top:30px;
@@ -433,18 +437,19 @@
 
   /* ============ ORDER SUMMARY ============ */
   .order-summary{
-    background:#faf8f3; border:1px solid #ece5d4; border-radius:10px;
+    background:var(--header-cream); border:1px solid var(--gold); border-radius:10px;
     padding:28px; position:sticky; top:110px;
   }
 
   .order-summary h2{
     font-family: 'Playfair Display', Georgia, serif;
     font-size:20px; color: var(--deep-green); margin-bottom:20px;
+    padding-bottom:12px; border-bottom:1px solid rgba(201,168,76,0.55);
   }
 
   .order-item{
     display:flex; gap:14px; align-items:flex-start;
-    padding-bottom:18px; margin-bottom:18px; border-bottom:1px solid #ece5d4;
+    padding-bottom:18px; margin-bottom:18px; border-bottom:1px solid rgba(201,168,76,0.35);
   }
 
   .order-item-thumb{
@@ -453,7 +458,7 @@
 
   .order-item-thumb img{
     width:64px; height:64px; object-fit:cover; border-radius:8px;
-    border:1px solid #e6e1d3; background:#fff;
+    border:1px solid var(--gold); background:#FFFEFA;
   }
 
   .order-item-qty{
@@ -471,7 +476,7 @@
   }
 
   .order-item-price{
-    font-size:14px; color: var(--green-mid); font-weight:700;
+    font-size:14px; color: var(--deep-green); font-weight:700;
     white-space:nowrap; flex-shrink:0;
   }
 
@@ -480,16 +485,16 @@
     font-size:14.5px; color: var(--text-dark); margin-bottom:12px;
   }
 
-  .summary-row.muted{ color:#888; font-size:13.5px; }
+  .summary-row.muted{ color:#625C50; font-size:13.5px; }
 
   .summary-total{
     display:flex; justify-content:space-between; align-items:baseline;
     font-size:19px; font-weight:700; color: var(--deep-green);
-    padding-top:16px; margin-top:6px; border-top:1.5px solid var(--deep-green);
+    padding-top:16px; margin-top:6px; border-top:1.5px solid var(--gold);
   }
 
   .summary-total .currency-label{
-    font-size:12px; font-weight:500; color:#888; margin-right:6px;
+    font-size:12px; font-weight:600; color:#625C50; margin-right:6px;
   }
 
   @media (max-width: 980px){
@@ -503,8 +508,25 @@
   }
 
   /* ============ FOOTER (shared) ============ */
+  html body .shared-site-header .brand-name,
+  html body .shared-site-header .brand-tagline {
+    color:var(--gold);
+  }
+
+  html body .shared-site-header .shared-account-link,
+  html body .shared-site-header .shared-logout-btn,
+  html body .shared-site-header .icon-btn {
+    color:var(--gold-light);
+  }
+
+  html body .shared-site-header .nav-row>a:hover,
+  html body .shared-site-header .nav-row .drop-toggle:hover,
+  html body .shared-site-header .nav-row>a[aria-current="page"] {
+    color:var(--gold);
+  }
+
   .footer {
-    background: linear-gradient(180deg, var(--deep-green), #071f17);
+    background: linear-gradient(180deg, var(--deep-green), #071F17);
     color: var(--gold-light);
     padding-top: 60px;
   }
@@ -529,7 +551,7 @@
   .footer-brand p {
     font-size: 13.5px;
     line-height: 1.8;
-    color: rgba(230, 207, 143, 0.8);
+    color: rgba(248, 245, 238, 0.82);
     margin-bottom: 16px;
   }
 
@@ -544,7 +566,7 @@
 
   .rating-text {
     font-size: 13px;
-    color: rgba(230, 207, 143, 0.85);
+    color: rgba(248, 245, 238, 0.86);
   }
 
   .rating-text a {
@@ -580,7 +602,7 @@
   }
 
   .footer-col ul li a {
-    color: rgba(230, 207, 143, 0.8);
+    color: rgba(248, 245, 238, 0.84);
     text-decoration: none;
     font-size: 14px;
     transition: color .2s;
@@ -592,7 +614,7 @@
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    color: rgba(230, 207, 143, 0.85);
+    color: rgba(248, 245, 238, 0.86);
     font-size: 14px;
     line-height: 1.6;
   }
@@ -614,7 +636,7 @@
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    border: 1px solid rgba(201, 164, 85, 0.4);
+    border: 1px solid rgba(201, 168, 76, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -637,14 +659,14 @@
     align-items: flex-start;
     gap: 10px;
     font-size: 13.5px;
-    color: rgba(230, 207, 143, 0.85);
+    color: rgba(248, 245, 238, 0.86);
     line-height: 1.6;
   }
 
   .footer-contact svg { flex-shrink: 0; margin-top: 3px; stroke: var(--gold); }
 
   .footer-contact a {
-    color: rgba(230, 207, 143, 0.85);
+    color: rgba(248, 245, 238, 0.86);
     text-decoration: none;
     transition: color .2s;
   }
@@ -652,14 +674,21 @@
   .footer-contact a:hover { color: var(--gold); }
 
   .footer-bottom {
-    border-top: 1px solid rgba(201, 164, 85, 0.2);
+    border-top: 1px solid rgba(201, 168, 76, 0.35);
     text-align: center;
     padding: 20px;
     font-size: 13px;
-    color: rgba(230, 207, 143, 0.6);
+    color: rgba(248, 245, 238, 0.72);
   }
 
-  .footer-bottom strong { color: var(--gold-light); }
+  .footer-bottom a {
+    color:var(--gold);
+    text-decoration:none;
+  }
+
+  .footer-bottom a:hover { text-decoration:underline; }
+
+  .footer-bottom strong { color: var(--gold); }
 
   @media (max-width: 1100px) {
     .footer-top { grid-template-columns: 1fr 1fr 1fr; }
@@ -732,10 +761,10 @@
         <a href="index.html">Paper Bags</a>
         <a href="index.html">Imported Bags</a>
         <a href="index.html">Kids Return Gifts</a>
-        <a href="index.html">New Collection</a>
-        <a href="index.html">Combos</a>
+        <a href="/category/new-collection">New Collection</a>
+        <a href="/category/combos">Combos</a>
         <a href="index.html">Customised Return Gifts</a>
-        <a href="index.html">Corporate Gifts</a>
+        <a href="/category/corporate-gifts">Corporate Gifts</a>
         <a href="index.html">Favour Bags</a>
         <a href="index.html">Eco-Friendly Bags</a>
         <a href="index.html">Wedding Return Gifts</a>
@@ -929,13 +958,19 @@
     <div id="orderItemsContainer"><!-- populated by JS --></div>
 
     <div class="summary-row">
-      <span>Subtotal</span>
-      <span id="summarySubtotal">₹0.00</span>
-    </div>
-    <div class="summary-row muted">
-      <span>Shipping</span>
-      <span id="summaryShipping">Enter shipping address</span>
-    </div>
+  <span>Subtotal</span>
+  <span id="summarySubtotal">₹0.00</span>
+</div>
+
+<div class="summary-row" id="discountRow">
+  <span id="discountLabel">Bulk Discount</span>
+  <span id="summaryDiscount">₹0.00</span>
+</div>
+
+<div class="summary-row muted">
+  <span>Shipping</span>
+  <span id="summaryShipping">Enter shipping address</span>
+</div>
     <div class="summary-total">
       <span>Total</span>
       <span><span class="currency-label">INR</span><span id="summaryTotal">₹0.00</span></span>
@@ -975,10 +1010,10 @@
       <ul>
         <li><a href="#">Return Gifts</a></li>
         <li><a href="#">Favour Bags</a></li>
-        <li><a href="#">Corporate Gifts</a></li>
+        <li><a href="/category/corporate-gifts">Corporate Gifts</a></li>
         <li><a href="#">Kids Return Gifts</a></li>
         <li><a href="#">Customised Gifts</a></li>
-        <li><a href="#">Combos</a></li>
+        <li><a href="/category/combos">Combos</a></li>
       </ul>
     </div>
 
@@ -1031,7 +1066,13 @@
     <p>Copyright &copy; 2025 <strong>Shailu's Concepts</strong>. All rights reserved.</p>
   </div>
 </footer>
-
+<script
+    src="https://checkout.razorpay.com/v1/checkout.js"
+    crossorigin="anonymous">
+</script>
+<script>
+    console.log("Razorpay loaded:", typeof Razorpay);
+</script>
 <script>
   // ===== Dropdown helper =====
   function toggleDropdown(id){
@@ -1069,63 +1110,143 @@
   // =====================================================
   // ============  ORDER SUMMARY (from cart)  ===========
   // =====================================================
-  // Reads the same localStorage key used by index.html's cart so this
-  // page reflects whatever was actually added to the cart. Swap
-  // loadCartForCheckout() for a real API/session call later if needed —
-  // everything else (rendering, totals) stays the same.
-
-  var CART_STORAGE_KEY = 'shailusCart';
-  var FALLBACK_ITEM = {
-    id: 'placeholder',
-    name: 'Decorated Seru For Marriage Big',
-    price: 1650,
-    img: 'https://placehold.co/200x200/f7f3ea/0d3328?text=Gift',
-    qty: 3
-  };
-
   function loadCartForCheckout(){
-    try{
-      var raw = localStorage.getItem(CART_STORAGE_KEY);
-      var parsed = raw ? JSON.parse(raw) : [];
-      return Array.isArray(parsed) ? parsed : [];
-    } catch(e){ return []; }
+    return window.ShailuCustomer.loadCart();
   }
 
-  function renderOrderSummary(){
+function renderOrderSummary(){
+
     var cart = loadCartForCheckout();
-    var container = document.getElementById('orderItemsContainer');
-    var usingFallback = false;
 
-    if(cart.length === 0){
-      // Flexible fallback: show a sample item as starting-code placeholder
-      // instead of a hard "empty" dead end, so the layout is always visible.
-      cart = [FALLBACK_ITEM];
-      usingFallback = true;
+    var container =
+      document.getElementById('orderItemsContainer');
+
+    container.innerHTML = cart.length
+      ? cart.map(function(item){
+
+        var priceLabel =
+          item.price > 0
+            ? ('₹' + Number(item.price).toFixed(2))
+            : 'Price on request';
+
+
+        return '' +
+
+          '<div class="order-item">' +
+
+            '<div class="order-item-thumb">' +
+
+              '<img src="' +
+                item.img +
+                '" alt="' +
+                item.name +
+              '">' +
+
+              '<span class="order-item-qty">' +
+                item.qty +
+              '</span>' +
+
+            '</div>' +
+
+            '<div class="order-item-info">' +
+              '<h4>' +
+                item.name +
+              '</h4>' +
+            '</div>' +
+
+            '<div class="order-item-price">' +
+              priceLabel +
+            '</div>' +
+
+          '</div>';
+
+      }).join('')
+      : '<p class="cart-empty">Your cart is empty.</p>';
+
+
+    // ==============================
+    // BULK PRICING
+    // ==============================
+
+    var totalQty = cart.reduce(
+      function(sum, item){
+        return sum + Number(item.qty);
+      },
+      0
+    );
+
+
+    var subtotal = cart.reduce(
+      function(sum, item){
+        return sum +
+          (Number(item.price) * Number(item.qty));
+      },
+      0
+    );
+
+
+    var discountPercentage = 0;
+
+
+    if(totalQty >= 10 && totalQty <= 50){
+
+        discountPercentage = 20;
+
+    }
+    else if(totalQty >= 51){
+
+        discountPercentage = 30;
+
     }
 
-    container.innerHTML = cart.map(function(item){
-      var priceLabel = item.price > 0 ? ('₹' + Number(item.price).toFixed(2)) : 'Price on request';
-      return '' +
-        '<div class="order-item">' +
-          '<div class="order-item-thumb">' +
-            '<img src="' + item.img + '" alt="' + item.name + '">' +
-            '<span class="order-item-qty">' + item.qty + '</span>' +
-          '</div>' +
-          '<div class="order-item-info"><h4>' + item.name + '</h4></div>' +
-          '<div class="order-item-price">' + priceLabel + '</div>' +
-        '</div>';
-    }).join('');
 
-    var subtotal = cart.reduce(function(sum, c){ return sum + (Number(c.price) * c.qty); }, 0);
-    document.getElementById('summarySubtotal').textContent = '₹' + subtotal.toFixed(2);
-    document.getElementById('summaryTotal').textContent = '₹' + subtotal.toFixed(2);
+    var discountAmount =
+      subtotal * discountPercentage / 100;
 
-    if(!usingFallback){
-      document.getElementById('cartBadge').textContent =
-        cart.reduce(function(sum, c){ return sum + c.qty; }, 0);
-    }
-  }
 
+    var finalTotal =
+      subtotal - discountAmount;
+
+
+    // ==============================
+    // UPDATE SUMMARY
+    // ==============================
+
+    document.getElementById(
+      'summarySubtotal'
+    ).textContent =
+      '₹' + subtotal.toFixed(2);
+
+
+    document.getElementById(
+      'summaryDiscount'
+    ).textContent =
+      '-₹' + discountAmount.toFixed(2);
+
+
+    document.getElementById(
+      'discountLabel'
+    ).textContent =
+      'Bulk Discount (' +
+      discountPercentage +
+      '%)';
+
+
+    document.getElementById(
+      'summaryTotal'
+    ).textContent =
+      '₹' + finalTotal.toFixed(2);
+
+
+    document.getElementById('cartBadge').textContent =
+      cart.reduce(function(sum, item) {
+        return sum + Number(item.qty || 0);
+      }, 0);
+
+}
+
+  window.addEventListener(window.ShailuCustomer.stateEvent, renderOrderSummary);
+  window.addEventListener(window.ShailuCustomer.cartEvent, renderOrderSummary);
   renderOrderSummary();
 
   // =====================================================
@@ -1144,12 +1265,701 @@
   // =====================================================
   // ===================  PAY NOW  =======================
   // =====================================================
-  function handlePayNow(){
-    // Starting-code hook: wire this up to your real payment gateway
-    // (Razorpay order creation, etc.) when the backend is ready.
-    alert('Payment integration coming soon!');
-  }
+// =====================================================
+// =================== RAZORPAY ========================
+// =====================================================
+
+async function handlePayNow() {
+
+    // =====================================================
+    // CHECK CUSTOMER LOGIN
+    // =====================================================
+
+    try {
+        const session = await window.ShailuCustomer.validateSession();
+        if (!session) {
+            alert("Please login before placing your order.");
+            window.location.href =
+                "login.html?returnTo=" +
+                encodeURIComponent(window.location.pathname + window.location.search);
+            return;
+        }
+        const token = session.token;
+
+        // =====================================================
+        // GET CART
+        // =====================================================
+
+        var cart = loadCartForCheckout();
+
+        if (!cart || cart.length === 0) {
+            alert("Your cart is empty.");
+            return;
+        }
+
+        const activeSession = window.ShailuCustomer.getSession();
+        if (
+            !activeSession ||
+            String(activeSession.user.id) !== String(session.user.id)
+        ) {
+            alert("Your login changed. Please try checkout again.");
+            return;
+        }
+
+
+        // =====================================================
+        // CALCULATE TOTAL
+        // =====================================================
+
+var totalQty = cart.reduce(
+    function(sum, item){
+        return sum + Number(item.qty);
+    },
+    0
+);
+
+
+var subtotal = cart.reduce(
+    function(sum, item){
+        return sum +
+            (Number(item.price) * Number(item.qty));
+    },
+    0
+);
+
+
+var discountPercentage = 0;
+
+
+if(totalQty >= 10 && totalQty <= 50){
+
+    discountPercentage = 20;
+
+}
+else if(totalQty >= 51){
+
+    discountPercentage = 30;
+
+}
+
+
+var discountAmount =
+    subtotal * discountPercentage / 100;
+
+
+var totalAmount =
+    subtotal - discountAmount;
+
+
+        if (!totalAmount || totalAmount <= 0) {
+
+            alert("Invalid order amount.");
+
+            return;
+        }
+
+
+        // =====================================================
+        // CHECK CHECKOUT FORM
+        // =====================================================
+
+        var form = document.getElementById("checkoutForm");
+
+        if (!form.checkValidity()) {
+
+            form.reportValidity();
+
+            return;
+        }
+
+
+        // =====================================================
+        // DISABLE PAY BUTTON
+        // =====================================================
+
+        var payButton =
+            document.querySelector(".pay-now-btn");
+
+        if (payButton) {
+
+            payButton.disabled = true;
+
+            payButton.textContent = "Processing...";
+
+        }
+
+
+        // =====================================================
+        // STEP 1
+        // CREATE RAZORPAY ORDER
+        // =====================================================
+
+        var response = await fetch(
+
+            `${window.API_BASE_URL}/api/payment/create-order`,
+
+            {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json",
+
+                    // IMPORTANT:
+                    // Send logged-in customer's JWT
+                    "Authorization": "Bearer " + token
+
+                },
+
+                body: JSON.stringify({
+
+                    items: cart.map(function(item) {
+                        return {
+                            productId: item.id,
+                            quantity: Number(item.qty)
+                        };
+                    }),
+
+                    customer: getCustomerDetails()
+
+                })
+
+            }
+
+        );
+
+
+        var data = await response.json();
+
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+
+                data.message ||
+                "Unable to create payment order."
+
+            );
+
+        }
+
+
+        // =====================================================
+        // RAZORPAY ORDER CREATED
+        // =====================================================
+
+        var razorpayOrder = data.order;
+
+        if (data.pricing) {
+            document.getElementById("summarySubtotal").textContent =
+                "₹" + Number(data.pricing.subtotal).toFixed(2);
+            document.getElementById("summaryDiscount").textContent =
+                "-₹" + Number(data.pricing.discountAmount).toFixed(2);
+            document.getElementById("discountLabel").textContent =
+                "Bulk Discount (" + data.pricing.discountPercentage + "%)";
+            document.getElementById("summaryTotal").textContent =
+                "₹" + Number(data.pricing.totalAmount).toFixed(2);
+        }
+
+
+        // =====================================================
+        // STEP 2
+        // OPEN RAZORPAY CHECKOUT
+        // =====================================================
+
+        var options = {
+
+            key: data.keyId,
+
+            amount: razorpayOrder.amount,
+
+            currency: razorpayOrder.currency,
+
+            name: "Shailu's Concepts",
+
+            description: "Gift Order",
+
+            order_id: razorpayOrder.id,
+
+            image: "assets/logo.jpeg",
+
+
+            // =================================================
+            // CUSTOMER DETAILS FOR RAZORPAY
+            // =================================================
+
+            prefill: {
+
+                name: getCustomerName(),
+
+                email: getCustomerEmail(),
+
+                contact: getCustomerPhone()
+
+            },
+
+
+            notes: {
+
+                store: "Shailu's Concepts"
+
+            },
+
+
+            theme: {
+
+                color: "#0d3328"
+
+            },
+
+
+            // =================================================
+            // STEP 3
+            // PAYMENT SUCCESS
+            // =================================================
+
+            handler: async function(paymentResponse) {
+
+                try {
+
+
+                    // =============================================
+                    // STEP 4
+                    // VERIFY PAYMENT ON BACKEND
+                    // =============================================
+
+                    var verifyResponse = await fetch(
+
+                        `${window.API_BASE_URL}/api/payment/verify`,
+
+                        {
+
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type": "application/json",
+
+                                // IMPORTANT:
+                                // Send same logged-in customer's JWT
+                                "Authorization": "Bearer " + token
+
+                            },
+
+
+                            body: JSON.stringify({
+
+                                // =================================
+                                // RAZORPAY PAYMENT DETAILS
+                                // =================================
+
+                                razorpay_order_id:
+                                    paymentResponse.razorpay_order_id,
+
+                                razorpay_payment_id:
+                                    paymentResponse.razorpay_payment_id,
+
+                                razorpay_signature:
+                                    paymentResponse.razorpay_signature
+
+                            })
+
+                        }
+
+                    );
+
+
+                    var verifyData =
+                        await verifyResponse.json();
+
+
+                    // =============================================
+                    // PAYMENT VERIFICATION FAILED
+                    // =============================================
+
+                    if (
+                        !verifyResponse.ok ||
+                        !verifyData.success
+                    ) {
+
+                        throw new Error(
+
+                            verifyData.message ||
+                            "Payment verification failed."
+
+                        );
+
+                    }
+
+
+                    // =============================================
+                    // OPEN WHATSAPP
+                    // =============================================
+
+                    if (verifyData.whatsappUrl) {
+
+                        window.open(
+
+                            verifyData.whatsappUrl,
+
+                            "_blank"
+
+                        );
+
+                    }
+
+
+                    // =============================================
+                    // PAYMENT SUCCESS
+                    // =============================================
+
+                    alert(
+
+                        "Order placed successfully! 🎉\n\n" +
+
+                        "Order ID: " +
+
+                        verifyData.storeOrderId +
+
+                        "\n\n" +
+
+                        "Payment ID: " +
+
+                        paymentResponse.razorpay_payment_id
+
+                    );
+
+
+                    // =============================================
+                    // SAVE PAYMENT INFORMATION
+                    // =============================================
+
+                    localStorage.setItem(
+
+                        "lastRazorpayPayment",
+
+                        JSON.stringify({
+
+                            orderId:
+                                paymentResponse.razorpay_order_id,
+
+                            paymentId:
+                                paymentResponse.razorpay_payment_id
+
+                        })
+
+                    );
+
+
+                    // =============================================
+                    // GO BACK TO HOME
+                    // =============================================
+
+                    window.location.href = "index.html";
+
+
+                } catch (error) {
+
+                    console.error(
+
+                        "Payment verification error:",
+
+                        error
+
+                    );
+
+
+                    alert(
+
+                        "Payment was completed, but verification failed.\n\n" +
+
+                        "Please contact Shailu's Concepts before trying again."
+
+                    );
+
+
+                    resetPayButton();
+
+                }
+
+            },
+
+
+            // =================================================
+            // RAZORPAY MODAL CLOSED
+            // =================================================
+
+            modal: {
+
+                ondismiss: function() {
+
+                    resetPayButton();
+
+                }
+
+            }
+
+        };
+
+
+        // =====================================================
+        // CREATE RAZORPAY INSTANCE
+        // =====================================================
+
+        var razorpay =
+            new Razorpay(options);
+
+
+        // =====================================================
+        // PAYMENT FAILED
+        // =====================================================
+
+        razorpay.on(
+
+            "payment.failed",
+
+            function(response) {
+
+                console.error(
+
+                    "Razorpay payment failed:",
+
+                    response.error
+
+                );
+
+
+                alert(
+
+                    "Payment failed.\n\n" +
+
+                    (
+                        response.error.description ||
+                        "Please try again."
+                    )
+
+                );
+
+
+                resetPayButton();
+
+            }
+
+        );
+
+
+        // =====================================================
+        // OPEN RAZORPAY
+        // =====================================================
+
+        razorpay.open();
+
+
+    } catch (error) {
+
+        console.error(
+
+            "Razorpay checkout error:",
+
+            error
+
+        );
+
+
+        alert(
+
+            error.message ||
+            "Unable to start payment."
+
+        );
+
+
+        resetPayButton();
+
+    }
+
+}
+
+
+// =====================================================
+// CUSTOMER DETAILS
+// =====================================================
+
+function getCustomerEmail() {
+
+    var input =
+        document.querySelector(
+            'input[placeholder="Email or mobile phone number"]'
+        );
+
+    if (!input) {
+        return "";
+    }
+
+    var value = input.value.trim();
+
+    // If customer entered a phone number instead of email
+    if (!value.includes("@")) {
+        return "";
+    }
+
+    return value;
+}
+
+
+function getCustomerPhone() {
+
+    var input =
+        document.querySelector(
+            'input[placeholder="Phone"]'
+        );
+
+    return input
+        ? input.value.trim()
+        : "";
+}
+
+
+function getCustomerName() {
+
+    var firstName =
+        document.querySelector(
+            'input[placeholder="First name (optional)"]'
+        );
+
+    var lastName =
+        document.querySelector(
+            'input[placeholder="Last name"]'
+        );
+
+    var first =
+        firstName
+            ? firstName.value.trim()
+            : "";
+
+    var last =
+        lastName
+            ? lastName.value.trim()
+            : "";
+
+    return (first + " " + last).trim();
+}
+
+function getCustomerDetails() {
+
+    var firstNameInput =
+        document.querySelector(
+            'input[placeholder="First name (optional)"]'
+        );
+
+    var lastNameInput =
+        document.querySelector(
+            'input[placeholder="Last name"]'
+        );
+
+    var addressInput =
+        document.querySelector(
+            'input[placeholder="Address"]'
+        );
+
+    var apartmentInput =
+        document.querySelector(
+            'input[placeholder="Apartment, suite, etc. (optional)"]'
+        );
+
+    var cityInput =
+        document.querySelector(
+            'input[placeholder="City"]'
+        );
+
+    var pinInput =
+        document.querySelector(
+            'input[placeholder="PIN code"]'
+        );
+
+    var phoneInput =
+        document.querySelector(
+            'input[placeholder="Phone"]'
+        );
+
+    var stateSelect =
+        document.querySelectorAll(
+            ".field select"
+        );
+
+    var firstName =
+        firstNameInput
+            ? firstNameInput.value.trim()
+            : "";
+
+    var lastName =
+        lastNameInput
+            ? lastNameInput.value.trim()
+            : "";
+
+    return {
+
+        name:
+            (firstName + " " + lastName).trim(),
+
+        email:
+            getCustomerEmail(),
+
+        phone:
+            phoneInput
+                ? phoneInput.value.trim()
+                : "",
+
+        address:
+            addressInput
+                ? addressInput.value.trim()
+                : "",
+
+        apartment:
+            apartmentInput
+                ? apartmentInput.value.trim()
+                : "",
+
+        city:
+            cityInput
+                ? cityInput.value.trim()
+                : "",
+
+        pinCode:
+            pinInput
+                ? pinInput.value.trim()
+                : "",
+
+        state:
+            stateSelect.length > 1
+                ? stateSelect[1].value
+                : "",
+
+        country:
+            "India"
+    };
+}
+// =====================================================
+// RESET PAY BUTTON
+// =====================================================
+
+function resetPayButton() {
+
+    var payButton =
+        document.querySelector(".pay-now-btn");
+
+    if (payButton) {
+
+        payButton.disabled = false;
+
+        payButton.textContent = "Pay now";
+    }
+}
 </script>
+<script src="category-config.js"></script>
+<script src="site-shell.js"></script>
+<script src="site-header.js"></script>
 
 </body>
 </html>

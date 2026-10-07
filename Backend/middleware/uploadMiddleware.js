@@ -1,39 +1,50 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 
 
 // =====================================================
 // CREATE UPLOAD DIRECTORIES
 // =====================================================
 
-const productUploadDir = path.join(
-    __dirname,
-    "..",
-    "uploads",
-    "products"
-);
+const legacyUploadRoot = path.resolve(__dirname, "..", "Uploads");
+const configuredUploadPath = process.env.UPLOADS_DIR;
+const uploadRoot = configuredUploadPath
+    ? path.isAbsolute(configuredUploadPath)
+        ? path.resolve(configuredUploadPath)
+        : path.resolve(__dirname, "..", configuredUploadPath)
+    : legacyUploadRoot;
 
-const heroUploadDir = path.join(
-    __dirname,
-    "..",
-    "uploads",
-    "heroes"
-);
+const getUploadDirectory = (...segments) => {
+    const directory = path.resolve(uploadRoot, ...segments);
 
+    if (
+        directory !== uploadRoot &&
+        !directory.startsWith(`${uploadRoot}${path.sep}`)
+    ) {
+        throw new Error("Upload directory must remain inside UPLOADS_DIR");
+    }
 
-if (!fs.existsSync(productUploadDir)) {
-    fs.mkdirSync(productUploadDir, {
-        recursive: true
-    });
+    return directory;
+};
+
+const uploadSubdirectories = [
+    "products",
+    "heroes",
+    "best-sellers",
+    "scroll",
+    "standout"
+];
+
+for (const subdirectory of uploadSubdirectories) {
+    fs.mkdirSync(getUploadDirectory(subdirectory), { recursive: true });
 }
 
-
-if (!fs.existsSync(heroUploadDir)) {
-    fs.mkdirSync(heroUploadDir, {
-        recursive: true
-    });
-}
+const createUploadFilename = (originalName) => {
+    const extension = path.extname(String(originalName || "")).toLowerCase();
+    return `${Date.now()}-${crypto.randomBytes(8).toString("hex")}${extension}`;
+};
 
 
 // =====================================================
@@ -50,25 +61,14 @@ const storage = multer.diskStorage({
         req.originalUrl.includes("/api/hero");
 
     if (isHeroUpload) {
-
-        cb(null, heroUploadDir);
-
+        cb(null, getUploadDirectory("heroes"));
     } else {
-
-        cb(null, productUploadDir);
-
+        cb(null, getUploadDirectory("products"));
     }
 },
 
     filename: (req, file, cb) => {
-
-        const extension =
-            path.extname(file.originalname);
-
-        const fileName =
-            `${Date.now()}-${Math.round(Math.random() * 1E9)}${extension}`;
-
-        cb(null, fileName);
+        cb(null, createUploadFilename(file.originalname));
     }
 
 });
@@ -80,16 +80,17 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
 
-    const allowedTypes = [
-        "image/jpeg",
-        "image/jpg",
-        "image/png",
-        "image/webp",
-        "image/gif"
-    ];
+    const allowedTypesByExtension = {
+        ".jpg": ["image/jpeg", "image/jpg"],
+        ".jpeg": ["image/jpeg", "image/jpg"],
+        ".png": ["image/png"],
+        ".webp": ["image/webp"],
+        ".gif": ["image/gif"]
+    };
+    const extension = path.extname(file.originalname).toLowerCase();
+    const allowedMimeTypes = allowedTypesByExtension[extension] || [];
 
-
-    if (allowedTypes.includes(file.mimetype)) {
+    if (allowedMimeTypes.includes(file.mimetype)) {
 
         cb(null, true);
 
@@ -110,17 +111,20 @@ const fileFilter = (req, file, cb) => {
 // MULTER CONFIGURATION
 // =====================================================
 
-const upload = multer({
-
-    storage: storage,
-
-    fileFilter: fileFilter,
-
+const createImageUpload = (imageStorage) => multer({
+    storage: imageStorage,
+    fileFilter,
     limits: {
         fileSize: 5 * 1024 * 1024
     }
-
 });
+
+const upload = createImageUpload(storage);
+upload.createImageUpload = createImageUpload;
+upload.createUploadFilename = createUploadFilename;
+upload.getUploadDirectory = getUploadDirectory;
+upload.uploadRoot = uploadRoot;
+upload.legacyUploadRoot = legacyUploadRoot;
 
 
 module.exports = upload;

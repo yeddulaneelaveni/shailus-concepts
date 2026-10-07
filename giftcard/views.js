@@ -9,7 +9,7 @@ console.log("VIEWS.JS LOADED");
 // API CONFIGURATION
 // =====================================================
 
-const API_URL = "http://localhost:5000";
+const API_URL = window.API_BASE_URL;
 
 // =====================================================
 // GET PRODUCT ID FROM URL

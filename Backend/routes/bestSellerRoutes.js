@@ -1,6 +1,6 @@
 const express = require("express");
-const multer = require("multer");
-const path = require("path");
+const adminMiddleware = require("../middleware/adminMiddleware");
+const imageUpload = require("../middleware/uploadMiddleware");
 
 const {
     getBestSellers,
@@ -11,50 +11,38 @@ const {
 
 const router = express.Router();
 
+const multer = require("multer");
 const storage = multer.diskStorage({
-
     destination: function(req, file, cb) {
-        cb(
-            null,
-            path.join(
-                __dirname,
-                "../uploads/best-sellers"
-            )
-        );
+        cb(null, imageUpload.getUploadDirectory("best-sellers"));
     },
 
     filename: function(req, file, cb) {
-
-        const uniqueName =
-            Date.now() +
-            "-" +
-            file.originalname
-                .replace(/\s+/g, "-");
-
-        cb(null, uniqueName);
+        cb(null, imageUpload.createUploadFilename(file.originalname));
     }
 });
 
-const upload = multer({
-    storage: storage
-});
+const upload = imageUpload.createImageUpload(storage);
 
 router.get("/", getBestSellers);
 
 router.post(
     "/",
+    adminMiddleware,
     upload.single("image"),
     createBestSeller
 );
 
 router.put(
     "/:id",
+    adminMiddleware,
     upload.single("image"),
     updateBestSeller
 );
 
 router.delete(
     "/:id",
+    adminMiddleware,
     deleteBestSeller
 );
 

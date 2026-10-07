@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="api-config.js"></script>
+<script src="customer-state.js"></script>
 <title>Login — Shailu's Concepts</title>
 <style>
   :root{
@@ -645,9 +647,9 @@
       </div>
     </div>
 
-    <a href="new-collection.html">New Collection</a>
-    <a href="combos.html">Combos</a>
-    <a href="corporate-gifts.html">Corporate Gifts</a>
+    <a href="/category/new-collection">New Collection</a>
+    <a href="/category/combos">Combos</a>
+    <a href="/category/corporate-gifts">Corporate Gifts</a>
     <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
   </div>
 </nav>
@@ -764,10 +766,10 @@
       <ul>
         <li><a href="index.html#">Return Gifts</a></li>
         <li><a href="index.html#">Favour Bags</a></li>
-        <li><a href="index.html#">Corporate Gifts</a></li>
+        <li><a href="/category/corporate-gifts">Corporate Gifts</a></li>
         <li><a href="index.html#">Kids Return Gifts</a></li>
         <li><a href="index.html#">Customised Gifts</a></li>
-        <li><a href="index.html#">Combos</a></li>
+        <li><a href="/category/combos">Combos</a></li>
       </ul>
     </div>
 
@@ -913,7 +915,7 @@
     try {
 
         const response = await fetch(
-            "http://localhost:5000/api/auth/login",
+            `${window.API_BASE_URL}/api/auth/login`,
             {
                 method: "POST",
 
@@ -937,22 +939,22 @@
             return;
         }
 
-        // Store authentication information
-        localStorage.setItem("token", data.token);
-
-        localStorage.setItem(
-            "user",
-            JSON.stringify(data.user)
-        );
+        window.ShailuCustomer.setSession(data.token, data.user);
 
         msg.style.color = "#0d3328";
         msg.textContent = "Login successful!";
 
-        console.log("Logged in user:", data.user);
-
-        // Redirect to home page
+        const requestedReturnTo =
+            new URLSearchParams(window.location.search).get("returnTo");
+        let returnTo = "index.html";
+        if (requestedReturnTo) {
+            const destination = new URL(requestedReturnTo, window.location.origin);
+            if (destination.origin === window.location.origin) {
+                returnTo = destination.href;
+            }
+        }
         setTimeout(() => {
-            window.location.href = "index.html";
+            window.location.href = returnTo;
         }, 1000);
 
     } catch (error) {
@@ -991,7 +993,7 @@
     try {
 
         const response = await fetch(
-            "http://localhost:5000/api/auth/register",
+            `${window.API_BASE_URL}/api/auth/register`,
             {
                 method: "POST",
 
@@ -1037,6 +1039,9 @@
     }
 }
 </script>
+<script src="category-config.js"></script>
+<script src="site-shell.js"></script>
+<script src="site-header.js"></script>
 
 </body>
 </html>

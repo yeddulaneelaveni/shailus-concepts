@@ -2,7 +2,7 @@
 // ADMIN DASHBOARD JAVASCRIPT
 // =====================================================
 
-const API_URL = "http://localhost:5000";
+const API_URL = window.API_BASE_URL;
 
 
 // =====================================================
@@ -22,10 +22,7 @@ let currentStandout = null;
 
 function authHeaders() {
 
-    const token =
-        localStorage.getItem("adminToken") ||
-        localStorage.getItem("token") ||
-        "";
+    const token = localStorage.getItem("adminToken") || "";
 
     if (!token) {
         return {};
@@ -47,7 +44,6 @@ async function parseResponse(response) {
 
     if (response.status === 401) {
         localStorage.removeItem("adminToken");
-        localStorage.removeItem("token");
         localStorage.removeItem("admin");
 
         if (window.location.pathname.toLowerCase().indexOf("admin-login") === -1) {
@@ -754,7 +750,1444 @@ function renderProducts(products) {
 
 }
 
+// ==============================
+// ORDERS
+// ==============================
 
+async function loadOrders() {
+
+    const container =
+        document.querySelector(".orders-container");
+
+    if (!container) {
+        console.error("Orders container not found");
+        return;
+    }
+
+    container.innerHTML = `
+        <div style="
+            padding:40px;
+            text-align:center;
+            color:#777;
+        ">
+            Loading orders...
+        </div>
+    `;
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/api/orders`,
+            {
+                headers: authHeaders()
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Unable to load orders"
+            );
+        }
+
+        const orders = data.orders || [];
+
+        if (orders.length === 0) {
+
+            container.innerHTML = `
+                <div style="
+                    background:#fff;
+                    padding:50px;
+                    text-align:center;
+                    border-radius:14px;
+                    border:1px solid #e5dfd4;
+                ">
+                    <h2 style="
+                        color:#073F32;
+                        font-family:Georgia,serif;
+                    ">
+                        No Orders Yet
+                    </h2>
+
+                    <p style="color:#777;">
+                        Customer orders will appear here.
+                    </p>
+                </div>
+            `;
+
+            return;
+        }
+
+
+        // ==============================
+        // ORDER TABLE
+        // ==============================
+
+        let rows = "";
+
+        orders.forEach(function(order) {
+
+            const paymentClass =
+                order.paymentStatus === "Paid"
+                    ? "paid"
+                    : "pending";
+
+            const date =
+                order.createdAt
+                    ? new Date(
+                        order.createdAt
+                    ).toLocaleString("en-IN")
+                    : "-";
+
+            rows += `
+                <tr>
+
+                    <td>
+                        <strong>
+                            ${escapeOrderHTML(
+                                order.orderId
+                            )}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${escapeOrderHTML(
+                            order.customerName
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeOrderHTML(
+                            order.phone
+                        )}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ₹${Number(
+                                order.totalAmount || 0
+                            ).toFixed(2)}
+                        </strong>
+                    </td>
+
+                    <td>
+                        <span class="
+                            order-payment
+                            ${paymentClass}
+                        ">
+                            ${escapeOrderHTML(
+                                order.paymentStatus
+                            )}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="
+                            order-status
+                        ">
+                            ${escapeOrderHTML(
+                                order.orderStatus
+                            )}
+                        </span>
+                    </td>
+
+                    <td>
+                        ${escapeOrderHTML(date)}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="order-view-btn"
+                            onclick="viewOrder('${encodeURIComponent(
+                                order.orderId
+                            )}')">
+
+                            View
+
+                        </button>
+
+                    </td>
+
+                </tr>
+            `;
+        });
+
+
+        container.innerHTML = `
+
+            <div class="orders-summary">
+
+                <div class="order-stat-card">
+
+                    <span>Total Orders</span>
+
+                    <strong>
+                        ${orders.length}
+                    </strong>
+
+                </div>
+
+
+                <div class="order-stat-card">
+
+                    <span>Paid Orders</span>
+
+                    <strong>
+                        ${
+                            orders.filter(
+                                o =>
+                                    o.paymentStatus === "Paid"
+                            ).length
+                        }
+                    </strong>
+
+                </div>
+
+
+                <div class="order-stat-card">
+
+                    <span>Processing</span>
+
+                    <strong>
+                        ${
+                            orders.filter(
+                                o =>
+                                    o.orderStatus ===
+                                    "Processing"
+                            ).length
+                        }
+                    </strong>
+
+                </div>
+
+
+                <div class="order-stat-card">
+
+                    <span>Delivered</span>
+
+                    <strong>
+                        ${
+                            orders.filter(
+                                o =>
+                                    o.orderStatus ===
+                                    "Delivered"
+                            ).length
+                        }
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="orders-table-card">
+
+                <div class="orders-table-wrapper">
+
+                    <table class="orders-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Order ID</th>
+
+                                <th>Customer</th>
+
+                                <th>Phone</th>
+
+                                <th>Total</th>
+
+                                <th>Payment</th>
+
+                                <th>Status</th>
+
+                                <th>Date</th>
+
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            ${rows}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        addOrdersStyles();
+
+
+    } catch (error) {
+
+        console.error(
+            "Orders loading error:",
+            error
+        );
+
+        container.innerHTML = `
+
+            <div style="
+                background:#fff;
+                padding:40px;
+                border-radius:14px;
+                border:1px solid #e5dfd4;
+                color:#a33;
+            ">
+
+                <h3>
+                    Unable to load orders
+                </h3>
+
+                <p>
+                    ${escapeOrderHTML(
+                        error.message
+                    )}
+                </p>
+
+            </div>
+
+        `;
+    }
+}
+
+
+// ==============================
+// VIEW ORDER
+// ==============================
+
+async function viewOrder(orderId) {
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/api/orders/` +
+            decodeURIComponent(orderId),
+            {
+                headers: authHeaders()
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message ||
+                "Unable to load order"
+            );
+        }
+
+        const order = data.order;
+
+        const address =
+            order.shippingAddress || {};
+
+        const items =
+            order.items || [];
+
+
+        let itemsHTML = "";
+
+        items.forEach(function(item) {
+
+            itemsHTML += `
+
+                <div class="order-item-row">
+
+                    <div>
+
+                        <strong>
+                            ${escapeOrderHTML(
+                                item.name
+                            )}
+                        </strong>
+
+                        <div>
+                            Quantity:
+                            ${Number(
+                                item.quantity || 0
+                            )}
+                        </div>
+
+                    </div>
+
+                    <strong>
+                        ₹${Number(
+                            item.finalPrice || 0
+                        ).toFixed(2)}
+                    </strong>
+
+                </div>
+
+            `;
+
+        });
+
+
+        const modal = document.createElement("div");
+
+        modal.className =
+            "order-details-overlay";
+
+
+        modal.innerHTML = `
+
+            <div class="order-details-modal">
+
+                <div class="order-details-header">
+
+                    <div>
+
+                        <small>
+                            ORDER
+                        </small>
+
+                        <h2>
+                            ${escapeOrderHTML(
+                                order.orderId
+                            )}
+                        </h2>
+
+                    </div>
+
+                    <button
+                        class="order-close-btn">
+
+                        ×
+
+                    </button>
+
+                </div>
+
+
+                <div class="order-details-grid">
+
+
+                    <!-- CUSTOMER -->
+
+                    <div class="order-detail-card">
+
+                        <h3>
+                            👤 Customer
+                        </h3>
+
+                        <p>
+                            <strong>
+                                Name:
+                            </strong>
+
+                            ${escapeOrderHTML(
+                                order.customerName
+                            )}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Phone:
+                            </strong>
+
+                            ${escapeOrderHTML(
+                                order.phone
+                            )}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Email:
+                            </strong>
+
+                            ${escapeOrderHTML(
+                                order.email || "-"
+                            )}
+                        </p>
+
+                    </div>
+
+
+                    <!-- PAYMENT -->
+
+                    <div class="order-detail-card">
+
+                        <h3>
+                            💳 Payment
+                        </h3>
+
+                        <p>
+
+                            <strong>
+                                Status:
+                            </strong>
+
+                            ${escapeOrderHTML(
+                                order.paymentStatus
+                            )}
+
+                        </p>
+
+                        <p>
+
+                            <strong>
+                                Payment ID:
+                            </strong>
+
+                            ${escapeOrderHTML(
+                                order.razorpayPaymentId
+                            )}
+
+                        </p>
+
+                        <p>
+
+                            <strong>
+                                Razorpay Order:
+                            </strong>
+
+                            ${escapeOrderHTML(
+                                order.razorpayOrderId
+                            )}
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- SHIPPING ADDRESS -->
+
+                    <div class="
+                        order-detail-card
+                        full
+                    ">
+
+                        <h3>
+                            📍 Shipping Address
+                        </h3>
+
+                        <div class="
+                            shipping-address-box
+                        ">
+
+                            <p>
+                                <strong>
+                                    Address:
+                                </strong>
+
+                                ${escapeOrderHTML(
+                                    address.address || "-"
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Apartment / Suite:
+                                </strong>
+
+                                ${escapeOrderHTML(
+                                    address.apartment || "-"
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    City:
+                                </strong>
+
+                                ${escapeOrderHTML(
+                                    address.city || "-"
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    State:
+                                </strong>
+
+                                ${escapeOrderHTML(
+                                    address.state || "-"
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    PIN Code:
+                                </strong>
+
+                                ${escapeOrderHTML(
+                                    address.pinCode || "-"
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Country:
+                                </strong>
+
+                                ${escapeOrderHTML(
+                                    address.country || "India"
+                                )}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PRODUCTS -->
+
+                    <div class="
+                        order-detail-card
+                        full
+                    ">
+
+                        <h3>
+                            🛍️ Products
+                        </h3>
+
+                        ${itemsHTML}
+
+                    </div>
+
+
+                    <!-- TOTAL -->
+
+                    <div class="
+                        order-detail-card
+                        full
+                    ">
+
+                        <h3>
+                            💰 Order Summary
+                        </h3>
+
+                        <div class="summary-line">
+
+                            <span>
+                                Subtotal
+                            </span>
+
+                            <strong>
+                                ₹${Number(
+                                    order.subtotal || 0
+                                ).toFixed(2)}
+                            </strong>
+
+                        </div>
+
+                        <div class="summary-line">
+
+                            <span>
+                                Discount
+                            </span>
+
+                            <strong>
+                                ${Number(
+                                    order.discountPercentage || 0
+                                )}%
+                            </strong>
+
+                        </div>
+
+                        <div class="summary-line">
+
+                            <span>
+                                Discount Amount
+                            </span>
+
+                            <strong>
+                                ₹${Number(
+                                    order.discountAmount || 0
+                                ).toFixed(2)}
+                            </strong>
+
+                        </div>
+
+                        <div class="summary-total">
+
+                            <span>
+                                Total
+                            </span>
+
+                            <strong>
+                                ₹${Number(
+                                    order.totalAmount || 0
+                                ).toFixed(2)}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ORDER STATUS -->
+
+                <div class="order-status-section">
+
+                    <h3>
+                        📦 Order Status
+                    </h3>
+
+                    <select
+                        id="adminOrderStatus">
+
+                        ${
+                            [
+                                "Order Placed",
+                                "Payment Confirmed",
+                                "Processing",
+                                "Packed",
+                                "Shipped",
+                                "Out for Delivery",
+                                "Delivered",
+                                "Cancelled"
+                            ]
+                            .map(function(status) {
+
+                                return `
+                                    <option
+                                        value="${status}"
+                                        ${
+                                            status ===
+                                            order.orderStatus
+                                                ? "selected"
+                                                : ""
+                                        }
+                                    >
+                                        ${status}
+                                    </option>
+                                `;
+
+                            })
+                            .join("")
+                        }
+
+                    </select>
+
+                    <button
+                        class="update-order-status-btn"
+                        onclick="updateAdminOrderStatus('${encodeURIComponent(
+                            order.orderId
+                        )}')">
+
+                        Update Status
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        document.body.appendChild(modal);
+
+
+        modal.querySelector(
+            ".order-close-btn"
+        ).onclick = function() {
+
+            modal.remove();
+
+        };
+
+
+        modal.onclick = function(event) {
+
+            if (event.target === modal) {
+                modal.remove();
+            }
+
+        };
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            error.message ||
+            "Unable to load order"
+        );
+
+    }
+
+}
+
+
+// ==============================
+// UPDATE ORDER STATUS
+// ==============================
+
+async function updateAdminOrderStatus(
+    orderId
+) {
+
+    const select =
+        document.getElementById(
+            "adminOrderStatus"
+        );
+
+    if (!select) return;
+
+    const orderStatus =
+        select.value;
+
+
+    try {
+
+        const response = await fetch(
+
+            `${API_URL}/api/orders/` +
+            decodeURIComponent(orderId) +
+            "/status",
+
+            {
+                method: "PATCH",
+
+                headers: {
+                    "Content-Type":
+                        "application/json",
+                    ...authHeaders()
+                },
+
+                body: JSON.stringify({
+                    orderStatus
+                })
+            }
+
+        );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Unable to update order"
+            );
+
+        }
+
+
+        alert(
+            "Order status updated successfully."
+        );
+
+
+        document
+            .querySelectorAll(
+                ".order-details-overlay"
+            )
+            .forEach(function(modal) {
+                modal.remove();
+            });
+
+
+        loadOrders();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            error.message ||
+            "Unable to update order status"
+        );
+
+    }
+
+}
+
+
+// ==============================
+// ESCAPE HTML
+// ==============================
+
+function escapeOrderHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+// ==============================
+// ORDERS STYLES
+// ==============================
+
+function addOrdersStyles() {
+
+    if (
+        document.getElementById(
+            "ordersDashboardStyles"
+        )
+    ) {
+        return;
+    }
+
+
+    const style =
+        document.createElement("style");
+
+
+    style.id =
+        "ordersDashboardStyles";
+
+
+    style.textContent = `
+
+        .orders-summary {
+
+            display:grid;
+
+            grid-template-columns:
+                repeat(4,1fr);
+
+            gap:18px;
+
+            margin-bottom:25px;
+
+        }
+
+
+        .order-stat-card {
+
+            background:#fff;
+
+            border:1px solid #e5dfd4;
+
+            border-radius:14px;
+
+            padding:22px;
+
+            box-shadow:
+                0 5px 18px
+                rgba(0,0,0,.05);
+
+        }
+
+
+        .order-stat-card span {
+
+            display:block;
+
+            color:#777;
+
+            font-size:13px;
+
+            margin-bottom:8px;
+
+        }
+
+
+        .order-stat-card strong {
+
+            color:#073F32;
+
+            font-family:Georgia,serif;
+
+            font-size:30px;
+
+        }
+
+
+        .orders-table-card {
+
+            background:#fff;
+
+            border-radius:14px;
+
+            border:1px solid #e5dfd4;
+
+            overflow:hidden;
+
+            box-shadow:
+                0 5px 18px
+                rgba(0,0,0,.05);
+
+        }
+
+
+        .orders-table-wrapper {
+
+            overflow-x:auto;
+
+        }
+
+
+        .orders-table {
+
+            width:100%;
+
+            border-collapse:collapse;
+
+            min-width:900px;
+
+        }
+
+
+        .orders-table th {
+
+            background:#073F32;
+
+            color:#fff;
+
+            padding:16px;
+
+            text-align:left;
+
+            font-size:13px;
+
+            white-space:nowrap;
+
+        }
+
+
+        .orders-table td {
+
+            padding:17px 16px;
+
+            border-bottom:
+                1px solid #eee8dc;
+
+            color:#34443d;
+
+            white-space:nowrap;
+
+        }
+
+
+        .orders-table tr:hover {
+
+            background:#faf8f2;
+
+        }
+
+
+        .order-payment,
+        .order-status {
+
+            display:inline-block;
+
+            padding:6px 11px;
+
+            border-radius:20px;
+
+            font-size:12px;
+
+            font-weight:600;
+
+        }
+
+
+        .order-payment.paid {
+
+            background:#e2f4e8;
+
+            color:#17713b;
+
+        }
+
+
+        .order-payment.pending {
+
+            background:#fff1cf;
+
+            color:#8b6800;
+
+        }
+
+
+        .order-status {
+
+            background:#f1eadb;
+
+            color:#073F32;
+
+        }
+
+
+        .order-view-btn {
+
+            border:none;
+
+            background:#073F32;
+
+            color:#e8d39a;
+
+            padding:9px 17px;
+
+            border-radius:7px;
+
+            cursor:pointer;
+
+            font-weight:600;
+
+        }
+
+
+        .order-view-btn:hover {
+
+            background:#d4af5a;
+
+            color:#073F32;
+
+        }
+
+
+        .order-details-overlay {
+
+            position:fixed;
+
+            inset:0;
+
+            background:
+                rgba(0,0,0,.55);
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:center;
+
+            padding:25px;
+
+            z-index:99999;
+
+        }
+
+
+        .order-details-modal {
+
+            background:#fff;
+
+            width:min(950px,100%);
+
+            max-height:90vh;
+
+            overflow-y:auto;
+
+            border-radius:18px;
+
+            padding:30px;
+
+            box-shadow:
+                0 25px 70px
+                rgba(0,0,0,.3);
+
+        }
+
+
+        .order-details-header {
+
+            display:flex;
+
+            justify-content:space-between;
+
+            align-items:center;
+
+            border-bottom:
+                1px solid #e5dfd4;
+
+            padding-bottom:20px;
+
+            margin-bottom:22px;
+
+        }
+
+
+        .order-details-header small {
+
+            color:#b18a35;
+
+            letter-spacing:2px;
+
+        }
+
+
+        .order-details-header h2 {
+
+            margin:5px 0 0;
+
+            color:#073F32;
+
+            font-family:Georgia,serif;
+
+        }
+
+
+        .order-close-btn {
+
+            border:none;
+
+            width:38px;
+
+            height:38px;
+
+            border-radius:50%;
+
+            background:#f0ece4;
+
+            cursor:pointer;
+
+            font-size:22px;
+
+        }
+
+
+        .order-details-grid {
+
+            display:grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap:18px;
+
+        }
+
+
+        .order-detail-card {
+
+            border:1px solid #e5dfd4;
+
+            border-radius:12px;
+
+            padding:20px;
+
+        }
+
+
+        .order-detail-card.full {
+
+            grid-column:1 / -1;
+
+        }
+
+
+        .order-detail-card h3 {
+
+            margin-top:0;
+
+            color:#073F32;
+
+            font-family:Georgia,serif;
+
+        }
+
+
+        .order-detail-card p {
+
+            color:#555;
+
+            line-height:1.6;
+
+        }
+
+
+        .shipping-address-box {
+
+            background:#faf7ef;
+
+            padding:18px;
+
+            border-radius:10px;
+
+        }
+
+
+        .shipping-address-box p {
+
+            margin:7px 0;
+
+        }
+
+
+        .order-item-row {
+
+            display:flex;
+
+            justify-content:space-between;
+
+            gap:20px;
+
+            padding:15px 0;
+
+            border-bottom:
+                1px solid #eee;
+
+        }
+
+
+        .order-item-row div div {
+
+            color:#777;
+
+            font-size:13px;
+
+            margin-top:5px;
+
+        }
+
+
+        .summary-line {
+
+            display:flex;
+
+            justify-content:space-between;
+
+            padding:9px 0;
+
+        }
+
+
+        .summary-total {
+
+            display:flex;
+
+            justify-content:space-between;
+
+            margin-top:12px;
+
+            padding:17px;
+
+            background:#073F32;
+
+            color:#fff;
+
+            border-radius:9px;
+
+            font-size:20px;
+
+        }
+
+
+        .summary-total strong {
+
+            color:#e8d39a;
+
+        }
+
+
+        .order-status-section {
+
+            margin-top:20px;
+
+            border:1px solid #e5dfd4;
+
+            border-radius:12px;
+
+            padding:20px;
+
+        }
+
+
+        .order-status-section h3 {
+
+            margin-top:0;
+
+            color:#073F32;
+
+        }
+
+
+        .order-status-section select {
+
+            width:100%;
+
+            padding:12px;
+
+            border:1px solid #ccc;
+
+            border-radius:7px;
+
+            margin-bottom:12px;
+
+        }
+
+
+        .update-order-status-btn {
+
+            background:#d4af5a;
+
+            color:#073F32;
+
+            border:none;
+
+            padding:11px 20px;
+
+            border-radius:7px;
+
+            font-weight:bold;
+
+            cursor:pointer;
+
+        }
+
+
+        @media(max-width:800px) {
+
+            .orders-summary {
+
+                grid-template-columns:
+                    repeat(2,1fr);
+
+            }
+
+
+            .order-details-grid {
+
+                grid-template-columns:1fr;
+
+            }
+
+
+            .order-detail-card.full {
+
+                grid-column:auto;
+
+            }
+
+        }
+
+
+        @media(max-width:500px) {
+
+            .orders-summary {
+
+                grid-template-columns:1fr;
+
+            }
+
+        }
+
+    `;
+
+
+    document.head.appendChild(style);
+
+}
 // =====================================================
 // PRODUCT SEARCH
 // =====================================================
@@ -4816,11 +6249,6 @@ function logout() {
 
     localStorage.removeItem(
         "adminToken"
-    );
-
-
-    localStorage.removeItem(
-        "token"
     );
 
 
