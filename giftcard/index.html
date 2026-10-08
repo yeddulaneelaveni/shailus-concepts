@@ -403,204 +403,69 @@
   @media (max-width:900px){ .price-grid{ grid-template-columns: repeat(3,1fr); } }
   @media (max-width:520px){ .price-grid{ grid-template-columns: repeat(2,1fr); } }
 
-  /* ============ KONDApALLI SHOWCASE ============ */
-  .kondapalli-showcase-section{ width:100%; max-width:none; margin:0; padding:0 0 54px; background:#fff; box-sizing:border-box; }
-  .kondapalli-showcase{
-    --kondapalli-ivory:#F8F5EE;
-    --kondapalli-sand:#F2E8D8;
-    --kondapalli-brown:#4A3428;
-    --kondapalli-saffron:#0D3328;
-    --kondapalli-gold:#C9A84C;
-    display:grid;
-    grid-template-columns:minmax(0,7fr) minmax(0,3fr);
-    align-items:stretch;
-    gap:2%;
-    width:100%;
-    max-width:none;
-    margin:0;
-    padding:0;
-    overflow:hidden;
-    border:0;
-    border-radius:0;
-    background:#fff;
-    box-shadow:none;
+  /* ============ KONDAPALLI BOMMALU SHOWCASE ============ */
+  .kb-section{ width:100%; background:#fff; padding:40px 0 60px; box-sizing:border-box; overflow:hidden; }
+  .kb-wrap{
+    --kb-brown:#2b1d14; --kb-green:#0D3328; --kb-peach:#f9dcc4; --kb-gold:#C9A84C;
+    display:grid; grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); align-items:start;
+    gap:clamp(24px,5vw,90px); width:100%; max-width:1500px; margin:0 auto; padding:0 clamp(16px,3vw,60px); box-sizing:border-box;
   }
-  .kondapalli-showcase:focus-visible{ outline:2px solid var(--kondapalli-gold); outline-offset:4px; }
-  .kondapalli-main-frame{
-    position:relative;
-    display:flex;
-    align-self:center;
-    align-items:center;
-    justify-content:center;
-    min-width:0;
-    width:100%;
-    height:auto;
-    min-height:0;
-    aspect-ratio:16 / 9;
-    overflow:hidden;
-    border-radius:22px;
-    background:var(--kondapalli-sand);
-    touch-action:pan-y;
+  /* left: lifestyle image with hotspots */
+  .kb-hero{ position:relative; width:100%; aspect-ratio:4 / 3.55; overflow:hidden; background:#efe6da; }
+  .kb-hero-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center;
+    opacity:1; transition:opacity .45s ease; }
+  .kb-hero-img.is-switching{ opacity:0; }
+  .kb-hotspot{
+    position:absolute; width:46px; height:46px; margin:-23px 0 0 -23px; padding:0; border:0; border-radius:50%;
+    background:rgba(255,255,255,.35); cursor:pointer; display:flex; align-items:center; justify-content:center;
+    -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px); transition:transform .25s ease, background .25s ease;
   }
-  .kondapalli-main-image{
-    display:block;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    object-position:center;
-    opacity:1;
-    transform:translateX(0) scale(1);
-    transition:opacity 250ms ease,transform 250ms ease;
+  .kb-hotspot::before{ content:""; width:26px; height:26px; border-radius:50%; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,.3); transition:transform .25s ease; }
+  .kb-hotspot::after{ content:""; position:absolute; inset:0; border-radius:50%; border:2px solid rgba(255,255,255,.7); animation:kbPulse 2s ease-out infinite; }
+  .kb-hotspot:hover,.kb-hotspot.is-active{ background:rgba(255,255,255,.6); transform:scale(1.12); }
+  .kb-hotspot.is-active::before{ transform:scale(1.15); }
+  @keyframes kbPulse{ 0%{ transform:scale(1); opacity:.9; } 100%{ transform:scale(1.7); opacity:0; } }
+  /* right: heading + single-product slider */
+  .kb-side{ min-width:0; padding-top:6px; }
+  .kb-title{ position:relative; display:inline-block; margin:0; padding-bottom:30px; color:var(--kb-brown);
+    font-family:'Playfair Display',Georgia,serif; font-size:clamp(34px,4.1vw,58px); font-weight:700; line-height:1.05; letter-spacing:-.5px; }
+  .kb-title::after{ content:""; position:absolute; left:2%; right:-8%; bottom:0; height:30px; background:no-repeat center/100% 100%
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 40' preserveAspectRatio='none'><path d='M4 30 C 40 6, 70 8, 95 26 C 120 44, 150 18, 190 20 C 240 22, 300 14, 396 10' fill='none' stroke='%23f9c9a2' stroke-width='7' stroke-linecap='round'/></svg>"); }
+  .kb-slider{ position:relative; margin-top:26px; width:100%; max-width:430px; }
+  .kb-viewport{ overflow:hidden; width:100%; }
+  .kb-track{ display:flex; width:100%; transition:transform .6s cubic-bezier(.4,0,.2,1); will-change:transform; }
+  .kb-slide{ flex:0 0 100%; min-width:0; text-align:center; }
+  .kb-card-img{ position:relative; display:block; width:100%; aspect-ratio:1 / 1; background:#fff; overflow:hidden; }
+  .kb-card-img img{ width:100%; height:100%; object-fit:contain; display:block; }
+  .kb-quick{ position:absolute; top:6px; right:6px; width:44px; height:44px; border-radius:50%; background:#fff; border:1px solid #eee;
+    box-shadow:0 2px 8px rgba(0,0,0,.12); display:flex; align-items:center; justify-content:center; color:var(--kb-brown); text-decoration:none; transition:background .2s, color .2s; }
+  .kb-quick:hover{ background:var(--kb-green); color:#fff; }
+  .kb-name{ display:block; margin:14px 0 6px; color:var(--kb-brown); font-size:18px; font-weight:500; text-decoration:none; line-height:1.3; }
+  .kb-name:hover{ color:var(--kb-green); }
+  .kb-price{ margin:0; color:var(--kb-brown); font-size:17px; }
+  .kb-actions{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px auto 0; max-width:340px; }
+  .kb-actions a,.kb-actions button{ display:inline-flex; align-items:center; justify-content:center; min-height:40px; padding:8px 10px;
+    border:1px solid var(--kb-green); border-radius:4px; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; text-decoration:none; transition:all .2s; }
+  .kb-actions a{ background:var(--kb-green); color:#fff; }
+  .kb-actions button{ background:transparent; color:var(--kb-green); }
+  .kb-actions a:hover,.kb-actions button:hover{ background:var(--kb-brown); border-color:var(--kb-brown); color:#fff; }
+  .kb-dots{ display:flex; align-items:center; justify-content:center; gap:22px; margin-top:22px; }
+  .kb-dot{ width:8px; height:8px; padding:0; border:0; border-radius:50%; background:#111; cursor:pointer; position:relative; transition:transform .2s; }
+  .kb-dot.is-active{ background:transparent; }
+  .kb-dot.is-active::before{ content:""; position:absolute; inset:-4px; border:2px solid #111; border-radius:50%; }
+  .kb-dot:focus-visible{ outline:2px solid var(--kb-gold); outline-offset:6px; }
+  .kb-msg{ padding:30px 0; color:#777; text-align:center; }
+  @media (max-width:900px){
+    .kb-wrap{ grid-template-columns:minmax(0,1fr); gap:28px; }
+    .kb-hero{ aspect-ratio:4 / 3.2; }
+    .kb-slider{ max-width:420px; margin-left:auto; margin-right:auto; }
+    .kb-side{ text-align:center; }
+    .kb-title{ font-size:clamp(32px,8vw,44px); }
   }
-  .kondapalli-main-image[hidden]{ display:none !important; }
-  .kondapalli-main-image.is-switching{ opacity:0; transform:translateX(12px) scale(.99); }
-  .kondapalli-details{
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-start;
-    min-width:0;
-    width:100%;
-    max-width:390px;
-    justify-self:start;
-    padding:12px 0;
-    color:var(--kondapalli-brown);
-  }
-  .kondapalli-details h2{
-    margin:0;
-    color:var(--kondapalli-brown);
-    font-family:'Playfair Display',Georgia,serif;
-    font-size:clamp(34px,3vw,44px);
-    font-weight:700;
-    line-height:1.05;
-  }
-  .kondapalli-details h2::after{
-    content:"";
-    display:block;
-    width:72%;
-    height:7px;
-    margin-top:7px;
-    border-radius:50%;
-    background:#DCE8DF;
-    transform:rotate(-1.5deg);
-  }
-  .kondapalli-subtitle{ margin:8px 0 10px; color:#796653; font-size:14px; line-height:1.6; }
-  .kondapalli-product-list{ display:grid; grid-template-rows:repeat(3,minmax(0,1fr)); gap:8px; min-height:0; flex:1; }
-  .kondapalli-featured-card{ display:grid; grid-template-columns:64px minmax(0,1fr); grid-template-rows:minmax(0,1fr) auto; align-items:center; gap:6px 10px; min-width:0; min-height:0; padding:8px; border:1px solid rgba(74,52,40,.12); border-radius:10px; background:#fff; box-shadow:0 4px 12px rgba(74,52,40,.07); }
-  .kondapalli-featured-image{ grid-column:1; grid-row:1; display:flex; align-items:center; justify-content:center; width:64px; height:64px; overflow:hidden; border-radius:7px; background:var(--kondapalli-sand); }
-  .kondapalli-featured-image img{ display:block; width:100%; height:100%; object-fit:contain; }
-  .kondapalli-featured-info{ grid-column:2; grid-row:1; min-width:0; }
-  .kondapalli-featured-info h3{ display:-webkit-box; overflow:hidden; margin:0 0 4px; color:var(--kondapalli-brown); font-family:'Playfair Display',Georgia,serif; font-size:13px; font-weight:700; line-height:1.25; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
-  .kondapalli-featured-price{ color:var(--kondapalli-saffron); font-size:13px; font-weight:700; }
-  .kondapalli-featured-actions{ grid-column:1 / -1; grid-row:2; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:7px; }
-  .kondapalli-featured-actions a,.kondapalli-featured-actions button{ display:inline-flex; align-items:center; justify-content:center; min-width:0; min-height:32px; padding:5px 6px; border:1px solid var(--kondapalli-brown); border-radius:4px; font-family:inherit; font-size:11px; font-weight:700; line-height:1.15; text-align:center; cursor:pointer; }
-  .kondapalli-featured-actions a{ color:#fff; background:var(--kondapalli-brown); text-decoration:none; }
-  .kondapalli-featured-actions button{ color:var(--kondapalli-brown); background:transparent; }
-  .kondapalli-featured-actions a:hover,.kondapalli-featured-actions button:hover{ border-color:var(--kondapalli-saffron); color:#fff; background:var(--kondapalli-saffron); }
-  .kondapalli-legacy-product[hidden]{ display:none !important; }
-  .kondapalli-current-product{
-    min-width:0;
-    overflow:visible;
-    border:0;
-    border-radius:0;
-    background:transparent;
-    box-shadow:none;
-    text-align:center;
-    transition:none;
-  }
-  .kondapalli-current-product:hover{ transform:none; box-shadow:none; }
-  .kondapalli-preview-frame{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width:100%;
-    aspect-ratio:1 / 1;
-    overflow:hidden;
-    border:1px solid rgba(74,52,40,.10);
-    border-radius:16px;
-    background:var(--kondapalli-sand);
-    box-shadow:0 8px 22px rgba(74,52,40,.08);
-  }
-  .kondapalli-preview-image{
-    display:block;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    object-position:center;
-    opacity:1;
-    transform:translateX(0) scale(1);
-    transition:opacity 250ms ease,transform 250ms ease;
-  }
-  .kondapalli-preview-image[hidden]{ display:none !important; }
-  .kondapalli-preview-image.is-switching{ opacity:0; transform:translateX(12px) scale(.99); }
-  .kondapalli-product-id{ display:block; margin-top:12px; color:#927d62; font-size:10px; font-weight:700; }
-  .kondapalli-product-name{ margin:5px 0 3px; color:var(--kondapalli-brown); font-family:'Playfair Display',Georgia,serif; font-size:18px; line-height:1.3; }
-  .kondapalli-product-price{ margin:0; color:var(--kondapalli-saffron); font-size:15px; font-weight:700; }
-  .kondapalli-cart-button{
-    min-height:40px;
-    padding:10px 16px;
-    border:1px solid var(--kondapalli-brown);
-    border-radius:4px;
-    color:var(--kondapalli-brown);
-    background:transparent;
-    font:inherit;
-    font-size:13px;
-    font-weight:700;
-    cursor:pointer;
-    transition:background 200ms ease,color 200ms ease,border-color 200ms ease;
-  }
-  .kondapalli-cart-button:hover{ border-color:var(--kondapalli-saffron); color:#fff; background:var(--kondapalli-saffron); }
-  .kondapalli-cart-button.added{ border-color:var(--kondapalli-brown); color:#fff; background:var(--kondapalli-brown); }
-  .kondapalli-product-actions{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px; margin-top:10px; }
-  .kondapalli-view-more{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    min-height:40px;
-    padding:8px 12px;
-    border:1px solid var(--kondapalli-brown);
-    border-radius:4px;
-    color:var(--kondapalli-brown);
-    font-size:13px;
-    font-weight:700;
-    text-decoration:none;
-    transition:background 200ms ease,color 200ms ease,border-color 200ms ease;
-  }
-  .kondapalli-view-more:hover{ border-color:var(--kondapalli-saffron); color:#fff; background:var(--kondapalli-saffron); }
-  .kondapalli-product-actions .kondapalli-cart-button{ width:100%; margin:0; padding:8px 10px; }
-  .kondapalli-dots{ display:flex; align-items:center; justify-content:center; gap:14px; margin-top:20px; }
-  .kondapalli-dot{
-    width:9px;
-    height:9px;
-    padding:0;
-    border:0;
-    border-radius:50%;
-    background:#c9bda9;
-    cursor:pointer;
-    transition:transform 220ms ease,background-color 220ms ease,width 220ms ease,height 220ms ease;
-  }
-  .kondapalli-dot:hover{ transform:scale(1.25); }
-  .kondapalli-dot.is-active{ width:13px; height:13px; background:var(--kondapalli-saffron); }
-  .kondapalli-dot:focus-visible{ outline:2px solid var(--kondapalli-gold); outline-offset:4px; }
-  @media(max-width:900px){
-    .kondapalli-showcase-section{ padding:0 0 42px; }
-    .kondapalli-showcase{ grid-template-columns:minmax(0,1fr); row-gap:24px; }
-    .kondapalli-main-frame{ width:100%; height:auto; min-height:0; aspect-ratio:16 / 9; }
-    .kondapalli-details{ width:100%; max-width:none; justify-self:stretch; padding:4px 16px 10px; }
-    .kondapalli-subtitle{ margin-bottom:16px; }
-  }
-  @media(max-width:520px){
-    .kondapalli-showcase-section{ padding:0 0 32px; }
-    .kondapalli-showcase{ gap:20px; padding:0; border-radius:0; }
-    .kondapalli-main-frame{ aspect-ratio:1 / 1; border-radius:18px; }
-    .kondapalli-details{ padding:4px 16px 8px; }
-    .kondapalli-details h2{ font-size:32px; }
-    .kondapalli-subtitle{ margin:8px 0 14px; font-size:13px; }
-    .kondapalli-main-frame{ height:auto; min-height:0; }
-    .kondapalli-preview-frame{ aspect-ratio:1 / 1; }
-    .kondapalli-product-name{ font-size:17px; }
-    .kondapalli-dots{ margin-top:16px; }
-    .kondapalli-product-list{ grid-template-rows:none; }
-    .kondapalli-featured-card{ min-height:116px; }
+  @media (max-width:520px){
+    .kb-section{ padding:24px 0 40px; }
+    .kb-hotspot{ width:38px; height:38px; margin:-19px 0 0 -19px; }
+    .kb-hotspot::before{ width:20px; height:20px; }
   }
 
   /* ============ VISIT OUR STORE ============ */
@@ -1120,29 +985,19 @@
   </div>
 </section>
 
-<!-- ============ KONDApALLI BOMMALU SHOWCASE ============ -->
-<section class="kondapalli-showcase-section" id="kondapalli-return-gifts">
-  <div class="kondapalli-showcase" id="kondapalliShowcase" tabindex="0" aria-label="Kondapalli Bommalu product showcase">
-    <div class="kondapalli-main-frame">
-      <img class="kondapalli-main-image" id="kondapalliMainImage" src="" alt="Kondapalli Bommalu showcase">
+<!-- ============ KONDAPALLI BOMMALU SHOWCASE (products id 30, 31, 32) ============ -->
+<section class="kb-section" id="kondapalli-return-gifts" aria-label="Kondapalli Bommalu">
+  <div class="kb-wrap">
+    <div class="kb-hero" id="kbHero">
+      <!-- Set your lifestyle image here (falls back to product 30's photo if the file is missing) -->
+      <img class="kb-hero-img" id="kbHeroImg" src="assets/kondapalli-showcase.jpg" alt="Kondapalli Bommalu styled at home">
+      <!-- Hotspot dots are added by JS; adjust positions in KB_HOTSPOTS below -->
     </div>
-    <div class="kondapalli-details">
-      <h2>Kondapalli<br>Bommalu</h2>
-      <p class="kondapalli-subtitle">Handcrafted stories from Andhra Pradesh</p>
-      <div class="kondapalli-product-list" id="kondapalliProductCards" aria-label="Featured products"></div>
-      <div class="kondapalli-legacy-product" hidden>
-        <div class="kondapalli-current-product" id="kondapalliCurrentProduct">
-          <div class="kondapalli-preview-frame">
-            <img class="kondapalli-preview-image" id="kondapalliRightImage" src="" alt="Selected Kondapalli product">
-          </div>
-          <h3 class="kondapalli-product-name" id="kondapalliProductName"></h3>
-          <p class="kondapalli-product-price" id="kondapalliProductPrice"></p>
-          <div class="kondapalli-product-actions">
-            <a class="kondapalli-view-more" id="kondapalliViewMore" href="views.html?id=32">View More</a>
-            <button class="add-cart-btn kondapalli-cart-button" id="kondapalliAddToCart" type="button" onclick="addToCartFromCard(this)">Add to Cart</button>
-          </div>
-          <div class="kondapalli-dots" id="kondapalliDots" role="group" aria-label="Choose a Kondapalli product"></div>
-        </div>
+    <div class="kb-side">
+      <h2 class="kb-title">Kondapalli<br>Bommalu</h2>
+      <div class="kb-slider" id="kbSlider">
+        <div class="kb-viewport"><div class="kb-track" id="kbTrack"><p class="kb-msg">Loading products...</p></div></div>
+        <div class="kb-dots" id="kbDots" role="group" aria-label="Choose a Kondapalli product"></div>
       </div>
     </div>
   </div>
@@ -2536,66 +2391,121 @@ function renderCart(){
     });
   }
 
+  /* ===== Kondapalli Bommalu showcase: products id 30, 31, 32 auto-scroll on the right ===== */
+  const KB_PRODUCT_IDS = [30, 31, 32];
+  // Hotspot positions on the left image (percent of image width / height), one per product in the same order
+  const KB_HOTSPOTS = [ { x: 12, y: 50 }, { x: 40, y: 76 }, { x: 80, y: 68 } ];
+  const KB_AUTOPLAY_MS = 3500;
+
   async function loadKondapalliProductCards() {
-    const productList = document.getElementById("kondapalliProductCards");
-    if (!productList) return;
+    const track = document.getElementById("kbTrack");
+    const dotsBox = document.getElementById("kbDots");
+    const hero = document.getElementById("kbHero");
+    const heroImg = document.getElementById("kbHeroImg");
+    const slider = document.getElementById("kbSlider");
+    if (!track || !dotsBox) return;
 
     try {
-      const products = await getHomepageProducts();
-      const featuredProducts = [];
-
-      for (const product of products) {
+      const all = await getHomepageProducts();
+      const items = [];
+      for (const id of KB_PRODUCT_IDS) {
+        const product = all.find(p => String(p.productId) === String(id));
+        if (!product) continue;
         let imageUrl = "";
         for (const candidate of getProductImageUrls(product)) {
-          if (await canLoadProductImage(candidate)) {
-            imageUrl = candidate;
-            break;
-          }
+          if (await canLoadProductImage(candidate)) { imageUrl = candidate; break; }
         }
-
-        if (imageUrl) featuredProducts.push({ product, imageUrl });
-        if (featuredProducts.length === 3) break;
+        items.push({ product, imageUrl });
       }
+      if (!items.length) throw new Error("Products 30, 31, 32 were not found");
 
-      if (featuredProducts.length !== 3) {
-        throw new Error(`Only ${featuredProducts.length} products have a loadable image for the Kondapalli section`);
+      track.innerHTML = items.map(({ product, imageUrl }) => {
+        const name = escapeHTML(product.name || "Product");
+        const pid = encodeURIComponent(product.productId ?? "");
+        const price = Number(product.price);
+        const priceLabel = Number.isFinite(price) && price > 0 ? "Rs. " + price.toFixed(2) : "Price on request";
+        return `
+          <article class="kb-slide product-card"
+            data-id="${escapeHTML(product.productId ?? "")}" data-name="${name}"
+            data-price="${Number.isFinite(price) ? price : 0}" data-img="${escapeHTML(imageUrl)}">
+            <div class="kb-card-img">
+              ${imageUrl ? `<img src="${escapeHTML(imageUrl)}" alt="${name}" loading="lazy">` : ""}
+              <a class="kb-quick" href="views.html?id=${pid}" aria-label="View ${name}">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              </a>
+            </div>
+            <a class="kb-name" href="views.html?id=${pid}">${name}</a>
+            <p class="kb-price">${priceLabel}</p>
+            <div class="kb-actions">
+              <a href="views.html?id=${pid}">View More</a>
+              <button type="button" class="add-cart-btn" onclick="addToCartFromCard(this)">Add to Cart</button>
+            </div>
+          </article>`;
+      }).join("");
+
+      // Left image: use the lifestyle image; if it is missing fall back to the first product photo
+      heroImg.onerror = function () { heroImg.onerror = null; if (items[0].imageUrl) heroImg.src = items[0].imageUrl; };
+
+      // Hotspots on the image
+      hero.querySelectorAll(".kb-hotspot").forEach(el => el.remove());
+      const hotspots = items.map((item, i) => {
+        const pos = KB_HOTSPOTS[i] || { x: 20 + i * 25, y: 60 };
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "kb-hotspot";
+        btn.style.left = pos.x + "%";
+        btn.style.top = pos.y + "%";
+        btn.setAttribute("aria-label", "Show " + (item.product.name || "product"));
+        btn.addEventListener("click", () => { go(i); restart(); });
+        hero.appendChild(btn);
+        return btn;
+      });
+
+      // Dots
+      dotsBox.innerHTML = "";
+      const dots = items.map((_, i) => {
+        const d = document.createElement("button");
+        d.type = "button";
+        d.className = "kb-dot";
+        d.setAttribute("aria-label", "Product " + (i + 1));
+        d.addEventListener("click", () => { go(i); restart(); });
+        dotsBox.appendChild(d);
+        return d;
+      });
+
+      let index = 0, timer = null;
+      function go(i) {
+        index = (i + items.length) % items.length;
+        track.style.transform = "translateX(" + (-100 * index) + "%)";
+        dots.forEach((d, n) => { d.classList.toggle("is-active", n === index); d.setAttribute("aria-current", n === index ? "true" : "false"); });
+        hotspots.forEach((h, n) => h.classList.toggle("is-active", n === index));
       }
+      function start() { stop(); if (items.length > 1) timer = setInterval(() => go(index + 1), KB_AUTOPLAY_MS); }
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+      function restart() { start(); }
 
-      productList.innerHTML = `
-        ${featuredProducts.map(({ product, imageUrl }) => {
-          const productName = escapeHTML(product.name || "Product");
-          const productId = encodeURIComponent(product.productId ?? "");
-          const price = Number(product.price);
-          const priceLabel = Number.isFinite(price) && price > 0
-            ? `₹${price.toFixed(2)}`
-            : "Price on request";
+      slider.addEventListener("mouseenter", stop);
+      slider.addEventListener("mouseleave", start);
+      slider.addEventListener("focusin", stop);
+      slider.addEventListener("focusout", start);
 
-          return `
-            <article class="kondapalli-featured-card product-card"
-              data-id="${escapeHTML(product.productId ?? "")}"
-              data-name="${productName}"
-              data-price="${Number.isFinite(price) ? price : 0}"
-              data-img="${escapeHTML(imageUrl)}">
-              <div class="kondapalli-featured-image">
-                <img src="${escapeHTML(imageUrl)}" alt="${productName}" loading="eager">
-              </div>
-              <div class="kondapalli-featured-info">
-                <h3>${productName}</h3>
-                <div class="kondapalli-featured-price">${priceLabel}</div>
-              </div>
-              <div class="kondapalli-featured-actions">
-                <a class="view-btn" href="views.html?id=${productId}">View More</a>
-                <button class="add-cart-btn" type="button" onclick="addToCartFromCard(this)">Add to Cart</button>
-              </div>
-            </article>
-          `;
-        }).join("")}
-      `;
+      // Swipe on touch screens
+      let startX = null;
+      slider.addEventListener("touchstart", e => { startX = e.touches[0].clientX; stop(); }, { passive: true });
+      slider.addEventListener("touchend", e => {
+        if (startX !== null) {
+          const dx = e.changedTouches[0].clientX - startX;
+          if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1));
+        }
+        startX = null; start();
+      });
 
-      console.log("Kondapalli products rendered successfully:", featuredProducts.length);
+      go(0);
+      start();
+      console.log("Kondapalli products rendered successfully:", items.length);
     } catch (error) {
       console.error("Kondapalli product loading error:", error);
-      productList.innerHTML = '<p>Unable to load featured products.</p>';
+      track.innerHTML = '<p class="kb-msg">Unable to load featured products.</p>';
     }
   }
 
@@ -3279,7 +3189,6 @@ function renderCart(){
     renderCategoryLinks();
   })();
 </script>
-<script src="kondapalli-showcase.js"></script>
 <script src="site-shell.js"></script>
 <script src="site-header.js"></script>
 
