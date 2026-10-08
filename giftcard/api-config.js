@@ -23,7 +23,7 @@
       .replace(/^\/+/, "");
 
     if (/^uploads\//i.test(rootRelativePath)) {
-      return new URL(rootRelativePath, `${window.location.origin}/`).href;
+      return new URL(rootRelativePath, `${window.API_BASE_URL}/`).href;
     }
 
     return new URL(rootRelativePath, `${window.location.origin}/`).href;
