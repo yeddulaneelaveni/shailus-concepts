@@ -766,7 +766,13 @@
     .brand-center img{ height:42px; }
     .brand-name{ font-size:16px; }
     .brand-tagline{ font-size:8.5px; }
-    .hamburger{ display:flex; }
+    .hamburger{
+      display:flex; align-items:center; justify-content:center; gap:4px; width:40px; height:40px;
+      padding:8px; border:1px solid var(--gold); border-radius:6px;
+      background:var(--deep-green); box-shadow:0 2px 8px rgba(13,51,40,0.2);
+    }
+    .hamburger span{ height:3px; background:var(--gold-light); }
+    .hamburger:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
     .nav-row{
       display:none; flex-direction:column; align-items:flex-start; gap:0; padding:6px 0;
       position:absolute; top:100%; left:0; right:0;
@@ -776,10 +782,19 @@
     }
     .nav-row.mobile-open{ display:flex; }
     .nav-row a, .nav-row .dropdown{ width:100%; }
-    .nav-row a, .nav-row .drop-toggle{ padding:13px 24px; width:100%; justify-content:space-between; color: var(--gold-light); }
-    .nav-row a:hover, .nav-row .drop-toggle:hover{ color: var(--gold); }
-    .nav-row a.active{ border-bottom:none; background: rgba(201,164,85,0.12); color: var(--gold); }
-    .dropdown-menu{ position:static; transform:none; width:100%; border-radius:0; box-shadow:none; grid-template-columns:1fr; min-width:0; }
+    .nav-row a, .nav-row .drop-toggle{
+      padding:13px 24px; width:100%; justify-content:space-between; color:var(--gold-light);
+      background:var(--deep-green); border-bottom:1px solid rgba(201,164,85,0.28);
+    }
+    .nav-row a:hover, .nav-row .drop-toggle:hover{ color:var(--gold); background:#174e3c; }
+    .nav-row a.active{ border-bottom:1px solid rgba(201,164,85,0.45); background:#174e3c; color:var(--gold); }
+    .dropdown-menu{
+      position:static; transform:none; width:100%; border-radius:0; box-shadow:none;
+      grid-template-columns:1fr; min-width:0; background:#09271f; border:0;
+      border-top:1px solid rgba(201,164,85,0.45); border-bottom:1px solid rgba(201,164,85,0.45);
+    }
+    .dropdown-menu a{ color:var(--gold-light); background:transparent; }
+    .dropdown-menu a:hover{ color:var(--gold); background:rgba(201,164,85,0.12); }
     .search-wrap.expanded .search-input{ width:130px; }
   }
   @media (max-width: 900px){
@@ -1002,23 +1017,6 @@
       <div class="comparison-handle" aria-hidden="true">&#8596;</div>
     </div>
   </div>
-</section>
-
-<!-- ============ NEW COLLECTION ============ -->
-<section class="best-sellers homepage-collection-section new-collection-section">
-  <div class="section-heading">
-    <h2>New Collection</h2>
-    <div class="section-underline"></div>
-    <p>Explore the latest additions to our gifting collection.</p>
-  </div>
-  <div class="bs-wrapper">
-    <div class="bs-track-outer">
-      <div class="bs-track" id="newCollectionTrack" aria-live="polite">
-        <!-- New Collection products load from the existing product API. -->
-      </div>
-    </div>
-  </div>
-  <a class="new-collection-view-all" data-category-link="new-collection" href="/category/new-collection">Explore New Collection</a>
 </section>
 
 <!-- ============ HOME DECOR ============ -->
