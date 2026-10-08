@@ -34,8 +34,8 @@ if (process.env.NODE_ENV === "production") {
         throw new Error("UPLOADS_DIR must be an absolute persistent storage path");
     }
 
-    if (!process.env.RAZORPAY_KEY_ID.startsWith("rzp_live_")) {
-        throw new Error("Production requires a Razorpay live key ID");
+    if (!/^rzp_(test|live)_/.test(process.env.RAZORPAY_KEY_ID)) {
+        throw new Error("Production requires a valid Razorpay test or live key ID");
     }
 
     const productionFrontendOrigins = (process.env.FRONTEND_URL || "")
