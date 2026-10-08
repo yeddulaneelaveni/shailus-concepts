@@ -1575,11 +1575,11 @@
   };
   var homepageCategoryAliases = {
     'Crockery Gifts': ['crockery gifts', 'crockery return gifts'],
-    'Wooden Trays & Boxes': ['wooden trays and boxes', 'wooden trays boxes'],
-    'Brass Gifts': ['brass gifts', 'brass return gifts', 'antique gold / brass', 'Brass gifts'],
+    'Wooden Trays & Boxes': ['wooden trays and boxes', 'wooden trays boxes', 'wooden trays & boxes'],
+    'Brass Gifts': ['brass gifts', 'brass', 'brass return gifts', 'antique gold / brass'],
     'German Silver': ['german silver'],
     'Combos': ['combos'],
-    'Kids Gifts': ['kids gifts', 'kids gifts photo frames'],
+    'Kids Gifts': ['kids gifts', 'kids gifts photo frames', 'kids gifts / photo frames'],
     'Water Bottles': ['water bottle', 'water bottles']
   };
 
@@ -1738,7 +1738,7 @@
       const category = section.selected;
       const matchingProducts = products.filter(product =>
         sectionKey === 'newCollection'
-          ? product.newArrival === true
+          ? product.newArrival === true || product.newArrival === 'true'
           : matchesHomepageCategory(product, category)
       );
       if (!matchingProducts.length) {
@@ -2399,25 +2399,18 @@ function renderCart(){
         return;
       }
 
-      const newArrivalProducts = Array.isArray(products)
-        ? products
-            .filter(product => product.newArrival === true || product.newArrival === "true")
-            .sort((a, b) => {
-              const aDate = new Date(a.createdAt || 0).getTime() || Number(a.productId || 0);
-              const bDate = new Date(b.createdAt || 0).getTime() || Number(b.productId || 0);
-              return bDate - aDate;
-            })
-        : [];
+      const collectionProducts = Array.isArray(products)
+        ? [...products].sort((a, b) => {
+            const arrivalDifference =
+              Number(b.newArrival === true || b.newArrival === "true") -
+              Number(a.newArrival === true || a.newArrival === "true");
+            if (arrivalDifference) return arrivalDifference;
 
-      const collectionProducts = newArrivalProducts.length
-        ? newArrivalProducts
-        : Array.isArray(products)
-          ? [...products].sort((a, b) => {
-              const aDate = new Date(a.createdAt || 0).getTime() || Number(a.productId || 0);
-              const bDate = new Date(b.createdAt || 0).getTime() || Number(b.productId || 0);
-              return bDate - aDate;
-            })
-          : [];
+            const aDate = new Date(a.createdAt || 0).getTime() || Number(a.productId || 0);
+            const bDate = new Date(b.createdAt || 0).getTime() || Number(b.productId || 0);
+            return bDate - aDate;
+          })
+        : [];
 
       productGrid.innerHTML = "";
 
@@ -2429,7 +2422,7 @@ function renderCart(){
         return;
       }
 
-      collectionProducts.slice(0, 12).forEach(function(product) {
+      collectionProducts.forEach(function(product) {
         let imagePath = "";
 
         if (product.image) {
