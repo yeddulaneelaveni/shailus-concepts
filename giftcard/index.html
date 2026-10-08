@@ -2109,7 +2109,7 @@ function renderCart(){
             '<div class="cart-item">' +
 
               '<img src="' +
-                item.img +
+                window.resolveStoreImageUrl(item.img) +
                 '" alt="' +
                 item.name +
               '">' +
@@ -2360,28 +2360,7 @@ function renderCart(){
   // =====================================================
 
  function fixImagePath(path) {
-
-    if (!path) {
-        return "";
-    }
-
-  const normalizedPath = String(path).replace(/\\/g, "/");
-
-  if (/^https?:\/\//i.test(normalizedPath)) {
-    return normalizedPath;
-  }
-
-    // Newly uploaded backend image
-  if (/^\/?uploads\//i.test(normalizedPath)) {
-    return `${window.API_BASE_URL}/` + normalizedPath.replace(/^\/?uploads\//i, "uploads/");
-    }
-
-    // Old MongoDB frontend image paths
-  if (normalizedPath.startsWith("../assets/")) {
-    return normalizedPath.replace("../assets/", "assets/");
-    }
-
-  return normalizedPath;
+    return window.resolveStoreImageUrl(path);
 }
 
 
@@ -2525,25 +2504,7 @@ function renderCart(){
   }
 
   function getBackendImageUrl(path) {
-    if (!path) return "";
-
-    if (path.startsWith("http://") || path.startsWith("https://")) {
-      return path;
-    }
-
-    if (path.startsWith("/uploads/")) {
-      return `${window.API_BASE_URL}${path}`;
-    }
-
-    if (path.startsWith("uploads/")) {
-      return `${window.API_BASE_URL}/` + path;
-    }
-
-    if (path.startsWith("../assets/")) {
-      return path.replace("../assets/", "assets/");
-    }
-
-    return path;
+    return window.resolveStoreImageUrl(path);
   }
 
   async function loadHeroFromBackend() {

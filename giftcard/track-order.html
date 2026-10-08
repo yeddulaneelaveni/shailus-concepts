@@ -987,8 +987,9 @@
             order.items
                 .map(item => {
 
-                    const image =
-                        item.image || "assets/logo.jpeg";
+                    const image = window.resolveStoreImageUrl(
+                        item.image || "assets/logo.jpeg"
+                    );
 
                     return `
 

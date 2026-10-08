@@ -24,27 +24,7 @@ const productId = urlParams.get("id");
 // =====================================================
 
 function fixProductImage(path) {
-
-    if (!path) {
-        return "";
-    }
-
-    // Backend uploaded image
-    if (path.startsWith("/uploads/")) {
-        return API_URL + path;
-    }
-
-    // Backend image without leading slash
-    if (path.startsWith("uploads/")) {
-        return API_URL + "/" + path;
-    }
-
-    // Old frontend paths
-    if (path.startsWith("../assets/")) {
-        return path.replace("../assets/", "assets/");
-    }
-
-    return path;
+    return window.resolveStoreImageUrl(path);
 }
 
 // =====================================================

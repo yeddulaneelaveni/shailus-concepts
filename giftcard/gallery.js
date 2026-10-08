@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let searchText = "";
 
     function getGalleryImagePath(path) {
-        return String(path || "").replace(/^\.\.\/assets\//, "assets/");
+        return window.resolveStoreImageUrl(path);
     }
 
     function render(list) {

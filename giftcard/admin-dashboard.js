@@ -92,25 +92,7 @@ function escapeHTML(value) {
 
 
 function getImageUrl(image) {
-
-    if (!image) {
-        return "";
-    }
-
-    image = String(image);
-
-    if (
-        image.startsWith("http://") ||
-        image.startsWith("https://")
-    ) {
-        return image;
-    }
-
-    if (image.startsWith("/")) {
-        return `${API_URL}${image}`;
-    }
-
-    return `${API_URL}/${image}`;
+    return window.resolveStoreImageUrl(image);
 }
 
 

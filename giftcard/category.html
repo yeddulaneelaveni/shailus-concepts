@@ -382,12 +382,7 @@
       }
 
       function fixProductImage(path) {
-        if (!path) return '';
-        const normalized = String(path).replace(/\\/g, '/');
-        if (/^https?:\/\//i.test(normalized)) return normalized;
-        if (/^\/?uploads\//i.test(normalized)) return `${API_URL}/${normalized.replace(/^\/?/, '')}`;
-        if (normalized.startsWith('../assets/')) return normalized.replace('../assets/', 'assets/');
-        return normalized;
+        return window.resolveStoreImageUrl(path);
       }
 
       function getCart() {
