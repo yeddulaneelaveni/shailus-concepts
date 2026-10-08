@@ -3181,6 +3181,29 @@ function renderCart(){
 <script src="kondapalli-showcase.js"></script>
 <script src="site-shell.js"></script>
 <script src="site-header.js"></script>
+<script>
+  (function removeDuplicateNewCollectionSections() {
+    function removeDuplicates(node) {
+      if (node.nodeType !== Node.ELEMENT_NODE) return;
+      if (node.matches(".new-collection-section")) {
+        node.remove();
+        return;
+      }
+      node.querySelectorAll(".new-collection-section").forEach(function (section) {
+        section.remove();
+      });
+    }
+
+    removeDuplicates(document.documentElement);
+
+    const observer = new MutationObserver(function (records) {
+      records.forEach(function (record) {
+        record.addedNodes.forEach(removeDuplicates);
+      });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  })();
+</script>
 
 </body>
 </html>

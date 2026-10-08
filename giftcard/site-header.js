@@ -108,12 +108,12 @@
       .shared-site-header .nav-row{position:absolute;top:100%;left:0;right:0;z-index:900;display:none;flex-direction:column;align-items:stretch;gap:0;max-height:calc(100dvh - 96px);padding:6px 0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;border-bottom:2px solid #c9a455;background:linear-gradient(135deg,#0d3328,#134a3a);box-shadow:0 14px 30px rgba(13,51,40,.3)}
       .shared-site-header .nav-row.mobile-open{display:flex}
       .shared-site-header .nav-row>a,.shared-site-header .nav-row .dropdown{width:100%}
-      .shared-site-header .nav-row>a,.shared-site-header .nav-row .drop-toggle{width:100%;justify-content:space-between;padding:13px 24px;border-bottom:1px solid rgba(201,164,85,.45);color:#e6cf8f;background:#0d3328}
-      .shared-site-header .nav-row>a:hover,.shared-site-header .nav-row .drop-toggle:hover{color:#c9a455;background:#174e3c}
+      .shared-site-header .nav-row.mobile-open>a,.shared-site-header .nav-row.mobile-open .drop-toggle{width:100%;justify-content:space-between;padding:13px 24px;border-bottom:1px solid rgba(201,164,85,.45);color:#e6cf8f;background:#0d3328}
+      .shared-site-header .nav-row.mobile-open>a:hover,.shared-site-header .nav-row.mobile-open .drop-toggle:hover{color:#c9a455;background:#174e3c}
       .shared-site-header .dropdown-menu{position:static;width:100%;min-width:0;grid-template-columns:1fr;transform:none;border:0;border-top:1px solid rgba(201,164,85,.55);border-bottom:1px solid rgba(201,164,85,.55);border-radius:0;background:#09271f;box-shadow:none}
-      .shared-site-header .dropdown-menu a{border-bottom:1px solid rgba(201,164,85,.3);color:#e6cf8f}
-      .shared-site-header .dropdown-menu a:last-child{border-bottom:0}
-      .shared-site-header .dropdown-menu a:hover{color:#c9a455;background:rgba(201,164,85,.12)}
+      .shared-site-header .nav-row.mobile-open .dropdown-menu a{border-bottom:1px solid rgba(201,164,85,.3);color:#e6cf8f}
+      .shared-site-header .nav-row.mobile-open .dropdown-menu a:last-child{border-bottom:0}
+      .shared-site-header .nav-row.mobile-open .dropdown-menu a:hover{color:#c9a455;background:rgba(201,164,85,.12)}
     }
   `;
   document.head.appendChild(sharedStyles);
