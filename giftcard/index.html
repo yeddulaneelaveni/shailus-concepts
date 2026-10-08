@@ -132,8 +132,8 @@
   .dropdown-menu a:hover{ background: rgba(201,164,85,0.15); color: var(--gold); }
 
   /* ============ HERO ============ */
-  .hero{ position: relative; display:grid; grid-template-columns:minmax(0, 1.8fr) minmax(340px, 1fr); grid-template-rows:minmax(0, 1fr); height:560px; min-height:560px; overflow:hidden; background:var(--cream-soft); }
-  .hero-image-col{ position: relative; grid-column:1; grid-row:1; width:100%; height:100%; overflow:hidden; }
+  .hero{ position: relative; min-height: 560px; overflow: hidden; }
+  .hero-image-col{ position: absolute; inset: 0; width: 100%; height: 100%; }
   .hero-image-col img{
     position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
     opacity: 0; visibility: hidden; transition: opacity .8s ease, visibility .8s ease;
@@ -142,21 +142,9 @@
   .hero-image-col::after{ content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.18) 60%, rgba(0,0,0,0.30) 100%); z-index: 1; }
 
   .hero-text-col{
-    position: relative; z-index: 5; grid-column:2; grid-row:1; min-height:0; display:block;
-    padding:12px; width:100%; background:var(--cream-soft);
+    position: relative; z-index: 5; min-height: 560px; display: flex; align-items: center;
+    justify-content: center; padding: 60px 20px; width: 100%;
   }
-  .hero-product-list{ display:grid; grid-template-rows:repeat(3, minmax(0, 1fr)); gap:10px; width:100%; height:100%; }
-  .hero-product-card{ display:grid; grid-template-columns:76px minmax(0, 1fr); grid-template-rows:minmax(0, 1fr) auto; align-items:center; gap:6px 10px; min-height:0; padding:10px; border:1px solid rgba(201,164,85,.5); border-radius:10px; background:#fff; box-shadow:0 4px 12px rgba(13,51,40,.08); }
-  .hero-product-image{ grid-column:1; grid-row:1; display:flex; align-items:center; justify-content:center; width:76px; height:76px; overflow:hidden; border-radius:7px; background:#faf7f2; }
-  .hero-product-image img{ display:block; width:100%; height:100%; object-fit:contain; }
-  .hero-product-info{ grid-column:2; grid-row:1; min-width:0; }
-  .hero-product-info h3{ display:-webkit-box; overflow:hidden; margin:0 0 5px; color:var(--deep-green); font:700 14px/1.25 'Playfair Display',Georgia,serif; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
-  .hero-product-info .price{ color:var(--gold); font-size:14px; font-weight:700; }
-  .hero-product-actions{ grid-column:1 / -1; grid-row:2; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .hero-product-actions .view-btn,.hero-product-actions .add-cart-btn{ display:inline-flex; align-items:center; justify-content:center; min-width:0; min-height:34px; padding:6px 8px; border-radius:4px; font-family:inherit; font-size:11px; font-weight:700; line-height:1.15; text-align:center; cursor:pointer; }
-  .hero-product-actions .view-btn{ border:0; color:var(--gold-light); background:var(--deep-green); text-decoration:none; }
-  .hero-product-actions .add-cart-btn{ border:1px solid var(--deep-green); color:var(--deep-green); background:#fff; }
-  .hero-product-actions .view-btn:hover,.hero-product-actions .add-cart-btn:hover{ border-color:var(--gold); color:var(--deep-green); background:var(--gold); }
 
   /* All hero CTA boxes sit bottom-right, matching the "Shop Now" placement */
   .hero-slide-text{
@@ -196,8 +184,6 @@
     border: 2px solid rgba(255,255,255,0.7); cursor: pointer; transition: background .2s, border-color .2s;
   }
   .hero-dot.active{ background: var(--gold); border-color: var(--gold); }
-  .hero-arrow.next{ right:calc(35.7% + 18px); }
-  .hero-dots{ left:32%; }
 
   /* ============ HERO <picture> WRAPPER ============ */
   .hero-image-col picture{ display:contents; }
@@ -476,7 +462,7 @@
     width:100%;
     max-width:390px;
     justify-self:start;
-    padding:30px 0;
+    padding:12px 0;
     color:var(--kondapalli-brown);
   }
   .kondapalli-details h2{
@@ -497,7 +483,20 @@
     background:#DCE8DF;
     transform:rotate(-1.5deg);
   }
-  .kondapalli-subtitle{ margin:12px 0 18px; color:#796653; font-size:14px; line-height:1.6; }
+  .kondapalli-subtitle{ margin:8px 0 10px; color:#796653; font-size:14px; line-height:1.6; }
+  .kondapalli-product-list{ display:grid; grid-template-rows:repeat(3,minmax(0,1fr)); gap:8px; min-height:0; flex:1; }
+  .kondapalli-featured-card{ display:grid; grid-template-columns:64px minmax(0,1fr); grid-template-rows:minmax(0,1fr) auto; align-items:center; gap:6px 10px; min-width:0; min-height:0; padding:8px; border:1px solid rgba(74,52,40,.12); border-radius:10px; background:#fff; box-shadow:0 4px 12px rgba(74,52,40,.07); }
+  .kondapalli-featured-image{ grid-column:1; grid-row:1; display:flex; align-items:center; justify-content:center; width:64px; height:64px; overflow:hidden; border-radius:7px; background:var(--kondapalli-sand); }
+  .kondapalli-featured-image img{ display:block; width:100%; height:100%; object-fit:contain; }
+  .kondapalli-featured-info{ grid-column:2; grid-row:1; min-width:0; }
+  .kondapalli-featured-info h3{ display:-webkit-box; overflow:hidden; margin:0 0 4px; color:var(--kondapalli-brown); font-family:'Playfair Display',Georgia,serif; font-size:13px; font-weight:700; line-height:1.25; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+  .kondapalli-featured-price{ color:var(--kondapalli-saffron); font-size:13px; font-weight:700; }
+  .kondapalli-featured-actions{ grid-column:1 / -1; grid-row:2; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:7px; }
+  .kondapalli-featured-actions a,.kondapalli-featured-actions button{ display:inline-flex; align-items:center; justify-content:center; min-width:0; min-height:32px; padding:5px 6px; border:1px solid var(--kondapalli-brown); border-radius:4px; font-family:inherit; font-size:11px; font-weight:700; line-height:1.15; text-align:center; cursor:pointer; }
+  .kondapalli-featured-actions a{ color:#fff; background:var(--kondapalli-brown); text-decoration:none; }
+  .kondapalli-featured-actions button{ color:var(--kondapalli-brown); background:transparent; }
+  .kondapalli-featured-actions a:hover,.kondapalli-featured-actions button:hover{ border-color:var(--kondapalli-saffron); color:#fff; background:var(--kondapalli-saffron); }
+  .kondapalli-legacy-product[hidden]{ display:none !important; }
   .kondapalli-current-product{
     min-width:0;
     overflow:visible;
@@ -600,6 +599,8 @@
     .kondapalli-preview-frame{ aspect-ratio:1 / 1; }
     .kondapalli-product-name{ font-size:17px; }
     .kondapalli-dots{ margin-top:16px; }
+    .kondapalli-product-list{ grid-template-rows:none; }
+    .kondapalli-featured-card{ min-height:116px; }
   }
 
   /* ============ VISIT OUR STORE ============ */
@@ -837,24 +838,6 @@
     .hero-text-col{ height: 100%; min-height: 0; padding: 24px 20px; }
   }
   @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
-  @media (max-width: 900px){
-    .hero{ display:grid; grid-template-columns:minmax(0, 1fr); grid-template-rows:320px auto; height:auto; min-height:0; aspect-ratio:auto; }
-    .hero-image-col{ grid-column:1; grid-row:1; min-height:0; }
-    .hero-text-col{ grid-column:1; grid-row:2; min-height:0; padding:12px; }
-    .hero-product-list{ grid-template-rows:none; grid-auto-rows:minmax(108px, auto); height:auto; }
-    .hero-arrow{ top:160px; }
-    .hero-arrow.next{ right:12px; }
-    .hero-arrow.prev{ left:12px; }
-    .hero-dots{ top:286px; bottom:auto; left:50%; }
-  }
-  @media (max-width: 480px){
-    .hero{ grid-template-rows:270px auto; }
-    .hero-product-list{ grid-auto-rows:minmax(108px, auto); gap:8px; }
-    .hero-product-card{ grid-template-columns:72px minmax(0, 1fr); padding:8px; }
-    .hero-product-image{ width:72px; height:72px; }
-    .hero-arrow{ top:135px; }
-    .hero-dots{ top:240px; }
-  }
 </style>
 <link rel="stylesheet" href="responsive.css">
 </head>
@@ -1002,6 +985,20 @@
   </div>
 </section>
 
+<!-- ============ NEW COLLECTIONS ============ -->
+<section class="collections">
+  <div class="section-heading">
+    <h2>New Collections</h2>
+    <div class="section-underline"></div>
+  </div>
+
+  <div class="product-grid" id="productGrid">
+    <div class="product-grid-track" id="productGridTrack">
+      <!-- Products are loaded dynamically from MongoDB -->
+    </div>
+  </div>
+</section>
+
 <!-- ============ BEST SELLERS ============ -->
 <section class="best-sellers">
   <div class="section-heading">
@@ -1132,17 +1129,20 @@
     <div class="kondapalli-details">
       <h2>Kondapalli<br>Bommalu</h2>
       <p class="kondapalli-subtitle">Handcrafted stories from Andhra Pradesh</p>
-      <div class="product-card kondapalli-current-product" id="kondapalliCurrentProduct">
-        <div class="kondapalli-preview-frame">
-          <img class="kondapalli-preview-image" id="kondapalliRightImage" src="" alt="Selected Kondapalli product">
+      <div class="kondapalli-product-list" id="kondapalliProductCards" aria-label="Featured products"></div>
+      <div class="kondapalli-legacy-product" hidden>
+        <div class="kondapalli-current-product" id="kondapalliCurrentProduct">
+          <div class="kondapalli-preview-frame">
+            <img class="kondapalli-preview-image" id="kondapalliRightImage" src="" alt="Selected Kondapalli product">
+          </div>
+          <h3 class="kondapalli-product-name" id="kondapalliProductName"></h3>
+          <p class="kondapalli-product-price" id="kondapalliProductPrice"></p>
+          <div class="kondapalli-product-actions">
+            <a class="kondapalli-view-more" id="kondapalliViewMore" href="views.html?id=32">View More</a>
+            <button class="add-cart-btn kondapalli-cart-button" id="kondapalliAddToCart" type="button" onclick="addToCartFromCard(this)">Add to Cart</button>
+          </div>
+          <div class="kondapalli-dots" id="kondapalliDots" role="group" aria-label="Choose a Kondapalli product"></div>
         </div>
-        <h3 class="kondapalli-product-name" id="kondapalliProductName"></h3>
-        <p class="kondapalli-product-price" id="kondapalliProductPrice"></p>
-        <div class="kondapalli-product-actions">
-          <a class="kondapalli-view-more" id="kondapalliViewMore" href="views.html?id=32">View More</a>
-          <button class="add-cart-btn kondapalli-cart-button" id="kondapalliAddToCart" type="button" onclick="addToCartFromCard(this)">Add to Cart</button>
-        </div>
-        <div class="kondapalli-dots" id="kondapalliDots" role="group" aria-label="Choose a Kondapalli product"></div>
       </div>
     </div>
   </div>
@@ -1169,20 +1169,6 @@
       <div class="bs-track" id="kidsReturnGiftsTrack">
         <!-- Kids return gifts are loaded dynamically from MongoDB -->
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ NEW COLLECTIONS ============ -->
-<section class="collections">
-  <div class="section-heading">
-    <h2>New Collections</h2>
-    <div class="section-underline"></div>
-  </div>
-
-  <div class="product-grid" id="productGrid">
-    <div class="product-grid-track" id="productGridTrack">
-      <!-- Products are loaded dynamically from MongoDB -->
     </div>
   </div>
 </section>
@@ -2449,7 +2435,7 @@ function renderCart(){
         return;
       }
 
-      collectionProducts.forEach(function(product) {
+      collectionProducts.slice(0, 12).forEach(function(product) {
         let imagePath = "";
 
         if (product.image) {
@@ -2527,7 +2513,7 @@ function renderCart(){
     return window.resolveStoreImageUrl(path);
   }
 
-  function getHeroProductImageUrls(product) {
+  function getProductImageUrls(product) {
     const paths = [
       product.image,
       ...(Array.isArray(product.images) ? product.images : [])
@@ -2541,7 +2527,7 @@ function renderCart(){
     return [...new Set(paths)];
   }
 
-  function canLoadHeroProductImage(imageUrl) {
+  function canLoadProductImage(imageUrl) {
     return new Promise(resolve => {
       const image = new Image();
       image.onload = () => resolve(image.naturalWidth > 0);
@@ -2550,11 +2536,9 @@ function renderCart(){
     });
   }
 
-  async function loadHeroProductCards() {
-    const productList = document.getElementById("heroTextColumn");
+  async function loadKondapalliProductCards() {
+    const productList = document.getElementById("kondapalliProductCards");
     if (!productList) return;
-
-    productList.innerHTML = '<div class="hero-product-list" aria-live="polite"><p>Loading products...</p></div>';
 
     try {
       const products = await getHomepageProducts();
@@ -2562,8 +2546,8 @@ function renderCart(){
 
       for (const product of products) {
         let imageUrl = "";
-        for (const candidate of getHeroProductImageUrls(product)) {
-          if (await canLoadHeroProductImage(candidate)) {
+        for (const candidate of getProductImageUrls(product)) {
+          if (await canLoadProductImage(candidate)) {
             imageUrl = candidate;
             break;
           }
@@ -2574,46 +2558,44 @@ function renderCart(){
       }
 
       if (featuredProducts.length !== 3) {
-        throw new Error(`Only ${featuredProducts.length} products have a loadable image`);
+        throw new Error(`Only ${featuredProducts.length} products have a loadable image for the Kondapalli section`);
       }
 
       productList.innerHTML = `
-        <div class="hero-product-list" aria-label="Featured products">
-          ${featuredProducts.map(({ product, imageUrl }) => {
-            const productName = escapeHTML(product.name || "Product");
-            const productId = encodeURIComponent(product.productId ?? "");
-            const price = Number(product.price);
-            const priceLabel = Number.isFinite(price) && price > 0
-              ? `₹${price.toFixed(2)}`
-              : "Price on request";
+        ${featuredProducts.map(({ product, imageUrl }) => {
+          const productName = escapeHTML(product.name || "Product");
+          const productId = encodeURIComponent(product.productId ?? "");
+          const price = Number(product.price);
+          const priceLabel = Number.isFinite(price) && price > 0
+            ? `₹${price.toFixed(2)}`
+            : "Price on request";
 
-            return `
-              <article class="hero-product-card product-card"
-                data-id="${escapeHTML(product.productId ?? "")}"
-                data-name="${productName}"
-                data-price="${Number.isFinite(price) ? price : 0}"
-                data-img="${escapeHTML(imageUrl)}">
-                <div class="hero-product-image">
-                  <img src="${escapeHTML(imageUrl)}" alt="${productName}" loading="eager">
-                </div>
-                <div class="hero-product-info">
-                  <h3>${productName}</h3>
-                  <div class="price">${priceLabel}</div>
-                </div>
-                <div class="hero-product-actions">
-                  <a class="view-btn" href="views.html?id=${productId}">View More</a>
-                  <button class="add-cart-btn" type="button" onclick="addToCartFromCard(this)">Add to Cart</button>
-                </div>
-              </article>
-            `;
-          }).join("")}
-        </div>
+          return `
+            <article class="kondapalli-featured-card product-card"
+              data-id="${escapeHTML(product.productId ?? "")}"
+              data-name="${productName}"
+              data-price="${Number.isFinite(price) ? price : 0}"
+              data-img="${escapeHTML(imageUrl)}">
+              <div class="kondapalli-featured-image">
+                <img src="${escapeHTML(imageUrl)}" alt="${productName}" loading="eager">
+              </div>
+              <div class="kondapalli-featured-info">
+                <h3>${productName}</h3>
+                <div class="kondapalli-featured-price">${priceLabel}</div>
+              </div>
+              <div class="kondapalli-featured-actions">
+                <a class="view-btn" href="views.html?id=${productId}">View More</a>
+                <button class="add-cart-btn" type="button" onclick="addToCartFromCard(this)">Add to Cart</button>
+              </div>
+            </article>
+          `;
+        }).join("")}
       `;
 
-      console.log("Hero products rendered successfully:", featuredProducts.length);
+      console.log("Kondapalli products rendered successfully:", featuredProducts.length);
     } catch (error) {
-      console.error("Hero product loading error:", error);
-      productList.innerHTML = '<div class="hero-product-list"><p>Unable to load featured products.</p></div>';
+      console.error("Kondapalli product loading error:", error);
+      productList.innerHTML = '<p>Unable to load featured products.</p>';
     }
   }
 
@@ -3251,7 +3233,7 @@ function renderCart(){
 
 
   loadProductsFromBackend();
-  loadHeroProductCards();
+  loadKondapalliProductCards();
   loadHeroFromBackend();
   loadScrollCategoriesFromBackend();
   loadBestSellersFromBackend();
