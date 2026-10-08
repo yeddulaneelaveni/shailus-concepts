@@ -382,17 +382,20 @@
       }
 
       function fixProductImage(path) {
-        const normalizedPath = String(path || '').trim().replace(/\\/g, '/');
-        if (/^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(normalizedPath)) return normalizedPath;
-
-        const rootRelativePath = normalizedPath
-          .replace(/^(?:\.\.\/|\.\/)+/, '')
-          .replace(/^\/+/, '');
-        if (/^uploads\//i.test(rootRelativePath)) {
-          return new URL(rootRelativePath, `${window.location.origin}/`).href;
-        }
-
         return window.resolveStoreImageUrl(path);
+      }
+
+      function getProductImagePaths(product) {
+        const imagePaths = [
+          product && product.image,
+          ...(product && Array.isArray(product.images) ? product.images : [])
+        ]
+          .filter(function (image) { return typeof image === 'string'; })
+          .map(function (image) { return image.trim(); })
+          .filter(Boolean)
+          .map(fixProductImage)
+          .filter(Boolean);
+        return Array.from(new Set(imagePaths));
       }
 
       function getCart() {
@@ -443,17 +446,17 @@
           return;
         }
 
-        grid.innerHTML = products.map(function (product) {
-          const imagePath = fixProductImage(product.image || (Array.isArray(product.images) ? product.images[0] : ''));
+        const productImagePaths = products.map(getProductImagePaths);
+        grid.innerHTML = products.map(function (product, index) {
+          const imagePaths = productImagePaths[index];
+          const imagePath = imagePaths[0] || '';
           const priceText = Number(product.price) > 0 ? '₹' + Number(product.price).toFixed(2) : 'Price on request';
           const badgeHtml = product.badge ? `<span class="product-badge">${escapeHTML(product.badge)}</span>` : '';
           const ratingHtml = product.rating ? `<span class="category-rating">★ ${Number(product.rating).toFixed(1)}</span>` : '';
 
           return `
             <article class="product-card" data-id="${escapeHTML(product.productId ?? '')}" data-name="${escapeHTML(product.name || 'Product')}" data-price="${Number(product.price) || 0}" data-img="${escapeHTML(imagePath)}">
-              <div class="img-wrap">
-                ${imagePath ? `<img src="${imagePath}" alt="${escapeHTML(product.name || 'Product')}" />` : ''}
-              </div>
+              ${imagePath ? `<div class="img-wrap"><img src="${escapeHTML(imagePath)}" alt="${escapeHTML(product.name || 'Product')}" onerror="this.closest('.img-wrap').remove()" /></div>` : ''}
               <div class="info">
                 <div class="badge-row">${badgeHtml}${ratingHtml}</div>
                 <h3>${escapeHTML(product.name || 'Product')}</h3>
@@ -466,6 +469,21 @@
             </article>
           `;
         }).join('');
+
+        grid.querySelectorAll('.product-card').forEach(function (card, index) {
+          const image = card.querySelector('.img-wrap img');
+          if (!image) return;
+
+          let nextImageIndex = 1;
+          image.onerror = function () {
+            if (nextImageIndex < productImagePaths[index].length) {
+              image.src = productImagePaths[index][nextImageIndex];
+              nextImageIndex += 1;
+            } else {
+              image.closest('.img-wrap').remove();
+            }
+          };
+        });
       }
 
       function renderCategoryPage() {

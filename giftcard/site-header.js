@@ -103,12 +103,17 @@
       .shared-site-header .brand-name{font-size:14px}
       .shared-site-header .brand-tagline{display:none}
       .shared-site-header .brand-center img{height:42px}
-      .shared-site-header .hamburger{display:flex}
-      .shared-site-header .nav-row{display:none;flex-direction:column;align-items:stretch;gap:0;padding:6px 0;overflow-x:hidden}
+      .shared-site-header .hamburger{display:flex;align-items:center;justify-content:center;width:40px;height:40px;padding:8px;border:1px solid #c9a455;border-radius:6px;background:#0d3328;box-shadow:0 2px 8px rgba(13,51,40,.2)}
+      .shared-site-header .hamburger span{background:#e6cf8f}
+      .shared-site-header .nav-row{position:absolute;top:100%;left:0;right:0;z-index:900;display:none;flex-direction:column;align-items:stretch;gap:0;max-height:calc(100dvh - 96px);padding:6px 0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;border-bottom:2px solid #c9a455;background:linear-gradient(135deg,#0d3328,#134a3a);box-shadow:0 14px 30px rgba(13,51,40,.3)}
       .shared-site-header .nav-row.mobile-open{display:flex}
       .shared-site-header .nav-row>a,.shared-site-header .nav-row .dropdown{width:100%}
-      .shared-site-header .nav-row>a,.shared-site-header .nav-row .drop-toggle{width:100%;justify-content:space-between;padding:13px 24px}
-      .shared-site-header .dropdown-menu{position:static;width:100%;min-width:0;grid-template-columns:1fr;transform:none;border-radius:0;box-shadow:none}
+      .shared-site-header .nav-row>a,.shared-site-header .nav-row .drop-toggle{width:100%;justify-content:space-between;padding:13px 24px;border-bottom:1px solid rgba(201,164,85,.45);color:#e6cf8f;background:#0d3328}
+      .shared-site-header .nav-row>a:hover,.shared-site-header .nav-row .drop-toggle:hover{color:#c9a455;background:#174e3c}
+      .shared-site-header .dropdown-menu{position:static;width:100%;min-width:0;grid-template-columns:1fr;transform:none;border:0;border-top:1px solid rgba(201,164,85,.55);border-bottom:1px solid rgba(201,164,85,.55);border-radius:0;background:#09271f;box-shadow:none}
+      .shared-site-header .dropdown-menu a{border-bottom:1px solid rgba(201,164,85,.3);color:#e6cf8f}
+      .shared-site-header .dropdown-menu a:last-child{border-bottom:0}
+      .shared-site-header .dropdown-menu a:hover{color:#c9a455;background:rgba(201,164,85,.12)}
     }
   `;
   document.head.appendChild(sharedStyles);

@@ -112,25 +112,42 @@ function displayProduct(product) {
     // MAIN IMAGE
     // =================================================
 
-    const mainImage = fixProductImage(
-        product.image ||
-        (
-            product.images &&
-            product.images.length
-                ? product.images[0]
-                : ""
-        )
-    );
+    const productImages = getProductImages(product);
+    const mainImage = productImages[0] || "";
 
     const mainImg =
         document.getElementById("mainImg");
 
-    if (mainImg && mainImage) {
+    if (mainImg) {
+        const mainImageWrap = mainImg.closest(".main-img-wrap");
+        mainImg.onerror = function () {
+            const failedImage = mainImg.currentSrc || mainImg.src;
+            const failedThumb = Array.from(
+                document.querySelectorAll(".thumb-row .thumb")
+            ).find(thumb => thumb.querySelector("img")?.src === failedImage);
+            if (failedThumb) failedThumb.remove();
 
-        mainImg.src = mainImage;
+            const fallbackThumb = document.querySelector(".thumb-row .thumb");
+            if (fallbackThumb) {
+                switchImg(
+                    fallbackThumb,
+                    fallbackThumb.querySelector("img").src
+                );
+                return;
+            }
 
-        mainImg.alt =
-            product.name || "Product";
+            if (mainImageWrap) mainImageWrap.hidden = true;
+            mainImg.removeAttribute("src");
+        };
+
+        if (mainImage) {
+            if (mainImageWrap) mainImageWrap.hidden = false;
+            mainImg.src = mainImage;
+            mainImg.alt = product.name || "Product";
+        } else {
+            if (mainImageWrap) mainImageWrap.hidden = true;
+            mainImg.removeAttribute("src");
+        }
     }
 
     // =================================================
@@ -153,8 +170,7 @@ function displayProduct(product) {
         details.dataset.price =
             product.price || "";
 
-        details.dataset.img =
-            mainImage || "";
+        details.dataset.img = mainImage;
     }
 
     // =================================================
@@ -411,40 +427,15 @@ function displayBadge(product) {
 // =====================================================
 
 function getProductImages(product) {
-
-    const imageList = [];
-
-    // Main image
-    if (product.image) {
-
-        imageList.push(
-            product.image
-        );
-    }
-
-    // Additional images
-    if (
-        product.images &&
-        Array.isArray(product.images)
-    ) {
-
-        product.images.forEach(
-            image => {
-
-                if (
-                    image &&
-                    !imageList.includes(image)
-                ) {
-
-                    imageList.push(image);
-                }
-            }
-        );
-    }
-
-    return imageList
-        .map(fixProductImage)
+    const imagePaths = [
+        product?.image,
+        ...(Array.isArray(product?.images) ? product.images : [])
+    ]
+        .filter(image => typeof image === "string")
+        .map(image => image.trim())
         .filter(Boolean);
+
+    return [...new Set(imagePaths.map(fixProductImage).filter(Boolean))];
 }
 
 // =====================================================
@@ -510,17 +501,13 @@ function displayProductImages(product) {
                 index === 0 ? "true" : "false"
             );
 
-            thumb.innerHTML = `
-                <img
-                    src="${image}"
-                    alt="${escapeHTML(
-                        product.name
-                    )} image ${index + 1}"
-                    onerror="
-                        this.style.display='none'
-                    "
-                >
-            `;
+            const thumbnailImage = document.createElement("img");
+            thumbnailImage.src = image;
+            thumbnailImage.alt = `${product.name || "Product"} image ${index + 1}`;
+            thumbnailImage.onerror = function () {
+                thumb.remove();
+            };
+            thumb.appendChild(thumbnailImage);
 
             thumb.onclick =
                 function () {
@@ -548,6 +535,8 @@ function switchImg(thumb, image) {
     }
 
     mainImg.src = image;
+    const mainImageWrap = mainImg.closest(".main-img-wrap");
+    if (mainImageWrap) mainImageWrap.hidden = false;
 
     document.querySelectorAll(".thumb-row .thumb").forEach(
         item => {
@@ -694,16 +683,8 @@ function displaySimilarProducts(
         .forEach(
             product => {
 
-                const image =
-                    fixProductImage(
-                        product.image ||
-                        (
-                            product.images &&
-                            product.images.length > 0
-                                ? product.images[0]
-                                : ""
-                        )
-                    );
+                const images = getProductImages(product);
+                const image = images[0] || "";
 
                 const card =
                     document.createElement(
@@ -724,22 +705,12 @@ function displaySimilarProducts(
                         product.price || 0
                     );
 
-                const productImage =
-                    image ||
-                    "https://placehold.co/300x300/f7f3ea/0d3328?text=No+Image";
-
                 card.innerHTML = `
-                    <div class="img-wrap">
-
-                        <img
-                            src="${productImage}"
-                            alt="${productName}"
-                            onerror="
-                                this.src='https://placehold.co/300x300/f7f3ea/0d3328?text=No+Image'
-                            "
-                        >
-
-                    </div>
+                    ${image ? `
+                        <div class="img-wrap">
+                            <img src="${escapeHTML(image)}" alt="${productName}">
+                        </div>
+                    ` : ""}
 
                     <div class="card-info">
 
@@ -770,6 +741,19 @@ function displaySimilarProducts(
 
                     </div>
                 `;
+
+                const relatedImage = card.querySelector(".img-wrap img");
+                if (relatedImage) {
+                    let nextImageIndex = 1;
+                    relatedImage.onerror = function () {
+                        if (nextImageIndex < images.length) {
+                            relatedImage.src = images[nextImageIndex];
+                            nextImageIndex += 1;
+                        } else {
+                            relatedImage.closest(".img-wrap").remove();
+                        }
+                    };
+                }
 
                 // =================================================
                 // VIEW BUTTON
