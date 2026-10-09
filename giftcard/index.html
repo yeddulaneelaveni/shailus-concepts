@@ -189,33 +189,6 @@
   }
   .hero-dot.active{ background: var(--gold); border-color: var(--gold); }
 
-  /* ============ PROMOTIONAL HERO SLIDE (pure CSS visual, no image files) ============ */
-  .hero-promo-bg{
-    position:absolute; inset:0; opacity:0; visibility:hidden; transition: opacity .8s ease, visibility .8s ease;
-    background:
-      radial-gradient(circle at 18% 22%, rgba(201,164,85,0.28) 0, rgba(201,164,85,0) 38%),
-      radial-gradient(circle at 85% 80%, rgba(230,207,143,0.20) 0, rgba(230,207,143,0) 42%),
-      repeating-linear-gradient(45deg, rgba(201,164,85,0.06) 0 2px, transparent 2px 22px),
-      linear-gradient(135deg, #072a21 0%, var(--deep-green) 45%, var(--green-mid) 100%);
-  }
-  .hero-promo-bg.active{ opacity:1; visibility:visible; }
-  .hero-promo-bg::before{
-    content:''; position:absolute; inset:22px; border:1.5px solid rgba(230,207,143,0.55); border-radius:6px; pointer-events:none;
-  }
-  .hero-promo-text{
-    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:0 clamp(40px, 8vw, 120px); gap:12px;
-    opacity:0; visibility:hidden; transition: opacity .6s ease, visibility .6s ease; z-index:1; pointer-events:none;
-  }
-  .hero-promo-text.active{ opacity:1; visibility:visible; z-index:2; pointer-events:auto; }
-  .hero-promo-text .promo-line{
-    font-family:'Playfair Display', Georgia, serif; font-weight:800; line-height:1.2; color:#f6e3a1;
-    font-size:clamp(22px, 3.8vw, 52px); text-shadow:0 2px 16px rgba(0,0,0,0.45);
-  }
-  .hero-promo-text .promo-divider{ width:90px; height:3px; background:var(--gold); border-radius:2px; margin:6px 0; }
-  .hero-promo-text .hero-cta{ margin-top:18px; }
-  @media (max-width: 480px){ .hero-promo-bg::before{ inset:12px; } .hero-promo-text{ padding:0 28px; gap:8px; } .hero-promo-text .hero-cta{ margin-top:10px; } }
-
   /* ============ HERO <picture> WRAPPER ============ */
   .hero-image-col picture{ display:contents; }
 
@@ -1368,7 +1341,6 @@
   // HERO CAROUSEL
   // =====================================================
 
-  var PROMO_SLIDE_LINK = 'https://wa.me/919704123499';
   var heroIndex = 0;
   var heroTotal = 3;
   var heroTimer = null;
@@ -1387,18 +1359,6 @@
         img.classList.toggle(
           'active',
           Number(img.dataset.slide) === heroIndex
-        );
-
-      });
-
-
-    document
-      .querySelectorAll('.hero-promo-bg, .hero-promo-text')
-      .forEach(function(el){
-
-        el.classList.toggle(
-          'active',
-          Number(el.dataset.slide) === heroIndex
         );
 
       });
@@ -2565,6 +2525,9 @@ function renderCart(){
   }
 
   async function loadHeroFromBackend() {
+    const hero4DesktopUrl = new URL("assets/1hero4.png", window.location.href).href;
+    const hero4MobileUrl = new URL("assets/hero respo4.png", window.location.href).href;
+
     try {
       console.log("Loading heroes from backend...");
 
@@ -2583,6 +2546,7 @@ function renderCart(){
         ? heroes
             .filter(hero => hero.active === true || hero.active === "true")
             .sort((a, b) => Number(a.order || 0) - Number(b.order || 0))
+            .slice(0, 3)
         : [];
 
       const imageColumn = document.getElementById("heroImageColumn");
@@ -2598,19 +2562,23 @@ function renderCart(){
       textColumn.innerHTML = "";
       dots.innerHTML = "";
 
-      const promoIndex = activeHeroes.length;
-
-      const promoBackgroundHtml = `<div class="hero-promo-bg" data-slide="${promoIndex}" aria-hidden="true"></div>`;
-      const promoTextHtml = `
-        <div class="hero-promo-text" data-slide="${promoIndex}">
-          <div class="promo-line">Premium Customised Jute Bags Manufacturers</div>
-          <div class="promo-divider"></div>
-          <div class="promo-line">Pichwai Metal Return Gifts Manufacturers</div>
-          <a href="${escapeHTML(PROMO_SLIDE_LINK)}" class="hero-cta">ENQUIRE NOW</a>
-        </div>`;
+      const hero4Index = activeHeroes.length;
+      const hero4ImageHtml = `
+        <picture>
+          <source media="(max-width: 1024px)" srcset="${escapeHTML(hero4MobileUrl)}">
+          <img
+            src="${escapeHTML(hero4DesktopUrl)}"
+            alt="Premium Customised Jute Bags and Pichwai Metal Return Gifts"
+            data-slide="${hero4Index}"
+            fetchpriority="low"
+            loading="lazy"
+            decoding="async"
+            onerror="console.error('Hero 4 image failed:', this.src);"
+          >
+        </picture>`;
 
       if (activeHeroes.length === 0) {
-        console.log("No active heroes found - showing promotional slide only");
+        console.log("No active heroes found - showing Hero 4");
       }
 
       const responsiveHeroImages = [
@@ -2641,7 +2609,7 @@ function renderCart(){
             >
           </picture>
         `;
-      }).join("") + promoBackgroundHtml;
+      }).join("") + hero4ImageHtml;
 
       textColumn.innerHTML = activeHeroes.map((hero, index) => {
         const buttonText = hero.buttonText || "Shop Now";
@@ -2654,7 +2622,7 @@ function renderCart(){
             </a>
           </div>
         `;
-      }).join("") + promoTextHtml;
+      }).join("");
 
       const totalSlides = activeHeroes.length + 1;
 
@@ -2678,8 +2646,21 @@ function renderCart(){
       var failTextCol = document.getElementById("heroTextColumn");
       var failDots = document.getElementById("heroDots");
       if (failImageCol && failTextCol && failDots && !failImageCol.children.length) {
-        failImageCol.innerHTML = '<div class="hero-promo-bg active" data-slide="0" aria-hidden="true"></div>';
-        failTextCol.innerHTML = '<div class="hero-promo-text active" data-slide="0"><div class="promo-line">Premium Customised Jute Bags Manufacturers</div><div class="promo-divider"></div><div class="promo-line">Pichwai Metal Return Gifts Manufacturers</div></div>';
+        failImageCol.innerHTML = `
+          <picture>
+            <source media="(max-width: 1024px)" srcset="${escapeHTML(hero4MobileUrl)}">
+            <img
+              src="${escapeHTML(hero4DesktopUrl)}"
+              alt="Premium Customised Jute Bags and Pichwai Metal Return Gifts"
+              class="active"
+              data-slide="0"
+              fetchpriority="high"
+              decoding="async"
+              onerror="console.error('Hero 4 image failed:', this.src);"
+            >
+          </picture>
+        `;
+        failTextCol.innerHTML = "";
         failDots.innerHTML = '<span class="hero-dot active" onclick="heroGoTo(0)"></span>';
         heroTotal = 1;
         heroShow(0);
