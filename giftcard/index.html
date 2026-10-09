@@ -84,10 +84,14 @@
   .brand-center{ display:flex; flex-direction:column; align-items:center; gap:2px; flex-shrink:0; }
   .brand-center img{ height:52px; width:auto; object-fit:contain; border-radius:6px; }
   .brand-name{
-    font-family: 'Playfair Display', Georgia, serif; font-size:20px; font-weight:700; letter-spacing:1.5px;
-    color: var(--gold-light); margin-top:4px; line-height:1; white-space:nowrap;
+    font-family: 'Playfair Display', Georgia, serif; font-size:24px; font-weight:800; letter-spacing:2px;
+    color: #f6e3a1; margin-top:4px; line-height:1.1; white-space:nowrap;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.35), 0 0 14px rgba(246,227,161,0.35);
   }
-  .brand-tagline{ font-size:10px; letter-spacing:2px; color: var(--gold-light); text-transform:uppercase; opacity:0.85; white-space:nowrap; }
+  .brand-tagline{
+    font-size:10px; font-weight:600; letter-spacing:2.2px; color: #ffffff; text-transform:uppercase;
+    opacity:0.95; text-align:center; line-height:1.4; max-width:460px; white-space:normal; margin-top:2px;
+  }
 
   .hamburger{
     display:none; flex-direction:column; justify-content:center; gap:5px; width:30px; height:30px;
@@ -184,6 +188,33 @@
     border: 2px solid rgba(255,255,255,0.7); cursor: pointer; transition: background .2s, border-color .2s;
   }
   .hero-dot.active{ background: var(--gold); border-color: var(--gold); }
+
+  /* ============ PROMOTIONAL HERO SLIDE (pure CSS visual, no image files) ============ */
+  .hero-promo-bg{
+    position:absolute; inset:0; opacity:0; visibility:hidden; transition: opacity .8s ease, visibility .8s ease;
+    background:
+      radial-gradient(circle at 18% 22%, rgba(201,164,85,0.28) 0, rgba(201,164,85,0) 38%),
+      radial-gradient(circle at 85% 80%, rgba(230,207,143,0.20) 0, rgba(230,207,143,0) 42%),
+      repeating-linear-gradient(45deg, rgba(201,164,85,0.06) 0 2px, transparent 2px 22px),
+      linear-gradient(135deg, #072a21 0%, var(--deep-green) 45%, var(--green-mid) 100%);
+  }
+  .hero-promo-bg.active{ opacity:1; visibility:visible; }
+  .hero-promo-bg::before{
+    content:''; position:absolute; inset:22px; border:1.5px solid rgba(230,207,143,0.55); border-radius:6px; pointer-events:none;
+  }
+  .hero-promo-text{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:0 clamp(40px, 8vw, 120px); gap:12px;
+    opacity:0; visibility:hidden; transition: opacity .6s ease, visibility .6s ease; z-index:1; pointer-events:none;
+  }
+  .hero-promo-text.active{ opacity:1; visibility:visible; z-index:2; pointer-events:auto; }
+  .hero-promo-text .promo-line{
+    font-family:'Playfair Display', Georgia, serif; font-weight:800; line-height:1.2; color:#f6e3a1;
+    font-size:clamp(22px, 3.8vw, 52px); text-shadow:0 2px 16px rgba(0,0,0,0.45);
+  }
+  .hero-promo-text .promo-divider{ width:90px; height:3px; background:var(--gold); border-radius:2px; margin:6px 0; }
+  .hero-promo-text .hero-cta{ margin-top:18px; }
+  @media (max-width: 480px){ .hero-promo-bg::before{ inset:12px; } .hero-promo-text{ padding:0 28px; gap:8px; } .hero-promo-text .hero-cta{ margin-top:10px; } }
 
   /* ============ HERO <picture> WRAPPER ============ */
   .hero-image-col picture{ display:contents; }
@@ -328,6 +359,8 @@
   }
   .product-card .info .add-cart-btn:hover{ background: var(--gold); color:#fff; border-color: var(--gold); }
   .product-card .info .add-cart-btn.added{ background: var(--deep-green); color:#fff; border-color: var(--deep-green); }
+  .new-collection-card .nc-link{ display:flex; flex-direction:column; flex:1; text-decoration:none; color:inherit; cursor:pointer; }
+  .new-collection-card .info{ justify-content:center; padding-bottom:16px; }
   /* ============ WHAT MAKES US STAND OUT ============ */
   .standout{ background:#fff; padding: 20px 40px 90px; }
   .standout-full{
@@ -624,6 +657,7 @@
   .cart-item-info{ flex:1; min-width:0; }
   .cart-item-info h4{ font-size:13.5px; color: var(--deep-green); font-weight:700; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .cart-item-info .ci-price{ font-size:12.5px; color: var(--gold); font-weight:700; }
+  .cart-item-info .ci-sub{ font-size:12px; color:#5a4632; margin-top:2px; }
   .cart-qty{ display:flex; align-items:center; gap:8px; }
   .cart-qty button{ width:22px; height:22px; border-radius:50%; border:1px solid var(--deep-green); background:none; color: var(--deep-green); cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; line-height:1; }
   .cart-qty button:hover{ background: var(--deep-green); color:#fff; }
@@ -644,8 +678,8 @@
   @media (max-width: 1024px){
     .top-bar{ padding:12px 18px; }
     .brand-center img{ height:42px; }
-    .brand-name{ font-size:16px; }
-    .brand-tagline{ font-size:8.5px; }
+    .brand-name{ font-size:19px; }
+    .brand-tagline{ font-size:8.5px; letter-spacing:1.6px; max-width:300px; }
     .hamburger{
       display:flex; align-items:center; justify-content:center; gap:4px; width:40px; height:40px;
       padding:8px; border:1px solid var(--gold); border-radius:6px;
@@ -688,8 +722,8 @@
     .product-grid-track{ grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; }
   }
   @media (max-width: 480px){
-    .top-left, .top-right{ gap:14px; } .brand-center img{ height:36px; } .brand-name{ font-size:13px; letter-spacing:1px; }
-    .brand-tagline{ font-size:7px; letter-spacing:1px; } .search-wrap.expanded .search-input{ width:90px; padding:6px 12px; }
+    .top-left, .top-right{ gap:14px; } .brand-center img{ height:36px; } .brand-name{ font-size:15px; letter-spacing:1px; }
+    .brand-tagline{ font-size:6.5px; letter-spacing:.4px; max-width:250px; } .search-wrap.expanded .search-input{ width:90px; padding:6px 12px; }
     .hero{ min-height:380px; } .hero-text-col{ min-height:380px; padding:24px 20px 0; }
     .hero-slide-text{ width:auto; } .hero-slide-text h1{ font-size:24px; line-height:1.3; } .hero-slide-text p{ font-size:13px; }
     .hero-slide-text{ right: 4%; bottom: 24px; }
@@ -739,7 +773,7 @@
     <div class="brand-center">
       <img src="assets/logo.jpeg" alt="Shailu's Concepts">
       <span class="brand-name">Shailu's Concepts</span>
-      <span class="brand-tagline">Return Gift Store For All Occasions</span>
+      <span class="brand-tagline">ONE STOP DESTINATION FOR ALL UNIQUE RETURN GIFTS</span>
     </div>
 
     <div class="top-right">
@@ -889,9 +923,9 @@
   </div>
   <div class="standout-full" id="standoutContainer">
     <div class="before-after-container" data-before-after tabindex="0" aria-label="Before and after image comparison">
-      <img class="before-image" src="assets/before.png" alt="Before">
+      <img class="before-image" src="assets/before.png" alt="Before" loading="lazy" decoding="async">
       <div class="after-image-wrapper">
-        <img class="after-image" src="assets/afterimage.png" alt="After">
+        <img class="after-image" src="assets/afterimage.png" alt="After" loading="lazy" decoding="async">
       </div>
       <div class="comparison-divider" aria-hidden="true"></div>
       <div class="comparison-handle" aria-hidden="true">&#8596;</div>
@@ -990,7 +1024,7 @@
   <div class="kb-wrap">
     <div class="kb-hero" id="kbHero">
       <!-- Set your lifestyle image here (falls back to product 30's photo if the file is missing) -->
-      <img class="kb-hero-img" id="kbHeroImg" src="assets/kondapalli-styled-at-home.jpg" alt="Kondapalli Bommalu styled at home">
+      <img class="kb-hero-img" id="kbHeroImg" src="assets/kondapalli-styled-at-home.jpg" alt="Kondapalli Bommalu styled at home" loading="lazy" decoding="async">
       <!-- Hotspot dots are added by JS; adjust positions in KB_HOTSPOTS below -->
     </div>
     <div class="kb-side">
@@ -1030,7 +1064,7 @@
 
 <!-- ============ VISIT OUR STORE ============ -->
 <section class="visit-store">
-  <img src="assets/store2.png" alt="Our Store" class="store-bg-img">
+  <img src="assets/store2.png" alt="Our Store" class="store-bg-img" loading="lazy" decoding="async">
   <div class="store-overlay"></div>
   <div class="store-content">
     <h2>Visit Our Store</h2>
@@ -1039,7 +1073,7 @@
       Korrapadu Rd, YMR Colony,<br>
       Proddatur, Andhra Pradesh – 516360
     </address>
-    <a href="tel:+918825498438" class="store-btn">CONTACT US</a>
+    <a href="tel:+919704123499" class="store-btn">CONTACT US</a>
   </div>
 </section>
 
@@ -1076,7 +1110,7 @@
   <div class="footer-top">
 
     <div class="footer-col footer-brand">
-      <img src="assets/logo.jpeg" alt="Shailu's Concepts">
+      <img src="assets/logo.jpeg" alt="Shailu's Concepts" loading="lazy" decoding="async">
       <p>At Shailu's Concepts, we offer wholesale return gifts for weddings, birthdays, baby showers, housewarmings, corporate events, and festivals. Our theme-based and customised gifts make every occasion special.</p>
       <div class="footer-rating">
         <span class="stars">★★★★★</span>
@@ -1141,7 +1175,7 @@
         </li>
         <li>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.02z"/></svg>
-          <a href="tel:+918825498438">+91 88254 98438</a>
+          <a href="tel:+919704123499">+91 97041 23499</a>
         </li>
       </ul>
     </div>
@@ -1334,6 +1368,7 @@
   // HERO CAROUSEL
   // =====================================================
 
+  var PROMO_SLIDE_LINK = 'https://wa.me/919704123499';
   var heroIndex = 0;
   var heroTotal = 3;
   var heroTimer = null;
@@ -1352,6 +1387,18 @@
         img.classList.toggle(
           'active',
           Number(img.dataset.slide) === heroIndex
+        );
+
+      });
+
+
+    document
+      .querySelectorAll('.hero-promo-bg, .hero-promo-text')
+      .forEach(function(el){
+
+        el.classList.toggle(
+          'active',
+          Number(el.dataset.slide) === heroIndex
         );
 
       });
@@ -1586,7 +1633,7 @@
     return `
       <div class="bs-card" data-id="${escapeHTML(product.productId ?? '')}" data-name="${escapeHTML(product.name || 'Product')}" data-price="${Number(product.price) || 0}" data-img="${escapeHTML(imageUrl)}">
         <div class="bs-img">
-          <img src="${imageUrl}" alt="${escapeHTML(product.name || 'Product')}" onerror="console.error('Homepage category product image failed:', this.src);">
+          <img src="${imageUrl}" alt="${escapeHTML(product.name || 'Product')}" loading="lazy" decoding="async" onerror="console.error('Homepage category product image failed:', this.src);">
         </div>
         <h3>${escapeHTML(product.name || 'Product')}</h3>
         <div class="bs-actions">
@@ -1676,7 +1723,13 @@
   );
 
   function loadCart(){
-    return window.ShailuCustomer.loadCart();
+    var stored = window.ShailuCustomer.loadCart();
+    if(!Array.isArray(stored)) return [];
+    return stored.map(function(item){
+      item.qty = Math.max(1, parseInt(item.qty, 10) || 1);
+      item.price = Number(item.price) || 0;
+      return item;
+    });
   }
 
 
@@ -1965,11 +2018,17 @@ function renderCart(){
       container.innerHTML =
         cart.map(function(item){
 
+          var itemPrice = Number(item.price) || 0;
           var priceLabel =
-            item.price > 0
+            itemPrice > 0
               ? ('₹' +
-                 item.price.toFixed(2))
+                 itemPrice.toFixed(2))
               : 'Price on request';
+          var itemSubtotalLabel =
+            itemPrice > 0
+              ? ('Subtotal: ₹' +
+                 (itemPrice * Number(item.qty)).toFixed(2))
+              : '';
 
 
           return '' +
@@ -1991,6 +2050,10 @@ function renderCart(){
                 '<div class="ci-price">' +
                   priceLabel +
                 '</div>' +
+
+                (itemSubtotalLabel
+                  ? '<div class="ci-sub">' + itemSubtotalLabel + '</div>'
+                  : '') +
 
               '</div>' +
 
@@ -2253,14 +2316,17 @@ function renderCart(){
     try {
       console.log("Loading products from backend...");
 
-      const response = await fetch(`${window.API_BASE_URL}/api/products`);
+      const productGrid = document.getElementById("productGridTrack");
 
-      if (!response.ok) {
-        throw new Error("Failed to load products");
+      if (productGrid && !productGrid.children.length) {
+        productGrid.innerHTML = `
+          <p style="grid-column:1/-1;text-align:center;padding:40px;color:#777;">
+            Loading products...
+          </p>`;
       }
 
-      const products = await response.json();
-      const productGrid = document.getElementById("productGridTrack");
+      // Shared request: all homepage sections reuse one /api/products call
+      const products = await getHomepageProducts();
 
       if (!productGrid) {
         console.error("Product grid not found");
@@ -2299,37 +2365,26 @@ function renderCart(){
           imagePath = fixImagePath(product.images[0]);
         }
 
-        const priceText = Number(product.price) > 0
-          ? "₹" + Number(product.price).toFixed(2)
-          : "Price on request";
+        // New Collections shows image + name only (no price). The whole card opens the product details page.
+        const detailsUrl = "views.html?id=" + encodeURIComponent(product.productId);
 
         const card = document.createElement("div");
-        card.className = "product-card";
+        card.className = "product-card new-collection-card";
 
         card.dataset.id = String(product.productId ?? "");
         card.dataset.name = product.name || "";
-        card.dataset.price = String(product.price ?? 0);
         card.dataset.img = imagePath;
 
         card.innerHTML = `
-          <div class="img-wrap" style="position:relative;">
-            ${imagePath ? `<img class="product-image" src="${imagePath}" alt="${escapeHTML(product.name || "Product")}" onerror="this.style.display='none';">` : ""}
-          </div>
-
-          <div class="info">
-            <h3>${escapeHTML(product.name || "Product")}</h3>
-            <div class="price">${priceText}</div>
-
-            <div class="card-actions">
-              <a href="views.html?id=${encodeURIComponent(product.productId)}" class="view-btn">
-                View
-              </a>
-
-              <button class="add-cart-btn" onclick="addToCartFromCard(this)">
-                Add to Cart
-              </button>
+          <a class="nc-link" href="${detailsUrl}" aria-label="View ${escapeHTML(product.name || "Product")}">
+            <div class="img-wrap" style="position:relative;">
+              ${imagePath ? `<img class="product-image" src="${imagePath}" alt="${escapeHTML(product.name || "Product")}" loading="lazy" decoding="async" onerror="this.style.display='none';">` : ""}
             </div>
-          </div>
+
+            <div class="info">
+              <h3>${escapeHTML(product.name || "Product")}</h3>
+            </div>
+          </a>
         `;
 
         card.dataset.collectionOriginal = "true";
@@ -2407,16 +2462,16 @@ function renderCart(){
 
     try {
       const all = await getHomepageProducts();
-      const items = [];
-      for (const id of KB_PRODUCT_IDS) {
-        const product = all.find(p => String(p.productId) === String(id));
-        if (!product) continue;
+      const kbProducts = KB_PRODUCT_IDS
+        .map(id => all.find(p => String(p.productId) === String(id)))
+        .filter(Boolean);
+      const items = await Promise.all(kbProducts.map(async product => {
         let imageUrl = "";
         for (const candidate of getProductImageUrls(product)) {
           if (await canLoadProductImage(candidate)) { imageUrl = candidate; break; }
         }
-        items.push({ product, imageUrl });
-      }
+        return { product, imageUrl };
+      }));
       if (!items.length) throw new Error("Products 30, 31, 32 were not found");
 
       track.innerHTML = items.map(({ product, imageUrl }) => {
@@ -2543,10 +2598,19 @@ function renderCart(){
       textColumn.innerHTML = "";
       dots.innerHTML = "";
 
+      const promoIndex = activeHeroes.length;
+
+      const promoBackgroundHtml = `<div class="hero-promo-bg" data-slide="${promoIndex}" aria-hidden="true"></div>`;
+      const promoTextHtml = `
+        <div class="hero-promo-text" data-slide="${promoIndex}">
+          <div class="promo-line">Premium Customised Jute Bags Manufacturers</div>
+          <div class="promo-divider"></div>
+          <div class="promo-line">Pichwai Metal Return Gifts Manufacturers</div>
+          <a href="${escapeHTML(PROMO_SLIDE_LINK)}" class="hero-cta">ENQUIRE NOW</a>
+        </div>`;
+
       if (activeHeroes.length === 0) {
-        heroTotal = 0;
-        console.log("No active heroes found");
-        return;
+        console.log("No active heroes found - showing promotional slide only");
       }
 
       const responsiveHeroImages = [
@@ -2571,11 +2635,13 @@ function renderCart(){
               alt="${escapeHTML(hero.title || "Hero image")}"
               class="${index === 0 ? "active" : ""}"
               data-slide="${index}"
+              ${index === 0 ? 'loading="eager" fetchpriority="high"' : 'fetchpriority="low"'}
+              decoding="async"
               onerror="console.error('Hero image failed:', this.src);"
             >
           </picture>
         `;
-      }).join("");
+      }).join("") + promoBackgroundHtml;
 
       textColumn.innerHTML = activeHeroes.map((hero, index) => {
         const buttonText = hero.buttonText || "Shop Now";
@@ -2588,16 +2654,18 @@ function renderCart(){
             </a>
           </div>
         `;
-      }).join("");
+      }).join("") + promoTextHtml;
 
-      dots.innerHTML = activeHeroes.map((_, index) => `
+      const totalSlides = activeHeroes.length + 1;
+
+      dots.innerHTML = Array.from({ length: totalSlides }, (_, index) => `
         <span
           class="hero-dot ${index === 0 ? "active" : ""}"
           onclick="heroGoTo(${index})"
         ></span>
       `).join("");
 
-      heroTotal = activeHeroes.length;
+      heroTotal = totalSlides;
       heroIndex = 0;
       heroShow(0);
       restartHeroTimer();
@@ -2606,6 +2674,16 @@ function renderCart(){
 
     } catch (error) {
       console.error("Hero loading error:", error);
+      var failImageCol = document.getElementById("heroImageColumn");
+      var failTextCol = document.getElementById("heroTextColumn");
+      var failDots = document.getElementById("heroDots");
+      if (failImageCol && failTextCol && failDots && !failImageCol.children.length) {
+        failImageCol.innerHTML = '<div class="hero-promo-bg active" data-slide="0" aria-hidden="true"></div>';
+        failTextCol.innerHTML = '<div class="hero-promo-text active" data-slide="0"><div class="promo-line">Premium Customised Jute Bags Manufacturers</div><div class="promo-divider"></div><div class="promo-line">Pichwai Metal Return Gifts Manufacturers</div></div>';
+        failDots.innerHTML = '<span class="hero-dot active" onclick="heroGoTo(0)"></span>';
+        heroTotal = 1;
+        heroShow(0);
+      }
     }
   }
 
@@ -2753,6 +2831,7 @@ function renderCart(){
             <a class="strip-card" href="${escapeHTML(category.link || "#")}">
               <img src="${imageUrl}"
                    alt="${escapeHTML(category.title || "Collection")}"
+                   width="270" height="300" decoding="async"
                    onerror="console.error('Scroll image failed:', this.src);">
             </a>
             <div class="strip-card-label">
@@ -2772,18 +2851,22 @@ function renderCart(){
 
   async function loadBestSellersFromBackend() {
     try {
-      const [bestSellerResponse, productsResponse] = await Promise.all([
+      const track = document.getElementById("bsTrack");
+      if (!track) return;
+      if (!track.children.length) {
+        track.innerHTML = `<p style="width:100%;text-align:center;padding:40px;color:#777;">Loading best sellers...</p>`;
+      }
+
+      // Best-sellers list and the shared products request run in parallel; products are reused, not re-fetched
+      const [bestSellerResponse, products] = await Promise.all([
         fetch(`${window.API_BASE_URL}/api/best-sellers`),
-        fetch(`${window.API_BASE_URL}/api/products`)
+        getHomepageProducts()
       ]);
-      if (!bestSellerResponse.ok || !productsResponse.ok) {
+      if (!bestSellerResponse.ok) {
         throw new Error("Failed to load best sellers");
       }
 
       const bestSellers = await bestSellerResponse.json();
-      const products = await productsResponse.json();
-      const track = document.getElementById("bsTrack");
-      if (!track) return;
 
       const configuredBestSellers = Array.isArray(bestSellers)
         ? bestSellers.filter(item => item.active !== false)
@@ -2821,6 +2904,7 @@ function renderCart(){
             <div class="bs-img">
               <img src="${imageUrl}"
                    alt="${escapeHTML(item.name || "Best Seller")}"
+                   loading="lazy" decoding="async"
                    onerror="console.error('Best seller image failed:', this.src);">
             </div>
             <h3>${escapeHTML(item.name || "Product")}</h3>
@@ -2842,6 +2926,10 @@ function renderCart(){
       console.log("MongoDB best sellers rendered:", activeBestSellers.length);
     } catch (error) {
       console.error("Best sellers loading error:", error);
+      const bsTrackEl = document.getElementById("bsTrack");
+      if (bsTrackEl) {
+        bsTrackEl.innerHTML = '<p style="width:100%;text-align:center;padding:40px;color:#b33;">Unable to load best sellers right now.</p>';
+      }
     }
   }
 

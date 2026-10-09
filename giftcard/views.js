@@ -10,6 +10,7 @@ console.log("VIEWS.JS LOADED");
 // =====================================================
 
 const API_URL = window.API_BASE_URL;
+const relatedProductCache = new Map();
 
 // =====================================================
 // GET PRODUCT ID FROM URL
@@ -23,8 +24,32 @@ const productId = urlParams.get("id");
 // IMAGE PATH HELPER
 // =====================================================
 
+function normalizeImageEntry(value) {
+    if (value === null || value === undefined) return "";
+
+    const text = String(value).trim().replace(/\\/g, "/");
+    return text || "";
+}
+
+function normalizeImageList(value) {
+    if (Array.isArray(value)) {
+        return value.flatMap(item => normalizeImageList(item));
+    }
+
+    if (typeof value === "string") {
+        return value
+            .split(",")
+            .map(normalizeImageEntry)
+            .filter(Boolean);
+    }
+
+    return normalizeImageEntry(value) ? [normalizeImageEntry(value)] : [];
+}
+
 function fixProductImage(path) {
-    return window.resolveStoreImageUrl(path);
+    const normalized = normalizeImageEntry(path);
+    if (!normalized) return "";
+    return window.resolveStoreImageUrl(normalized);
 }
 
 // =====================================================
@@ -427,15 +452,21 @@ function displayBadge(product) {
 // =====================================================
 
 function getProductImages(product) {
-    const imagePaths = [
+    const sourceImages = [
         product?.image,
-        ...(Array.isArray(product?.images) ? product.images : [])
-    ]
-        .filter(image => typeof image === "string")
-        .map(image => image.trim())
-        .filter(Boolean);
+        ...(Array.isArray(product?.images) ? product.images : []),
+        ...(Array.isArray(product?.imageUrls) ? product.imageUrls : []),
+        ...(Array.isArray(product?.gallery) ? product.gallery : [])
+    ];
 
-    return [...new Set(imagePaths.map(fixProductImage).filter(Boolean))];
+    const imagePaths = normalizeImageList(sourceImages);
+
+    const resolved = imagePaths
+        .map(fixProductImage)
+        .filter(Boolean)
+        .filter((url, index, arr) => arr.indexOf(url) === index);
+
+    return resolved;
 }
 
 // =====================================================
@@ -504,6 +535,8 @@ function displayProductImages(product) {
             const thumbnailImage = document.createElement("img");
             thumbnailImage.src = image;
             thumbnailImage.alt = `${product.name || "Product"} image ${index + 1}`;
+            thumbnailImage.loading = "lazy";
+            thumbnailImage.decoding = "async";
             thumbnailImage.onerror = function () {
                 thumb.remove();
             };
@@ -612,6 +645,15 @@ async function loadRelatedProducts(
         return;
     }
 
+    const cacheKey = `related:${currentProduct?.productId ?? "unknown"}`;
+    if (relatedProductCache.has(cacheKey)) {
+        displaySimilarProducts(
+            relatedProductCache.get(cacheKey),
+            "Explore more gifts from Shailu's Concepts"
+        );
+        return;
+    }
+
     try {
         const response = await fetch(
             `${API_URL}/api/products/${currentProduct.productId}/related`
@@ -626,8 +668,15 @@ async function loadRelatedProducts(
             ? payload.products
             : [];
 
+        const validRelatedProducts = relatedProducts.filter(product => {
+            if (!product || !product.productId) return false;
+            return true;
+        });
+
+        relatedProductCache.set(cacheKey, validRelatedProducts);
+
         displaySimilarProducts(
-            relatedProducts,
+            validRelatedProducts,
             payload.message || currentProduct.relatedProductsMessage || "Explore more gifts from Shailu's Concepts"
         );
     }
@@ -638,6 +687,8 @@ async function loadRelatedProducts(
             error
         );
 
+        const fallbackProducts = [];
+        relatedProductCache.set(cacheKey, fallbackProducts);
         displaySimilarProducts([], "Explore more gifts from Shailu's Concepts");
     }
 }
@@ -674,10 +725,6 @@ function displaySimilarProducts(
         return;
     }
 
-    // =================================================
-    // SHOW RELATED PRODUCTS
-    // =================================================
-
     products
         .slice(0, 4)
         .forEach(
@@ -708,7 +755,7 @@ function displaySimilarProducts(
                 card.innerHTML = `
                     ${image ? `
                         <div class="img-wrap">
-                            <img src="${escapeHTML(image)}" alt="${productName}">
+                            <img src="${escapeHTML(image)}" alt="${productName}" loading="lazy" decoding="async">
                         </div>
                     ` : ""}
 
@@ -750,14 +797,11 @@ function displaySimilarProducts(
                             relatedImage.src = images[nextImageIndex];
                             nextImageIndex += 1;
                         } else {
-                            relatedImage.closest(".img-wrap").remove();
+                            const imgWrap = relatedImage.closest(".img-wrap");
+                            if (imgWrap) imgWrap.remove();
                         }
                     };
                 }
-
-                // =================================================
-                // VIEW BUTTON
-                // =================================================
 
                 const viewButton =
                     card.querySelector(
